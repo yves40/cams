@@ -27,7 +27,7 @@
             <param name="remoteserver" value="${vboxweb.server}"/>
             <param name="localdir" value="${build.workdir}"/>
             <param name="localzip" value="vuex.zip"/>
-            <param name="remotenetdir" value="${vboxweb.htmlroot}/vuex-tutorial"/>
+            <param name="remotenetdir" value="${vboxweb.htmlroot}/cams"/>
             <param name="remoteaccount" value="${vboxweb.user}"/>
             <param name="remoteaccountpass" value="${vboxweb.password}"/>
         </antcall>

@@ -6,7 +6,7 @@
 //    Dec 22 2018    Cams tests
 //----------------------------------------------------------------------------
 
-const Version = "urltest.js, Dec 22 2018, 1.32 ";
+const Version = "urltest.js, Dec 22 2018, 1.33 ";
 
 const fetch = require("node-fetch");
 
@@ -38,7 +38,7 @@ function urlcall(theurl) {
 };
 
 // ------------ Call Test URL ------ ------------------------------------------
-const cam1 = process.env.camurl || 'https://jsonplaceholder.typicode.com/users/2';
+const cam1 = process.env.CAMURL || 'https://jsonplaceholder.typicode.com/users/2';
 let target = '';
 if (camuser !== undefined && campass !== undefined) {
   target = cam1 + '&usr=' + camuser + '&pwd=' + campass; 
