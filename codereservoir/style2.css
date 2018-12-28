@@ -7,7 +7,7 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr ;
   grid-template-areas: 
   "title title"
   "header header"
@@ -23,7 +23,11 @@
   grid-template-rows: 1fr;
   grid-template-areas: 
   ". sidebar content .";
-  grid-gap: 10px;
+  grid-gap: 8px;
+}
+.subgrid > div {
+  background-color: #ccc;
+  border: solid 2px#999;
 }
 
 .title {
@@ -34,35 +38,21 @@
 }
 .sidebar {
   grid-area: sidebar;
+  grid-row-start: 1 / 3;
 }
 .content {
   grid-area: content;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+  padding: .2em .5em .2em .5em;
 }
+
 .footer {
   grid-area: footer;
 }
 
-.grid div:nth-child(even) {
-  background-color: grey;
-}
-.grid div:nth-child(odd) {
-  background-color:darkgray;
-}
-
-@media screen and (min-width: 1000px) {
-  .grid {
-    display: grid;
-    grid-template-columns:  1fr 500px 500px 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    grid-template-areas: 
-    ". title title ."
-    ". header header ."
-    ". sidebar content ."
-    ". footer footer .";
-    grid-gap: 4px;
-    padding: 5px 10px 5px 10px;
-  }
-  
+.grid > div {
+  background-color: #ccc;
+  border: solid 2px#999;
 }
