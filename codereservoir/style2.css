@@ -44,8 +44,14 @@
   grid-area: content;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
   grid-gap: 10px;
   padding: .2em .5em .2em .5em;
+}
+
+.content > p {
+  border: solid 1px black;
+  padding: .4em .2em .4em .2em;
 }
 
 .footer {
