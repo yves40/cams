@@ -70,7 +70,6 @@
             </div>
             <div class="col-4"></div>
           </div>
-
           <!-- Password -->
           <div class="row">
             <div class="col-4"></div>
@@ -152,7 +151,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '2.37, Dec 31 2018',
+    Version: '2.36, Dec 31 2018',
     name: '',
     email: '',
     password: '',
