@@ -2,6 +2,7 @@
   App.vue
 
   Dec 31 2018   Initial
+  Jan 01 2019   Test&fix vee-validate problem
 
 -->
 <template>
@@ -27,6 +28,7 @@
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
         <v-btn id="register_btn" flat v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
+        <v-btn id="registerDBG_btn" flat v-bind:to="{ name: 'RegisterDBG' }" v-if="!current_user">Register DBG</v-btn>
         <v-btn id="login_btn" flat v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
         <v-btn id="logout_btn" flat @click="logout" v-if="current_user">Logout</v-btn>
       </v-toolbar-items>
@@ -35,7 +37,7 @@
     <v-content>
         <v-container fluid>
           <div id="app">
-            <router-view></router-view>
+            <router-view/>
           </div>
         </v-container>
     </v-content>
@@ -50,7 +52,7 @@
 export default {
   name: "Cams",
   data: () => ({
-    Version: 'Cams 1.10, Dec 31 2018 ',
+    Version: 'Cams 1.12, Jan 01 2019 ',
     drawer: null,
     current_user: null,
   })
