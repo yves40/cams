@@ -19,7 +19,7 @@
                 Based on NODEURLPREFIX environment variable.
                 Look at myenv.js in ./config
   Dec 07 2018   Remove style section
-  Dec 31 2018   Integrated in cams project
+  Jan 01 2019   CAMS project
 
 -->
 <template>
@@ -151,7 +151,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '2.36, Dec 31 2018',
+    Version: '2.35, Jan 01 2019',
     name: '',
     email: '',
     password: '',

@@ -6,7 +6,7 @@
 
 -->
 <template>
-  <v-app id="cams">
+  <v-app id="app">
     <v-navigation-drawer fixed v-model="drawer" app>
       <!-- Side bar Navigation -->
       <v-list dense>
@@ -50,9 +50,9 @@
 
 <script>
 export default {
-  name: "Cams",
+  name: "App",
   data: () => ({
-    Version: 'Cams 1.12, Jan 01 2019 ',
+    Version: 'Cams 1.13, Jan 01 2019 ',
     drawer: null,
     current_user: null,
   })
