@@ -20,6 +20,7 @@
                 Look at myenv.js in ./config
   Dec 07 2018   Remove style section
   Jan 01 2019   CAMS project
+  Jan 02 2019   Debug vee-validate ;-(((
 
 -->
 <template>
@@ -28,7 +29,7 @@
       the current state of your inputs as a whole.
   -->
   <ValidationObserver>
-    <template slot-scope="{ invalid, validated }">
+    <div slot-scope="{ invalid, validated }">
       <v-toolbar dark color="primary">
         <v-toolbar-title>Register User</v-toolbar-title>
       </v-toolbar>
@@ -74,14 +75,13 @@
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
-              <ValidationProvider name="password" rules="required|min:6|confirmed:passconf">
+              <ValidationProvider name="password" rules="required|min:6|confirmed:passconf" vid="passwd">
                 <v-text-field
                   slot-scope="{ errors, valid }"
                   v-model="password"
                   :error-messages="errors"
                   :success="valid"
                   label="Password"
-                  required
                   type="password"
                 ></v-text-field>
               </ValidationProvider>
@@ -92,14 +92,13 @@
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
-              <ValidationProvider vid="passconf" name="passwordctl" rules="required">
+              <ValidationProvider name="passwordctl" rules="required|min:6|confirmed:passwd" vid="passconf" >
                 <v-text-field
                   slot-scope="{ errors, valid }"
                   v-model="passwordctl"
                   :error-messages="errors"
                   :success="valid"
                   label="Password again"
-                  required
                   type="password"
                 ></v-text-field>
               </ValidationProvider>
@@ -121,7 +120,7 @@
             <div class="col"></div>
           </v-card-actions>
       </div>
-    </template>
+    </div>
   </ValidationObserver>
 </template>
 
@@ -151,7 +150,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '2.35, Jan 01 2019',
+    Version: '2.42, Jan 02 2019',
     name: '',
     email: '',
     password: '',
