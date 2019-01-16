@@ -6,79 +6,112 @@
 
   Jan 01 2019   Initial
   Jan 15 2019   vee-validate Not working ;-(
+  Jan 16 2019   vee-validate Not working ;-( Fortunately we've one running well in packt samples
 
 -->
 <template>
-  <ValidationObserver ref="logobserver">
-    <template slot-scope="{ invalid, validated }">
-      <div>
-        <!-- The input area -->
-        <h3>{{ Version }}</h3>
-
-        <v-card-text>
-          <v-form>
-            <!-- Password -->
-            <div class="row">
-              <div class="col-4"></div>
-              <div class="form-group col-4">
-                <ValidationProvider
-                  vid="password"
-                  name="password"
-                  rules="required|min:6|confirmed:passconf"
-                >
-                  <v-text-field
-                    slot-scope="{ errors, valid }"
-                    v-model="password"
-                    :error-messages="errors"
-                    :success="valid"
-                    label="Password"
-                    type="text"
-                  ></v-text-field>
-                </ValidationProvider>
-              </div>
-              <div class="col-4"></div>
+  <ValidationObserver>
+    <div slot-scope="{ invalid, validated }">
+      <v-card-title>{{ Version }}</v-card-title>
+      <!-- The input area -->
+      <v-card-text>
+        <v-form>
+          <!-- Name -->
+          <div class="row">
+            <div class="col-4"></div>
+            <div class="form-group col-4">
+              <ValidationProvider name="name" rules="required|min:4|max:20">
+                <v-text-field
+                  slot-scope="{ errors, valid }"
+                  v-model="name"
+                  :error-messages="errors"
+                  :success="valid"
+                  label="Name"
+                  required
+                ></v-text-field>
+              </ValidationProvider>
             </div>
-            <!-- Password control -->
-            <div class="row">
-              <div class="col-4"></div>
-              <div class="form-group col-4">
-                <ValidationProvider
-                  vid="passconf"
-                  name="passwordctl"
-                  rules="required|min:6|confirmed:password"
-                >
-                  <v-text-field
-                    slot-scope="{ errors, valid }"
-                    v-model="passwordctl"
-                    :error-messages="errors"
-                    :success="valid"
-                    label="Password again"
-                    type="text"
-                  ></v-text-field>
-                </ValidationProvider>
-              </div>
-              <div class="col-4"></div>
+            <div class="col-4"></div>
+          </div>
+          <!-- Mail -->
+          <div class="row">
+            <div class="col-4"></div>
+            <div class="form-group col-4">
+              <ValidationProvider name="email" rules="required|email">
+                <v-text-field
+                  slot-scope="{ errors, valid }"
+                  v-model="email"
+                  :error-messages="errors"
+                  :success="valid"
+                  label="E-mail"
+                  required
+                ></v-text-field>
+              </ValidationProvider>
             </div>
-          </v-form>
-        </v-card-text>
-        <!-- Buttons -->
-        <div class="row">
-          <v-card-actions>
-            <div class="col"></div>
-            <div class="col"><v-btn @click="clear">Clear</v-btn></div>
-            <div class="col">
-              <v-btn
-                color="primary"
-                @click="submit"
-                :disabled="invalid || !validated"
-                >Register</v-btn
+            <div class="col-4"></div>
+          </div>
+          <!-- Password -->
+          <div class="row">
+            <div class="col-4"></div>
+            <div class="form-group col-4">
+              <ValidationProvider
+                name="password"
+                rules="required|min:6|confirmed:passconf"
               >
+                <v-text-field
+                  slot-scope="{ errors, valid }"
+                  v-model="password"
+                  :error-messages="errors"
+                  :success="valid"
+                  label="Password"
+                  required
+                  type="text"
+                ></v-text-field>
+              </ValidationProvider>
             </div>
-            <div class="col"></div>
-          </v-card-actions>
-        </div>
+            <div class="col-4"></div>
+          </div>
+          <!-- Password control -->
+          <div class="row">
+            <div class="col-4"></div>
+            <div class="form-group col-4">
+              <ValidationProvider
+                vid="passconf"
+                name="passwordctl"
+                rules="required"
+              >
+                <v-text-field
+                  slot-scope="{ errors, valid }"
+                  v-model="passwordctl"
+                  :error-messages="errors"
+                  :success="valid"
+                  label="Password again"
+                  required
+                  type="text"
+                ></v-text-field>
+              </ValidationProvider>
+            </div>
+            <div class="col-4"></div>
+          </div>
+        </v-form>
+      </v-card-text>
+      <!-- Buttons -->
+      <div class="row">
+        <v-card-actions>
+          <div class="col"></div>
+          <div class="col"><v-btn @click="clear">Clear</v-btn></div>
+          <div class="col">
+            <v-btn
+              color="primary"
+              @click="submit"
+              :disabled="invalid || !validated"
+              >Register</v-btn
+            >
+          </div>
+          <div class="col"></div>
+        </v-card-actions>
       </div>
-    </template>
+    </div>
   </ValidationObserver>
 </template>
 
@@ -88,7 +121,7 @@
 
   export default {
     data: () => ({
-      Version: "registerDBG 1.30, Jan 15 2019",
+      Version: "registerDBG 1.34, Jan 16 2019",
       name: "",
       email: "",
       password: "",

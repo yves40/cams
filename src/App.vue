@@ -52,7 +52,7 @@
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.13, Jan 01 2019 ',
+    Version: 'Cams 1.14, Jan 16 2019 ',
     drawer: null,
     current_user: null,
   })
