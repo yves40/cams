@@ -5,8 +5,9 @@
 //    Dec 03 2018   Prefix not hard coded
 //    Dec 07 2018   Problem with mono node config and CORS
 //    Jan 16 2019   Start working on services in the CAMS app
+//    Jan 17 2019   Port 8081
 //----------------------------------------------------------------------------
-const Version = "myenv 1.13, Jan 16 2019";
+const Version = "myenv 1.14, Jan 17 2019";
 
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
