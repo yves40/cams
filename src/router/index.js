@@ -5,13 +5,14 @@
 //    Jan 17 2019    WIP on user services
 //----------------------------------------------------------------------------
 
-const Version = "index.js, Jan 17 2019, 1.03 ";
+const Version = "index.js, Jan 17 2019, 1.04 ";
 
 import Vue from "vue";
 import Router from "vue-router";
 import HelloWorld from "@/components/HelloWorld";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
+import Identity from "@/components/Identity";
 
 Vue.use(Router);
 
