@@ -18,16 +18,43 @@
 //                  Will work on that later. No internet address available
 //                  for my super vboxweb server
 //    Jan 17 2019   Transfered to the CAMS project
+//    Jan 19 2019   Some CORS tests, but not selected
+//    Jan 20 2019   Start adding session management
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 1.80, Jan 17 2019 ';
+const Version = 'userController.js 1.83, Jan 20 2019 ';
 
 const user = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
 
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 module.exports.controller = (app) => {
+
+    //-----------------------------------------------------------------------------------
+    // passport initialization stuff
+    // Local strategy
+    //-----------------------------------------------------------------------------------
+    passport.use( new LocalStrategy( {
+        usernameField: 'email',
+        passwordField: 'password',
+        failureFlash: true,
+        passReqToCallback : true,
+    }, (req, email, password, done) => {
+        user.getUserByEmail(email, (err, loggeduser) => {
+            if(err) { return done(err); }
+            if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
+            user.comparePassword(password, loggeduser.password, (error, isMatch ) => {
+                if (isMatch) {
+                    return done(null, loggeduser)   // Success login !!!
+                }
+                return done( null, false, {message: 'Wrong password'} ); // Error
+            });
+            return true;
+        });
+    }));
+
     //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
@@ -95,6 +122,7 @@ module.exports.controller = (app) => {
                 });
             }
             console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
+            res.setHeader('Access-Control-Allow-Origin', '*');
             res.send({ user });
         });
     });

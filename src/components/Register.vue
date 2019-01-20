@@ -22,6 +22,7 @@
   Jan 01 2019   CAMS project
   Jan 02 2019   Debug vee-validate ;-(((
   Jan 17 2019   Some CORS tests
+  Jan 19 2019   Some CORS tests, once more
 
 -->
 <template>
@@ -151,7 +152,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '2.43, Jan 17 2019',
+    Version: '2.44, Jan 19 2019',
     name: '',
     email: '',
     password: '',
@@ -167,8 +168,8 @@ export default {
     },
     // All rules satisfied otherwise button is disabled
     submit() {      
-      this.$log.debug('Submit called ');
       const prefix = myenv.getURLprefix();
+      this.$log.debug('Submit called to : ' + prefix);
       return axios(
         {
             method: 'post',

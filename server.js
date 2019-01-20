@@ -4,8 +4,10 @@
 //    Dec 22 2018    Initial, for the cams project
 //    Jan 16 2019    use config/myenv
 //    Jan 17 2019    Setup login and register services
+//    Jan 19 2019    CORS problem is back ;-(
+//    Jan 20 2019    CORS ;-(
 //----------------------------------------------------------------------------
-const Version = "server.js, Jan 17 2019, 1.22 ";
+const Version = "server.js, Jan 20 2019, 1.29 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -17,6 +19,9 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const bodyParser  = require('body-parser');
 const cors = require('cors');
+const passport = require('passport');
+const exprsession = require('express-session');
+
 
 console.log('\n\n' +Version + '\n\n');
 
@@ -69,10 +74,9 @@ console.log('\nCORS Security setting, sites list:');
 console.log("---------------------------------------------------------");
 
 var whitelist = [
-    'http://192.168.47.200:8080', 
-    'http://vboxweb:8080',
-    'http://vboxweb:8081',
-  ];
+  'http://vboxweb:8080',
+  'http://vboxweb:8081',
+];
 
 let i = 0;
 for (; i < whitelist.length; ++i) {
@@ -94,7 +98,7 @@ function checkOrigin(origin, callback) {
   }
 }
 const corsOptions = {
-  'origin': '*',
+  'origin': checkOrigin,
   'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
   'preflightContinue': false,
   'optionsSuccessStatus': 204,
@@ -102,6 +106,26 @@ const corsOptions = {
   'allowedHeaders': ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
+
+//----------------------------------------------------------------------------
+//  Session management : Use JWT
+//----------------------------------------------------------------------------
+console.log('\nInitializing passport session parameters');
+console.log("---------------------------------------------------------");
+app.use(exprsession({
+  secret: jwtconfig.jwtSecret,
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    httpOnly: false,
+    maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
+},
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 //----------------------------------------------------------------------------
 // Check prefix used for services calls, depending on whether using DEV
