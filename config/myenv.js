@@ -8,7 +8,7 @@
 //    Jan 17 2019   Port 8081
 //    Jan 21 2019   CORS
 //----------------------------------------------------------------------------
-const Version = "myenv 1.15, Jan 21 2019";
+const Version = "myenv 1.16, Jan 21 2019 ";
 
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
@@ -47,6 +47,10 @@ module.exports.getPort = function getPort() {
 
 module.exports.getCORS = function getCORS() {
   return corsOptions;
+};
+
+module.exports.getCORSwhitelist = function getCORSwhitelist() {
+  return whitelist;
 };
 
 //----------------------------------------------------------------------------

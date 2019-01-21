@@ -7,19 +7,21 @@
 //    Jan 19 2019    CORS problem is back ;-(
 //    Jan 20 2019    CORS ;-(
 //    Jan 21 2019    CORS ! Found the problem. Seeking for the best solution
+//                   Then some work on passport
 //----------------------------------------------------------------------------
-const Version = "server.js, Jan 21 2019, 1.34 ";
+const Version = "server.js, Jan 21 2019, 1.38 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
-const express = require("express");
-const jwtconfig = require("./config/jwtconfig");  
 const myenv = require("./config/myenv");
-const mongoose = require('mongoose');
-const fs = require('fs');
+const jwtconfig = require("./config/jwtconfig");  
+
+const express = require("express");
 const bodyParser  = require('body-parser');
+const mongoose = require('mongoose');
 const cors = require('cors');
+const fs = require('fs');
 const passport = require('passport');
 const exprsession = require('express-session');
 
@@ -30,10 +32,19 @@ console.log('\n\n' +Version + '\n\n');
 // Initialize Express
 //----------------------------------------------------------------------------
 const app = express();
-app.use(express.static(__dirname + "/dist"));
 const router = express.Router();
 app.use(bodyParser.json());
+app.use(express.static(__dirname + "/dist"));
 
+//----------------------------------------------------------------------------
+// For the favicon boring request error
+//----------------------------------------------------------------------------
+app.use(function(req, res, next) {
+  if (req.originalUrl && req.originalUrl.split("/").pop() === "favicon.ico") {
+    return res.sendStatus(204);
+  }
+  return next();
+});
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
@@ -73,6 +84,13 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 //----------------------------------------------------------------------------
 console.log('\nCORS Security setting, sites list:');
 console.log("---------------------------------------------------------");
+
+let loop = 0;
+let sitelist = myenv.getCORSwhitelist();
+for (; loop < sitelist.length; ++loop) {
+  console.log('\t\t\tSite : ' + sitelist[loop]);
+}
+
 app.use(cors(myenv.getCORS()));
 
 //----------------------------------------------------------------------------
@@ -111,13 +129,6 @@ router.get("/", function(req, res) {
   res.json({ message: "API initialized" });
 });
 
-// For the favicon boring request error
-app.use(function(req, res, next) {
-  if (req.originalUrl && req.originalUrl.split("/").pop() === "favicon.ico") {
-    return res.sendStatus(204);
-  }
-  return next();
-});
 
 console.log("\nServer status :");
 console.log("---------------------------------------------------------");

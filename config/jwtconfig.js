@@ -6,11 +6,12 @@
 //    Dec 08 2018   TWITTER login, start of work
 //    Dec 09 2018   GOOGLE and LINKEDIN, prepare future ;-)
 //    Dec 31 2018   Clean up
+//    Jan 21 2019   NODESECRET
 //----------------------------------------------------------------------------
-const Version = 'jwtconfig 1.04, Dec 31 2018';
+const Version = 'jwtconfig 1.05, Jan 21 2019';
 
 module.exports = {  
-    jwtSecret: "thisisthesecretkey",
+    jwtSecret: process.env.NODESECRET || 'thisisthesecretkey' ,
     jwtSession: {
         session: false
     },

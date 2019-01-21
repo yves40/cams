@@ -23,7 +23,7 @@
 //    Jan 21 2019   CORS is still very mysterious to me
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 1.86, Jan 21 2019 ';
+const Version = 'userController.js 1.87, Jan 21 2019 ';
 
 const user = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -50,6 +50,7 @@ module.exports.controller = (app) => {
             if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
             user.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
+                    console.log(Version + email + ' identified');
                     return done(null, loggeduser)   // Success login !!!
                 }
                 return done( null, false, {message: 'Wrong password'} ); // Error
