@@ -6,8 +6,9 @@
 //    Dec 07 2018   Problem with mono node config and CORS
 //    Jan 16 2019   Start working on services in the CAMS app
 //    Jan 17 2019   Port 8081
+//    Jan 21 2019   CORS
 //----------------------------------------------------------------------------
-const Version = "myenv 1.14, Jan 17 2019";
+const Version = "myenv 1.15, Jan 21 2019";
 
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
@@ -42,4 +43,38 @@ module.exports.getVersion = function getVersion() {
 
 module.exports.getPort = function getPort() {
   return port;
+};
+
+module.exports.getCORS = function getCORS() {
+  return corsOptions;
+};
+
+//----------------------------------------------------------------------------
+// C O R S stuff
+//----------------------------------------------------------------------------
+const whitelist = [
+  'http://vboxweb:8080',
+];
+
+function checkOrigin(origin, callback) {
+  console.log(Version + (origin === undefined ? 'Local node': origin) + ' CORS check');
+  if (origin === undefined) { // Do not want to block REST tools or server-to-server requests
+    callback(null, true);
+  }
+  else { // origin is specified
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      console.log(Version + (origin === null ? 'Local node': origin) + ' not allowed by CORS');
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}
+const corsOptions = {
+  'origin': checkOrigin,
+  'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  'preflightContinue': false,
+  'optionsSuccessStatus': 204,
+  'credentials': true,
+  'allowedHeaders': ['Content-Type', 'Authorization'],
 };

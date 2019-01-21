@@ -6,8 +6,9 @@
 //    Jan 17 2019    Setup login and register services
 //    Jan 19 2019    CORS problem is back ;-(
 //    Jan 20 2019    CORS ;-(
+//    Jan 21 2019    CORS ! Found the problem. Seeking for the best solution
 //----------------------------------------------------------------------------
-const Version = "server.js, Jan 20 2019, 1.29 ";
+const Version = "server.js, Jan 21 2019, 1.34 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -72,40 +73,7 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 //----------------------------------------------------------------------------
 console.log('\nCORS Security setting, sites list:');
 console.log("---------------------------------------------------------");
-
-var whitelist = [
-  'http://vboxweb:8080',
-  'http://vboxweb:8081',
-];
-
-let i = 0;
-for (; i < whitelist.length; ++i) {
-  console.log('\t\t\t' + whitelist[i])
-}
-
-function checkOrigin(origin, callback) {
-  console.log(Version + (origin === undefined ? 'Local node': origin) + ' CORS check');
-  if (origin === undefined) { // For single node config
-    callback(null, true);
-  }
-  else { // origin is specified
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      console.log(Version + (origin === null ? 'Local node': origin) + ' not allowed by CORS');
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}
-const corsOptions = {
-  'origin': checkOrigin,
-  'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  'preflightContinue': false,
-  'optionsSuccessStatus': 204,
-  'credentials': true,
-  'allowedHeaders': ['Content-Type', 'Authorization'],
-};
-app.use(cors(corsOptions));
+app.use(cors(myenv.getCORS()));
 
 //----------------------------------------------------------------------------
 //  Session management : Use JWT

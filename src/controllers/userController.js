@@ -20,15 +20,18 @@
 //    Jan 17 2019   Transfered to the CAMS project
 //    Jan 19 2019   Some CORS tests, but not selected
 //    Jan 20 2019   Start adding session management
+//    Jan 21 2019   CORS is still very mysterious to me
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 1.83, Jan 20 2019 ';
+const Version = 'userController.js 1.86, Jan 21 2019 ';
 
 const user = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
+const myenv = require("../../config/myenv");
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const cors = require('cors');
 
 module.exports.controller = (app) => {
 
@@ -58,7 +61,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
-    app.get('/users/current_user', (req, res) => {
+    app.get('/users/current_user', cors(myenv.getCORS()), (req, res) => {
         if (req.user) {
             res.header("Access-Control-Allow-Credentials", "true");
             res.json( {current_user: req.user} );
@@ -82,7 +85,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // logout a user
     //-----------------------------------------------------------------------------------
-    app.get('/users/logout', (req, res) => {
+    app.get('/users/logout', cors(myenv.getCORS()), (req, res) => {
         if (req.user) {
             console.log(Version + 'logging ' + req.user.email +  ' out');
             const useremail = req.user.email;
@@ -98,7 +101,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // List all users
     //-----------------------------------------------------------------------------------
-    app.get('/users/list', (req, res) => {
+    app.get('/users/list', cors(myenv.getCORS()), (req, res) => {
         user.listUsers( (error, userlist) => {
             if(error) { console.log(error);}
             console.log(Version + "Fetched " + userlist.length + " users"); 
@@ -109,7 +112,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // Register user
     //-----------------------------------------------------------------------------------
-    app.post('/users/register', (req, res) => {
+    app.post('/users/register', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Adding a user');
         const name = req.body.name;
         const email = req.body.email;
@@ -122,14 +125,14 @@ module.exports.controller = (app) => {
                 });
             }
             console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
-            res.setHeader('Access-Control-Allow-Origin', '*');
+            // res.setHeader('Access-Control-Allow-Origin', '*');
             res.send({ user });
         });
     });
     //-----------------------------------------------------------------------------------
     // Register users
     //-----------------------------------------------------------------------------------
-    app.post('/users/registers', (req, res) => {
+    app.post('/users/registers', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Adding users');
         let allusers = {};
         allusers = req.body.allusers;
@@ -149,7 +152,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // Remove One user by ID
     //-----------------------------------------------------------------------------------
-    app.post('/users/delete/ID/:id', (req, res) => {
+    app.post('/users/delete/ID/:id', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Removing user with ID : ' + req.params.id);
         user.deleteoneUserByID( req.params.id, (error, deleted) => {
             if(error) { console.log(error); }
@@ -165,7 +168,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // Remove One user by name
     //-----------------------------------------------------------------------------------
-    app.post('/users/delete/name/:name', (req, res) => {
+    app.post('/users/delete/name/:name', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Removing user with name : ' + req.params.name);
         user.deleteoneUserByName( req.params.name, (error, deleted) => {
             if(error) { console.log(error); }
@@ -181,7 +184,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // Remove all users
     //-----------------------------------------------------------------------------------
-    app.post('/users/deleteall', (req, res) => {
+    app.post('/users/deleteall', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Deleting all users !!!');
         user.deleteallUsers( () => {
             console.log(Version + ' done !!');
