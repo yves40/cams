@@ -6,8 +6,9 @@
 //    Nov 21 2018   Get a user by email
 //    Dec 03 2018   Add a local user strategy
 //    Jan 17 2019   Transfered to the CAMS project
+//    Jan 22 2019   Add a user profile
 //----------------------------------------------------------------------------
-const Version = 'userModel.js 1.21 Jan 17 2019 ';
+const Version = 'userModel.js 1.23 Jan 22 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -20,6 +21,7 @@ const userschema = new schema(
         name: String,
         email: String,
         password: String,
+        profilecode: 0,
     }
 );
 const User = mongoose.model("user", userschema);
@@ -34,6 +36,7 @@ module.exports.createUser = (newuser, callback) => {
         bcryptjs.hash(newuser.password, salt, (error, hash) => {
             // Store the hashed password
             const newuseresource = newuser;
+            newuseresource.profilecode = newuser.profilecode;
             newuseresource.password = hash;
             newuseresource.save(callback);
         });
@@ -45,7 +48,7 @@ module.exports.createUser = (newuser, callback) => {
 //-----------------------------------------------------------------------------------
 module.exports.listUsers = (callback) => {
     console.log(Version + 'GET all users');
-    User.find({}, 'name email password', callback); 
+    User.find({}, 'name email password profilecode', callback); 
 };
 
 //-----------------------------------------------------------------------------------

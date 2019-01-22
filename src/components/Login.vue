@@ -16,6 +16,7 @@
   Dec 08 2018   TWITTER login, start of work
   Dec 09 2018   TWITTER login, work..
   Dec 31 2018   Integrated in cams project : Simplified no twitter, google or linkedin
+  Jan 22 2019   Send a refresh after login to update the top bar
 -->
 <template>
 
@@ -103,14 +104,14 @@
 
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
-// import bus from '../bus';
+import bus from '../bus';
 
 const myenv = require('../../config/myenv');  
 
 
 export default {
   data: () => ({
-    Version: '1.29, Dec 31 2018',
+    Version: '1.32, Jan 22 2019 ',
     email: '',
     password: '',
   }),
@@ -140,12 +141,11 @@ export default {
       .then((response) => {
           window.localStorage.setItem('jwt', response.data.token);
           this.$swal('Great!', 'Welcome ' + response.data.message, 'success');
-          // bus.$emit('refreshUser');
+          bus.$emit('refreshUser');
           this.$router.push({ name: 'Home' });
         },
       )
       .catch((error) => {
-          // const errormess = req.flash('error');
           this.$swal('Damned, not logged!', 'Invalid credentials', 'error');
           this.$router.push({ name: 'Login' });
         },

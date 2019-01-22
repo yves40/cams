@@ -6,6 +6,7 @@
   Jan 16 2019   vee-validate problem partially fixed. 
                 Still one problem : Cannot read property '$watch' of undefined
                 But does not prevent the register page from running
+  Jan 22 2019   Add top bar management now...
 
 -->
 <template>
@@ -51,13 +52,86 @@
 </template>
 
 <script>
+/* eslint-disable indent */
+/* eslint no-unused-vars: "off" */
+/* eslint no-useless-concat: "off" */
+/* eslint prefer-template: "off" */
+/* eslint max-len: "off" */
+/* eslint prefer-const: "off" */
+/* eslint no-alert: "off" */
+/* eslint no-trailing-spaces: "off" */
+/* eslint brace-style: "off" */
+/* eslint arrow-body-style: "off" */
+/* eslint no-console: "off" */
+/* eslint object-shorthand: "off" */
+/* eslint func-names: "off" */
+/* eslint space-before-function-paren: "off" */
+/* eslint no-multi-assign: "off" */
+
+import axios from 'axios';
+
+import bus from './bus';
+
+const myenv = require('../config/myenv');  
+
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.14, Jan 16 2019 ',
+    Version: 'Cams 1.17, Jan 22 2019 ',
     drawer: null,
     current_user: null,
-  })
+  }),
+  mounted() {
+    this.fetchUser();
+    this.listenToEvents();
+  },
+  methods: {
+    // --------------------------------- Event listener --------------------------------
+    listenToEvents() {
+      bus.$on('refreshUser', () => {
+        this.fetchUser();
+      });
+    },
+    // --------------------------------- Is user logged ? ------------------------------
+    async fetchUser() {
+      const prefix = myenv.getURLprefix();
+      this.$log.debug('fetchuser service prefix is : ', prefix);
+      return axios({
+        method: 'get',
+        url: prefix + '/users/current_user',
+        withCredentials: 'true',
+      })
+      .then((response) => {
+        if (response.data.current_user === 'anonymous') {
+          this.current_user = null;
+        }
+        else {
+          this.current_user = response.data.current_user;
+        }
+      })
+      .catch(() => {
+        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        this.current_user = null;
+      });
+    },
+    // --------------------------------- Logging out  --------------------------------
+    logout() {
+      const prefix = myenv.getURLprefix();
+      this.$log.debug('Logout the user :', prefix + '/users/logout');
+      return axios({
+        method: 'get',
+        url: prefix + '/users/logout',
+        withCredentials: 'true',
+      })
+      .then((response) => {
+        this.$log.debug(response.data.message);
+        bus.$emit('refreshUser');
+        this.$router.push({ name: 'Home' });
+      })
+      .catch(() => {});
+    },
+  },
+
 };
 </script>
 

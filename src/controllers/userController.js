@@ -23,9 +23,10 @@
 //    Jan 21 2019   CORS is still very mysterious to me
 //    Jan 22 2019   Passport : API problem solved
 //                  When registering a user, check he's not aleady registered
+//                  Add top bar management, fix problem with invalid login
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.00, Jan 22 2019 ';
+const Version = 'userController.js 2.03, Jan 22 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -86,7 +87,6 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.get('/users/current_user', cors(myenv.getCORS()), (req, res) => {
         if (req.user) {
-            res.header("Access-Control-Allow-Credentials", "true");
             res.json( {current_user: req.user} );
         }
         else {
@@ -140,11 +140,10 @@ module.exports.controller = (app) => {
         User.getUserByEmail(req.body.email, (err, loggeduser) => {
             if(err) { return done(err); }
             if ( !loggeduser ) { 
-                console.log(Version + 'Adding a user');
                 const name = req.body.name;
                 const email = req.body.email;
                 const password = req.body.password;
-                const newuser = new User({name, email, password});
+                const newuser = new User({name, email, password, profilecode: 0});
                 User.createUser(newuser, (error, user) => {
                     if(error) { 
                         res.status(422).json({
