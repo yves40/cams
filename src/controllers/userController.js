@@ -26,7 +26,7 @@
 //                  Add top bar management, fix problem with invalid login
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.03, Jan 22 2019 ';
+const Version = 'userController.js 2.04, Jan 22 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -56,7 +56,7 @@ module.exports.controller = (app) => {
         passReqToCallback : true,
     }, (req, email, password, done) => {
         User.getUserByEmail(email, (err, loggeduser) => {
-            if(err) { return done(err); }
+            if(err) { return done(null, false, {message: 'Bad login'}); }
             if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
             User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
@@ -97,7 +97,9 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // login a user
     //-----------------------------------------------------------------------------------
-    app.post('/users/login', cors(myenv.getCORS()), passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true, }), (req, res) => {
+    app.post('/users/login', cors(myenv.getCORS()), passport.authenticate('local',
+                         { failureRedirect: '/users/login', failureFlash: false, }), 
+                    (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         console.log(Version + 'signing the token with a 24h expiration time');
         const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 86400}); // 24 hours
