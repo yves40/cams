@@ -55,7 +55,7 @@ module.exports.listUsers = (callback) => {
 // Get a user by email
 //-----------------------------------------------------------------------------------
 module.exports.getUserByEmail = (email, callback) => {
-        const query = { email };
+    const query = { email };
     User.findOne(query, callback);
 };
 

@@ -26,7 +26,7 @@
 //                  Add top bar management, fix problem with invalid login
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.04, Jan 22 2019 ';
+const Version = 'userController.js 2.09, Jan 22 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -49,25 +49,24 @@ module.exports.controller = (app) => {
     // passport initialization stuff
     // Local strategy
     //-----------------------------------------------------------------------------------
-    passport.use( new LocalStrategy( {
-        usernameField: 'email',
-        passwordField: 'password',
-        failureFlash: true,
-        passReqToCallback : true,
-    }, (req, email, password, done) => {
-        User.getUserByEmail(email, (err, loggeduser) => {
-            if(err) { return done(null, false, {message: 'Bad login'}); }
-            if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
-            User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
-                if (isMatch) {
-                    console.log(Version + email + ' identified');
-                    return done(null, loggeduser)   // Success login !!!
-                }
-                return done( null, false, {message: 'Wrong password'} ); // Error
+    passport.use( new LocalStrategy({
+            usernameField: 'email',
+            passwordField: 'password',
+            failureFlash: true,}, 
+        (email, password, done) => {
+            User.getUserByEmail(email, (err, loggeduser) => {
+                if(err) { return done(err); }
+                if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
+                User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
+                    if (isMatch) {
+                        console.log(Version + email + ' identified');
+                        return done(null, loggeduser)   // Success login !!!
+                    }
+                    return done( null, false, {message: 'Wrong password'} ); // Error
+                });
             });
-            return true;
-        });
-    }));
+        }
+    ));
 
     passport.serializeUser((loggeduser, done) => {
         console.log(Version + 'serializeUser with mail : ' + loggeduser.email);
@@ -97,8 +96,8 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // login a user
     //-----------------------------------------------------------------------------------
-    app.post('/users/login', cors(myenv.getCORS()), passport.authenticate('local',
-                         { failureRedirect: '/users/login', failureFlash: false, }), 
+    app.post('/users/login', cors(myenv.getCORS()),
+                 passport.authenticate('local'), 
                     (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         console.log(Version + 'signing the token with a 24h expiration time');
