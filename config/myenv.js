@@ -7,8 +7,9 @@
 //    Jan 16 2019   Start working on services in the CAMS app
 //    Jan 17 2019   Port 8081
 //    Jan 21 2019   CORS
+//    Jan 22 2019   Remove some logging
 //----------------------------------------------------------------------------
-const Version = "myenv 1.16, Jan 21 2019 ";
+const Version = "myenv 1.17, Jan 22 2019 ";
 
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
@@ -61,7 +62,7 @@ const whitelist = [
 ];
 
 function checkOrigin(origin, callback) {
-  console.log(Version + (origin === undefined ? 'Local node': origin) + ' CORS check');
+  // console.log(Version + (origin === undefined ? 'Local node': origin) + ' CORS check');
   if (origin === undefined) { // Do not want to block REST tools or server-to-server requests
     callback(null, true);
   }
