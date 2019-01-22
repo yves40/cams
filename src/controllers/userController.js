@@ -26,7 +26,7 @@
 //                  Add top bar management, fix problem with invalid login
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.09, Jan 22 2019 ';
+const Version = 'userController.js 2.13, Jan 22 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -52,7 +52,7 @@ module.exports.controller = (app) => {
     passport.use( new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',
-            failureFlash: true,}, 
+            }, 
         (email, password, done) => {
             User.getUserByEmail(email, (err, loggeduser) => {
                 if(err) { return done(err); }
@@ -80,6 +80,21 @@ module.exports.controller = (app) => {
         });
     });
 
+    const authrequired = function() {
+        passport.authenticate('local', { failWithError: true } ),
+            function(req, res, next) {
+                // handle success
+                console.log(req);
+                if (req.xhr) { return res.json({ id: req.user.id }); }
+                return res.redirect('/');
+            },
+            function(err, req, res, next) {
+                // handle error
+                console.log(req);
+                if (req.xhr) { return res.json(err); }
+                return res.redirect('/login');
+            }    
+    };
 
     //-----------------------------------------------------------------------------------
     // get current user
@@ -96,9 +111,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // login a user
     //-----------------------------------------------------------------------------------
-    app.post('/users/login', cors(myenv.getCORS()),
-                 passport.authenticate('local'), 
-                    (req, res) => {
+    app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('local'), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         console.log(Version + 'signing the token with a 24h expiration time');
         const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 86400}); // 24 hours
