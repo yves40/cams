@@ -152,7 +152,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '2.44, Jan 19 2019',
+    Version: '2.45, Jan 22 2019',
     name: '',
     email: '',
     password: '',
@@ -184,9 +184,14 @@ export default {
             },
         },
       )
-      .then(() => {
-          this.$swal('Great!', 'User registered', 'success');
-          this.$router.push({ name: 'Login' });
+      .then((response) => {
+          if (response.data.status === 'OK'){
+            this.$swal('Great!', response.data.message, 'success');
+            this.$router.push({ name: 'Login' });
+          }
+          else {
+            this.$swal('Ooops!', response.data.message, 'error');
+          }
         },
       )
       .catch((error) => {

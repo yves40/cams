@@ -141,7 +141,7 @@ export default {
           window.localStorage.setItem('jwt', response.data.token);
           this.$swal('Great!', 'Welcome ' + response.data.message, 'success');
           // bus.$emit('refreshUser');
-          this.$router.push({ name: 'Identity' });
+          this.$router.push({ name: 'Home' });
         },
       )
       .catch((error) => {

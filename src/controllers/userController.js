@@ -21,17 +21,26 @@
 //    Jan 19 2019   Some CORS tests, but not selected
 //    Jan 20 2019   Start adding session management
 //    Jan 21 2019   CORS is still very mysterious to me
+//    Jan 22 2019   Passport : API problem solved
+//                  When registering a user, check he's not aleady registered
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 1.87, Jan 21 2019 ';
+const Version = 'userController.js 2.00, Jan 22 2019 ';
 
-const user = require('../models/userModel');
+const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
 const myenv = require("../../config/myenv");
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const passportJWT = require('passport-jwt');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
+
+const ExtractJwt = passportJWT.ExtractJwt;
+const jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
+jwtOptions.secretOrKey = jwtconfig.jwtSecret;
 
 module.exports.controller = (app) => {
 
@@ -45,10 +54,10 @@ module.exports.controller = (app) => {
         failureFlash: true,
         passReqToCallback : true,
     }, (req, email, password, done) => {
-        user.getUserByEmail(email, (err, loggeduser) => {
+        User.getUserByEmail(email, (err, loggeduser) => {
             if(err) { return done(err); }
             if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
-            user.comparePassword(password, loggeduser.password, (error, isMatch ) => {
+            User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
                     console.log(Version + email + ' identified');
                     return done(null, loggeduser)   // Success login !!!
@@ -58,6 +67,19 @@ module.exports.controller = (app) => {
             return true;
         });
     }));
+
+    passport.serializeUser((loggeduser, done) => {
+        console.log(Version + 'serializeUser with mail : ' + loggeduser.email);
+        done(null, loggeduser.id);
+    });
+
+    passport.deserializeUser((id, done) => { 
+        console.log(Version + 'deserializeUser with ID : ' + id);
+        User.findById(id, (err, loggeduser) => {
+            done(err, loggeduser);
+        });
+    });
+
 
     //-----------------------------------------------------------------------------------
     // get current user
@@ -75,7 +97,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // login a user
     //-----------------------------------------------------------------------------------
-    app.post('/users/login', passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true, }), (req, res) => {
+    app.post('/users/login', cors(myenv.getCORS()), passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true, }), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         console.log(Version + 'signing the token with a 24h expiration time');
         const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 86400}); // 24 hours
@@ -103,7 +125,7 @@ module.exports.controller = (app) => {
     // List all users
     //-----------------------------------------------------------------------------------
     app.get('/users/list', cors(myenv.getCORS()), (req, res) => {
-        user.listUsers( (error, userlist) => {
+        User.listUsers( (error, userlist) => {
             if(error) { console.log(error);}
             console.log(Version + "Fetched " + userlist.length + " users"); 
             res.send(userlist);   
@@ -114,21 +136,39 @@ module.exports.controller = (app) => {
     // Register user
     //-----------------------------------------------------------------------------------
     app.post('/users/register', cors(myenv.getCORS()), (req, res) => {
-        console.log(Version + 'Adding a user');
-        const name = req.body.name;
-        const email = req.body.email;
-        const password = req.body.password;
-        const newuser = new user({name, email, password});
-        user.createUser(newuser, (error, user) => {
-            if(error) { 
-                res.status(422).json({
-                    message: 'Something went wrong, try again later',
+
+        User.getUserByEmail(req.body.email, (err, loggeduser) => {
+            if(err) { return done(err); }
+            if ( !loggeduser ) { 
+                console.log(Version + 'Adding a user');
+                const name = req.body.name;
+                const email = req.body.email;
+                const password = req.body.password;
+                const newuser = new User({name, email, password});
+                User.createUser(newuser, (error, user) => {
+                    if(error) { 
+                        res.status(422).json({
+                            message: 'Something went wrong, try again later',
+                        });
+                    }
+                    console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
+                    res.send({
+                        user: user, 
+                        message: 'User ' + user.email + ' registered',
+                        status: 'OK',
+                    });
                 });
             }
-            console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
-            // res.setHeader('Access-Control-Allow-Origin', '*');
-            res.send({ user });
+            else {
+                console.log(Version + 'User ' + req.body.email + ' already registered');
+                res.send({
+                    user: null, 
+                    message: 'User ' + req.body.email + ' already registered',
+                    status: 'KO',
+                });
+        }
         });
+
     });
     //-----------------------------------------------------------------------------------
     // Register users
@@ -155,7 +195,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/delete/ID/:id', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Removing user with ID : ' + req.params.id);
-        user.deleteoneUserByID( req.params.id, (error, deleted) => {
+        User.deleteoneUserByID( req.params.id, (error, deleted) => {
             if(error) { console.log(error); }
             if(deleted.result.n === 0) { 
                 console.log('No user matching this ID :' + req.params.id);
@@ -171,7 +211,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/delete/name/:name', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Removing user with name : ' + req.params.name);
-        user.deleteoneUserByName( req.params.name, (error, deleted) => {
+        User.deleteoneUserByName( req.params.name, (error, deleted) => {
             if(error) { console.log(error); }
             if(deleted.result.n === 0) { 
                 console.log('No user matching this name :' + req.params.name);
@@ -187,7 +227,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/deleteall', cors(myenv.getCORS()), (req, res) => {
         console.log(Version + 'Deleting all users !!!');
-        user.deleteallUsers( () => {
+        User.deleteallUsers( () => {
             console.log(Version + ' done !!');
             res.send('success');
         });

@@ -9,7 +9,7 @@
 //    Jan 21 2019    CORS ! Found the problem. Seeking for the best solution
 //                   Then some work on passport
 //----------------------------------------------------------------------------
-const Version = "server.js, Jan 21 2019, 1.38 ";
+const Version = "server.js, Jan 21 2019, 1.39 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -36,6 +36,25 @@ const router = express.Router();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/dist"));
 
+//----------------------------------------------------------------------------
+//  Session management : Use Passport
+//  Beware, the order of app.use() calls is mandatory
+//----------------------------------------------------------------------------
+console.log('\nInitializing passport session parameters');
+console.log("---------------------------------------------------------");
+app.use(exprsession({
+  secret: jwtconfig.jwtSecret,
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    httpOnly: false,
+    maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
+},
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 //----------------------------------------------------------------------------
 // For the favicon boring request error
 //----------------------------------------------------------------------------
@@ -79,7 +98,7 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 
 
 //----------------------------------------------------------------------------
-// Cross-origin Resource Sharing
+// Cross-Origin Resource Sharing
 // https://github.com/expressjs/cors/blob/master/README.md
 //----------------------------------------------------------------------------
 console.log('\nCORS Security setting, sites list:');
@@ -92,26 +111,6 @@ for (; loop < sitelist.length; ++loop) {
 }
 
 app.use(cors(myenv.getCORS()));
-
-//----------------------------------------------------------------------------
-//  Session management : Use JWT
-//----------------------------------------------------------------------------
-console.log('\nInitializing passport session parameters');
-console.log("---------------------------------------------------------");
-app.use(exprsession({
-  secret: jwtconfig.jwtSecret,
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: false,
-    httpOnly: false,
-    maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
-},
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 
 //----------------------------------------------------------------------------
 // Check prefix used for services calls, depending on whether using DEV
