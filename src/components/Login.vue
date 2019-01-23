@@ -17,6 +17,8 @@
   Dec 09 2018   TWITTER login, work..
   Dec 31 2018   Integrated in cams project : Simplified no twitter, google or linkedin
   Jan 22 2019   Send a refresh after login to update the top bar
+  Jan 23 2019   WIP on user Identity
+  
 -->
 <template>
 
@@ -142,7 +144,7 @@ export default {
           window.localStorage.setItem('jwt', response.data.token);
           this.$swal('Great!', 'Welcome ' + response.data.message, 'success');
           bus.$emit('refreshUser');
-          this.$router.push({ name: 'Home' });
+          this.$router.push({ name: 'Identity' });
         },
       )
       .catch((error) => {

@@ -7,6 +7,7 @@
                 Still one problem : Cannot read property '$watch' of undefined
                 But does not prevent the register page from running
   Jan 22 2019   Add top bar management now...
+  Jan 23 2019   Logout process completed
 
 -->
 <template>
@@ -77,7 +78,7 @@ const myenv = require('../config/myenv');
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.17, Jan 22 2019 ',
+    Version: 'Cams 1.18, Jan 23 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -126,6 +127,7 @@ export default {
       .then((response) => {
         this.$log.debug(response.data.message);
         bus.$emit('refreshUser');
+        window.localStorage.removeItem('jwt');
         this.$router.push({ name: 'Home' });
       })
       .catch(() => {});

@@ -7,6 +7,7 @@
   Dec 04 2018   display req.user
   Dec 07 2018   Remove style section
   Jan 17 2019   Imported in the CAMS project
+  Jan 23 2019   Check user is logged, otherwise nonsense
   
 -->
 <template>
@@ -41,7 +42,9 @@
 
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
+import axios from 'axios';
 import jwtconfig from '../../config/jwtconfig';
+import myenv from '../../config/myenv';
 
 const ExtractJwt = passportJWT.ExtractJwt;
 
@@ -51,20 +54,45 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 
 export default {
   data: () => ({
-    Version: '1.27, Jan 17 2019 ',
+    Version: '1.31, Jan 23 2019 ',
     token: '',
     payload: '',
     theuser: 'unknown',
   }),
   methods: {
+    // --------------------------------- Is user logged ? ------------------------------
+    fetchUser() {
+      const prefix = myenv.getURLprefix();
+      this.$log.debug('fetchuser service prefix is : ', prefix);
+      return axios({
+        method: 'get',
+        url: prefix + '/users/current_user',
+        withCredentials: 'true',
+      })
+      .then((response) => {
+        if (response.data.current_user === 'anonymous') {
+          this.$router.push({ name: 'Login' });
+        }
+        else {
+          this.theuser = response.data.current_user;
+        }
+      })
+      .catch(() => {
+        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        this.theuser = null;
+      });
+    },
   },
   mounted() {
+    this.fetchUser();
     this.token = window.localStorage.getItem('jwt');
-    const base64Url = this.token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const buff = new Buffer(base64, 'base64');
-    const payloadinit = buff.toString('ascii');
-    this.payload = JSON.parse(payloadinit);
+    if (this.token !== null) {
+      const base64Url = this.token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const buff = new Buffer(base64, 'base64');
+      const payloadinit = buff.toString('ascii');
+      this.payload = JSON.parse(payloadinit);
+    }
   },
 };
 </script>
