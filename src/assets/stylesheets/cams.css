@@ -1,0 +1,48 @@
+/*
+    cams.css
+
+    Jan 24 2019   Initial
+
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 10% 1fr 10%;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas: 
+  "header header header"
+  ". content ."
+  "footer footer footer";
+  grid-gap: 4px;
+  padding: 5px 10px 5px 10px;
+}
+
+.header {
+  grid-area: header;
+  height: 2em;
+}
+
+.content {
+  grid-area: content;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: 10px;
+  padding: .2em .5em .2em .5em;
+}
+
+.footer {
+  grid-area: footer;
+}
+
+.grid > div {
+  background-color: #3f51b5!important;
+  border: solid 2px black;
+  border-radius: 4px;
+  color: white;
+}

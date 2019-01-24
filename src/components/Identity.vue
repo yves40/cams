@@ -7,18 +7,16 @@
   Dec 04 2018   display req.user
   Dec 07 2018   Remove style section
   Jan 17 2019   Imported in the CAMS project
-  Jan 23 2019   Check user is logged, otherwise nonsense
+  Jan 23 2019   Check user is logged
+  Jan 24 2019   WIP on displayed information
   
 -->
 <template>
-  <v-layout>
-    This is the identity page : {{Version}}
-    <br>
-    The user token is : {{token}}
-    <br>
-    Payload           : {{payload}}
-
-  </v-layout>
+    <div class="grid">
+        <div class="header">This is the identity page : {{Version}}</div>
+        <div class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam recusandae praesentium, quam aliquam veniam rem? Incidunt pariatur, rem quaerat ab fugit voluptatum laboriosam quis ipsam? Debitis odio recusandae sed ea corrupti maiores alias aperiam eius quasi dolorem. Cupiditate, nulla quos.</div>
+        <div class="footer">This is the footer</div>
+    </div>
 </template>
 
 <script>
@@ -42,19 +40,20 @@
 
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
+import jwt from 'jsonwebtoken';
 import axios from 'axios';
+
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../../config/myenv';
 
 const ExtractJwt = passportJWT.ExtractJwt;
-
 const jwtOptions = {};
 jwtOptions.secretOrKey = jwtconfig.jwtSecret;
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 
 export default {
   data: () => ({
-    Version: '1.31, Jan 23 2019 ',
+    Version: '1.34, Jan 24 2019 ',
     token: '',
     payload: '',
     theuser: 'unknown',

@@ -24,9 +24,10 @@
 //    Jan 22 2019   Passport : API problem solved
 //                  When registering a user, check he's not aleady registered
 //                  Add top bar management, fix problem with invalid login
+//    Jan 23 2019   Some cleanup
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.13, Jan 22 2019 ';
+const Version = 'userController.js 2.14, Jan 23 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -79,22 +80,6 @@ module.exports.controller = (app) => {
             done(err, loggeduser);
         });
     });
-
-    const authrequired = function() {
-        passport.authenticate('local', { failWithError: true } ),
-            function(req, res, next) {
-                // handle success
-                console.log(req);
-                if (req.xhr) { return res.json({ id: req.user.id }); }
-                return res.redirect('/');
-            },
-            function(err, req, res, next) {
-                // handle error
-                console.log(req);
-                if (req.xhr) { return res.json(err); }
-                return res.redirect('/login');
-            }    
-    };
 
     //-----------------------------------------------------------------------------------
     // get current user

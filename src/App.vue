@@ -8,6 +8,7 @@
                 But does not prevent the register page from running
   Jan 22 2019   Add top bar management now...
   Jan 23 2019   Logout process completed
+  Jan 24 2019   css
 
 -->
 <template>
@@ -72,6 +73,8 @@
 import axios from 'axios';
 
 import bus from './bus';
+import './assets/stylesheets/cams.css';
+
 
 const myenv = require('../config/myenv');  
 
