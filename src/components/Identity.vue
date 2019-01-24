@@ -12,9 +12,29 @@
   
 -->
 <template>
-    <div class="grid">
-        <div class="header">This is the identity page : {{Version}}</div>
-        <div class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam recusandae praesentium, quam aliquam veniam rem? Incidunt pariatur, rem quaerat ab fugit voluptatum laboriosam quis ipsam? Debitis odio recusandae sed ea corrupti maiores alias aperiam eius quasi dolorem. Cupiditate, nulla quos.</div>
+    <div class="grid3x5">
+        <div class="header">{{Version}}</div>
+        <div class="content3cols">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+        </div>
+        <div class="content2cols">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+        </div>
+        <div class="content1col">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+        </div>
         <div class="footer">This is the footer</div>
     </div>
 </template>
@@ -53,7 +73,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 
 export default {
   data: () => ({
-    Version: '1.34, Jan 24 2019 ',
+    Version: '1.41, Jan 24 2019 ',
     token: '',
     payload: '',
     theuser: 'unknown',
