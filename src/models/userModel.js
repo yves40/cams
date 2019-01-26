@@ -7,8 +7,9 @@
 //    Dec 03 2018   Add a local user strategy
 //    Jan 17 2019   Transfered to the CAMS project
 //    Jan 22 2019   Add a user profile
+//    Jan 25 2019   Add getUserByID()
 //----------------------------------------------------------------------------
-const Version = 'userModel.js 1.23 Jan 22 2019 ';
+const Version = 'userModel.js 1.24 Jan 25 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -52,12 +53,21 @@ module.exports.listUsers = (callback) => {
 };
 
 //-----------------------------------------------------------------------------------
+// Get a user by ID
+//-----------------------------------------------------------------------------------
+module.exports.getUserByID = (ID, callback) => {
+    // User.collection.findOne({ "_id": objectid(ID) }, callback);
+    User.findById(ID, callback);
+};
+
+//-----------------------------------------------------------------------------------
 // Get a user by email
 //-----------------------------------------------------------------------------------
 module.exports.getUserByEmail = (email, callback) => {
     const query = { email };
     User.findOne(query, callback);
 };
+
 
 //-----------------------------------------------------------------------------------
 // Password checking

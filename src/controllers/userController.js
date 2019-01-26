@@ -25,18 +25,23 @@
 //                  When registering a user, check he's not aleady registered
 //                  Add top bar management, fix problem with invalid login
 //    Jan 23 2019   Some cleanup
+//    Jan 25 2019   passwort jwt is back
+//    Jan 26 2019   Some readings about jwt an passport drives to more tests
+//                  Add a find user ByID a d by email services
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.14, Jan 23 2019 ';
+const Version = 'userController.js 2.25, Jan 26 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
 const myenv = require("../../config/myenv");
 
-const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const passportJWT = require('passport-jwt');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const JwtStrategy = passportJWT.Strategy;
+
 const cors = require('cors');
 
 const ExtractJwt = passportJWT.ExtractJwt;
@@ -50,11 +55,32 @@ module.exports.controller = (app) => {
     // passport initialization stuff
     // Local strategy
     //-----------------------------------------------------------------------------------
-    passport.use( new LocalStrategy({
-            usernameField: 'email',
-            passwordField: 'password',
-            }, 
+    passport.use('login',  new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        }, 
         (email, password, done) => {
+            User.getUserByEmail(email, (err, loggeduser) => {
+                if(err) { return done(err); }
+                if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
+                User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
+                    if (isMatch) {
+                        console.log(Version + email + ' identified');
+                        return done(null, loggeduser)   // Success login !!!
+                    }
+                    return done( null, false, {message: 'Wrong password'} ); // Error
+                });
+            });
+        }
+    ));
+
+    //-----------------------------------------------------------------------------------
+    // passport initialization stuff
+    // jwt strategy
+    //-----------------------------------------------------------------------------------
+    passport.use( new JwtStrategy(jwtOptions,
+        (jwtpayload, done) => {
+            console.log('Hello, in jwtStrategy module : ' + jwtpayload);
             User.getUserByEmail(email, (err, loggeduser) => {
                 if(err) { return done(err); }
                 if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
@@ -82,6 +108,17 @@ module.exports.controller = (app) => {
     });
 
     //-----------------------------------------------------------------------------------
+    // login a user : local strategy
+    //-----------------------------------------------------------------------------------
+    app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('login'), (req, res) => {
+        const payload = { id: req.user.id, email: req.user.email };
+        console.log(Version + 'signing the token with a 24h expiration time');
+        const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 10800}); // 3 hours
+        console.log(Version + 'User ' + req.user.email + ' logged');
+        res.json( { message: req.user.email + ' logged', token });
+    });
+
+    //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
     app.get('/users/current_user', cors(myenv.getCORS()), (req, res) => {
@@ -94,9 +131,9 @@ module.exports.controller = (app) => {
     }); 
 
     //-----------------------------------------------------------------------------------
-    // login a user
+    // login a user : jwt strategy
     //-----------------------------------------------------------------------------------
-    app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('local'), (req, res) => {
+    app.post('/users/loginjwt', cors(myenv.getCORS()), passport.authenticate('jwt'), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         console.log(Version + 'signing the token with a 24h expiration time');
         const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 86400}); // 24 hours
@@ -189,6 +226,32 @@ module.exports.controller = (app) => {
         res.send('success');
     });
     //-----------------------------------------------------------------------------------
+    // Find a user by ID
+    //-----------------------------------------------------------------------------------
+    app.get('/users/find/ID/:id', cors(myenv.getCORS()), (req, res) => {
+        console.log(Version + 'Search user with ID : ' + req.params.id);
+        User.findById( req.params.id, (error, user) => {
+            if(error) { 
+                console.log(error); 
+                res.send( { message: 'No user matching this ID :' + req.params.id });
+            }
+            res.send(user);
+        });
+    })
+    //-----------------------------------------------------------------------------------
+    // Find a user by mail
+    //-----------------------------------------------------------------------------------
+    app.get('/users/find/email/:email', cors(myenv.getCORS()), (req, res) => {
+        console.log(Version + 'Search user with mail : ' + req.params.email);
+        User.findOne({ 'email': req.params.email },  (error, user) => {
+            if(error) { 
+                console.log(error); 
+                res.send( { message: 'No user matching this email :' + req.params.email });
+            }
+            res.send(user);
+        });
+    })
+    //-----------------------------------------------------------------------------------
     // Remove One user by ID
     //-----------------------------------------------------------------------------------
     app.post('/users/delete/ID/:id', cors(myenv.getCORS()), (req, res) => {
@@ -197,6 +260,7 @@ module.exports.controller = (app) => {
             if(error) { console.log(error); }
             if(deleted.result.n === 0) { 
                 console.log('No user matching this ID :' + req.params.id);
+                res.send( { message: 'No user matching this ID :' + req.params.id });
             }
             else{
                 console.log(Version + ' Done.' );
