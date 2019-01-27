@@ -1,9 +1,10 @@
 #--------------------------------------------------------------------------------
 #	nodeadmin.sh
 #
-#	Jan 25 2019  	Initial
+#	Jan 26 2019  	Initial
+#	Jan 27 2019  	Initial
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.04, Jan 25 2019 "
+VERSION="nodeadmin.sh v 1.07, Jan 26 2019 "
 LOG="/tmp/camsnode.log"
 CAMSROOT="/var/www/html/cams/"
 #--------------------------------------------------------------------------------
@@ -26,6 +27,28 @@ Usage()
   echo
 }
 #---------------------------------------------------------------------------------------
+#   Node processes startup
+#---------------------------------------------------------------------------------------
+NodeStart()
+{
+  echo
+  echo
+  echo 'Starting node processes'
+  echo
+  echo
+}
+#---------------------------------------------------------------------------------------
+#   Node processes stop
+#---------------------------------------------------------------------------------------
+NodeStop()
+{
+  echo
+  echo
+  echo 'Stopping all node processes'
+  echo
+  echo
+}
+#---------------------------------------------------------------------------------------
 #   Node processes status
 #---------------------------------------------------------------------------------------
 NodeStatus()
@@ -33,10 +56,17 @@ NodeStatus()
   echo
   echo 'Node processes status'
   echo
-  ps -edf | grep -v grep | grep -i -e 'webpack
+  ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
 nodemon
 /TOOLS/node/bin/node' > processlist
-  cat processlist
+
+  while read line
+  do  
+    pid=`echo "$line" | awk '/ / { print $2 }';`
+    processname=`echo $line | awk '{print substr($0,index($0,$8))}'`
+    echo "[] $pid $processname"
+  done < processlist
+
   echo
   echo
 }
@@ -55,9 +85,9 @@ then
 fi
 
 case $1 in 
-  'start')  echo 'Starting node processes'
+  'start')  NodeStart
             ;;
-  'stop')   echo 'Stopping all node processes'
+  'stop')   NodeStop
             ;;
   'status') 
             NodeStatus
