@@ -10,10 +10,10 @@ alias shsys='ps -edf | grep -i '
 alias hh='history | grep -i '
 alias lrtl='ls -rtl'
 alias lal='ls -al'
-alias log='. ~/.bashrc'
 alias motd='cat /etc/motd'
 alias sshagent='eval "$(ssh-agent -s)"'
 alias mongo='mongo --port 4100 --quiet'
+alias nodemon='nodemon --no-colors'
 alias renv='. ~/.bashrc'
 
 export JAVA_HOME=/app/oracle/products/jdk1.8.0_60
@@ -44,7 +44,8 @@ export NODE_DISABLE_COLORS=1
 
 # Used to switch node programs from DEV to PROD
 export NODEDEVMODE=true
-export NODEURLPREFIX=http://vboxweb:8089
+export NODEURLPREFIX=http://vboxweb:8081
+export NODESECRET=thisisthesecretkey
 # Vuex tutorial and CAMS tests
 export CAMUSER=yves
 export CAMPASS=dumb

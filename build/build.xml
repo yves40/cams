@@ -39,6 +39,7 @@
     <target name="nodekit">
         <copy todir="${build.workdir}" verbose="${copy.verbosemode}">
             <fileset dir="${build.srcdir}" casesensitive="true">
+                <include name="**/*.sh"/>
                 <include name="**/*.html"/>
                 <include name="**/*.js"/>
                 <include name="**/*.json"/>
@@ -113,6 +114,10 @@
                  trust="true" verbose="${zip.verbosemode}"/>
         <!-- Manage the .bashrc file -->
         <sshexec command="mv ${remotenetdir}/.bashrc ~/.bashrc" host="${remoteserver}" username="${remoteaccount}"
+                 password="${remoteaccountpass}"
+                 trust="true" verbose="${zip.verbosemode}"/>
+        <!-- chmod for shell script -->
+        <sshexec command="chmod +x ${remotenetdir}/shell/nodeadmin.sh" host="${remoteserver}" username="${remoteaccount}"
                  password="${remoteaccountpass}"
                  trust="true" verbose="${zip.verbosemode}"/>
     </target>
