@@ -7,16 +7,20 @@
   "scripts": {
     "dev": "webpack-dev-server --no-color --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js", 
-    "server": "nodemon --no-colors server.js"
+    "build": "node build/build.js",
+    "server": "nodemon --no-colors server.js",
+    "all": "concurrently \"npm run dev\" \"nodemon --no-colors server.js\""
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "background-process": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.2.1",
     "bootstrap-vue": "^2.0.0-rc.11",
+    "concurrently": "^4.1.0",
     "cors": "^2.8.5",
     "express-session": "^1.15.6",
+    "forever": "^0.15.3",
     "mongoose": "^5.4.4",
     "node-fetch": "^2.3.0",
     "passport": "^0.4.0",

@@ -15,6 +15,7 @@ alias sshagent='eval "$(ssh-agent -s)"'
 alias mongo='mongo --port 4100 --quiet'
 alias nodemon='nodemon --no-colors'
 alias renv='. ~/.bashrc'
+alias forever='$CAMS/node_modules/forever/bin/forever --no-colors'
 
 export JAVA_HOME=/app/oracle/products/jdk1.8.0_60
 export JH=/app/oracle/products/jdk1.8.0_60
@@ -26,6 +27,7 @@ export W2=/var/www/html/packt-chap5/
 export W3=/var/www/html/packt-chap6/
 export W4=/var/www/html/vuex-tutorial/
 export W5=/var/www/html/cams/
+export CAMS=/var/www/html/cams/
 export HOST=vboxweb
 
 export PHP=/var/www/php

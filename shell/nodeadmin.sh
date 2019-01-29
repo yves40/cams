@@ -2,9 +2,9 @@
 #	nodeadmin.sh
 #
 #	Jan 26 2019  	Initial
-#	Jan 27 2019  	Initial
+#	Jan 28 2019  	Add code to the three utility routines
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.07, Jan 26 2019 "
+VERSION="nodeadmin.sh v 1.09, Jan 28 2019 "
 LOG="/tmp/camsnode.log"
 CAMSROOT="/var/www/html/cams/"
 #--------------------------------------------------------------------------------
@@ -35,6 +35,9 @@ NodeStart()
   echo
   echo 'Starting node processes'
   echo
+  cd $CAMS
+  npm run all
+  cd $CAMS/shell
   echo
 }
 #---------------------------------------------------------------------------------------
@@ -46,6 +49,16 @@ NodeStop()
   echo
   echo 'Stopping all node processes'
   echo
+  ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
+nodemon
+/TOOLS/node/bin/node' > processlist
+
+  while read line
+  do  
+    pid=`echo "$line" | awk '/ / { print $2 }';`
+    log "[!!!] $pid killed"
+    kill $pid
+  done < processlist
   echo
 }
 #---------------------------------------------------------------------------------------
@@ -63,8 +76,9 @@ nodemon
   while read line
   do  
     pid=`echo "$line" | awk '/ / { print $2 }';`
-    processname=`echo $line | awk '{print substr($0,index($0,$8))}'`
-    echo "[] $pid $processname"
+    ppid=`echo "$line" | awk '/ / { print $3 }';`
+    processname=`echo $line | cut -d ' ' -f 8-`
+    log "[] $pid $ppid $processname"
   done < processlist
 
   echo
