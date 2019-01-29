@@ -1,21 +1,13 @@
+#----------------------------------------------------------------------------------------
 # .bashrc
+#
+#	Jan 29 2019		Alias for nodeadmin.sh
+#----------------------------------------------------------------------------------------
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
-
-# User specific aliases and functions
-alias shsys='ps -edf | grep -i '
-alias hh='history | grep -i '
-alias lrtl='ls -rtl'
-alias lal='ls -al'
-alias motd='cat /etc/motd'
-alias sshagent='eval "$(ssh-agent -s)"'
-alias mongo='mongo --port 4100 --quiet'
-alias nodemon='nodemon --no-colors'
-alias renv='. ~/.bashrc'
-alias forever='$CAMS/node_modules/forever/bin/forever --no-colors'
 
 export JAVA_HOME=/app/oracle/products/jdk1.8.0_60
 export JH=/app/oracle/products/jdk1.8.0_60
@@ -23,11 +15,11 @@ export PATH=$JAVA_HOME/bin:/var/opt/Python-2.7.11:$PATH
 export AH=/etc/httpd
 export WEB=/var/www/html
 export W1=/var/www/html/packt-chap2/express_app
-export W2=/var/www/html/packt-chap5/
-export W3=/var/www/html/packt-chap6/
-export W4=/var/www/html/vuex-tutorial/
-export W5=/var/www/html/cams/
-export CAMS=/var/www/html/cams/
+export W2=/var/www/html/packt-chap5
+export W3=/var/www/html/packt-chap6
+export W4=/var/www/html/vuex-tutorial
+export W5=/var/www/html/cams
+export CAMS=/var/www/html/cams
 export HOST=vboxweb
 
 export PHP=/var/www/php
@@ -52,5 +44,18 @@ export NODESECRET=thisisthesecretkey
 export CAMUSER=yves
 export CAMPASS=dumb
 export CAMURL="https://jsonplaceholder.typicode.com/users/2"
+
+# User specific aliases and functions
+alias shsys='ps -edf | grep -i '
+alias hh='history | grep -i '
+alias lrtl='ls -rtl'
+alias lal='ls -al'
+alias motd='cat /etc/motd'
+alias sshagent='eval "$(ssh-agent -s)"'
+alias mongo='mongo --port 4100 --quiet'
+alias nodemon='nodemon --no-colors'
+alias renv='. ~/.bashrc'
+alias forever='$CAMS/node_modules/forever/bin/forever --no-colors'
+alias nodem='$CAMS/shell/nodeadmin.sh'
 
 
