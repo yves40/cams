@@ -9,6 +9,7 @@
   Jan 17 2019   Imported in the CAMS project
   Jan 23 2019   Check user is logged
   Jan 24 2019   WIP on displayed information
+  Jan 30 2019   No longer need jwt stuff
   
 -->
 <template>
@@ -66,14 +67,9 @@ import axios from 'axios';
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../../config/myenv';
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const jwtOptions = {};
-jwtOptions.secretOrKey = jwtconfig.jwtSecret;
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-
 export default {
   data: () => ({
-    Version: '1.41, Jan 24 2019 ',
+    Version: '1.43, Jan 30 2019 ',
     token: '',
     payload: '',
     theuser: 'unknown',
@@ -87,6 +83,7 @@ export default {
         method: 'get',
         url: prefix + '/users/current_user',
         withCredentials: 'true',
+        headers: { Authorization: `jwt ${token}` },
       })
       .then((response) => {
         if (response.data.current_user === 'anonymous') {
@@ -103,8 +100,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchUser();
     this.token = window.localStorage.getItem('jwt');
+    this.fetchUser();
     if (this.token !== null) {
       const base64Url = this.token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');

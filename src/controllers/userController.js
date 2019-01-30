@@ -31,7 +31,7 @@
 //    Jan 30 2019   Small change in a log message
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.26, Jan 30 2019 ';
+const Version = 'userController.js 2.30, Jan 30 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -54,6 +54,23 @@ module.exports.controller = (app) => {
 
     //-----------------------------------------------------------------------------------
     // passport initialization stuff
+    // jwt strategy
+    //-----------------------------------------------------------------------------------
+    passport.use('jwt', new JwtStrategy(jwtOptions,
+        (token, done) => {
+            console.log('Hello, in jwtStrategy module : ' + token);
+            try {
+                return done(null, token);
+            }
+            catch(error) {
+                done(error);
+            }
+        }
+    ));
+
+
+    //-----------------------------------------------------------------------------------
+    // passport initialization stuff
     // Local strategy
     //-----------------------------------------------------------------------------------
     passport.use('login',  new LocalStrategy({
@@ -61,27 +78,6 @@ module.exports.controller = (app) => {
         passwordField: 'password',
         }, 
         (email, password, done) => {
-            User.getUserByEmail(email, (err, loggeduser) => {
-                if(err) { return done(err); }
-                if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
-                User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
-                    if (isMatch) {
-                        console.log(Version + email + ' identified');
-                        return done(null, loggeduser)   // Success login !!!
-                    }
-                    return done( null, false, {message: 'Wrong password'} ); // Error
-                });
-            });
-        }
-    ));
-
-    //-----------------------------------------------------------------------------------
-    // passport initialization stuff
-    // jwt strategy
-    //-----------------------------------------------------------------------------------
-    passport.use( new JwtStrategy(jwtOptions,
-        (jwtpayload, done) => {
-            console.log('Hello, in jwtStrategy module : ' + jwtpayload);
             User.getUserByEmail(email, (err, loggeduser) => {
                 if(err) { return done(err); }
                 if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
@@ -122,7 +118,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
-    app.get('/users/current_user', cors(myenv.getCORS()), (req, res) => {
+    app.get('/users/current_user', cors(myenv.getCORS()), passport.authenticate('jwt', { session : false }), (req, res) => {
         if (req.user) {
             res.json( {current_user: req.user} );
         }
@@ -145,7 +141,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // logout a user
     //-----------------------------------------------------------------------------------
-    app.get('/users/logout', cors(myenv.getCORS()), (req, res) => {
+    app.post('/users/logout', cors(myenv.getCORS()), (req, res) => {
         if (req.user) {
             console.log(Version + 'logging ' + req.user.email +  ' out');
             const useremail = req.user.email;
