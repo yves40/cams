@@ -6,9 +6,10 @@
 #	Jan 29 2019  	Startup procedure
 #               Minor details, date format...
 #	Jan 30 2019  	Shorten log message
+#               Capability to strat only one component
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.22, "
-VERSIONDATE="Jan 29 2019 "
+VERSION="nodeadmin.sh v 1.28, "
+VERSIONDATE="Jan 30 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
@@ -26,7 +27,10 @@ Usage()
 {
   echo
   echo
-  log "./nodeadmin.sh start|stop|status"
+  echo "./nodeadmin.sh start|stop|status [procselector]"
+  echo 
+  echo "With start, can optionnaly specify a procselector."
+  echo "Possible values are : all|web|api"
   echo
   echo
 }
@@ -40,13 +44,28 @@ NodeStart()
   cd $CAMS
   echo
   echo
-  log 'Starting node processes'
+
+  case $proclist in 
+    ALL)  log "Start all processes"
+            log "#1 Web app"
+            npm run dev&
+            log "#2 the API server"
+            # Cannot use an alias or a shell variable so use the full path
+            $CAMS/node_modules/forever/bin/forever --no-colors start server.js
+            ;;
+    WEB)  log "Start WEB process"
+            log "#1 Web app"
+            npm run dev&
+            ;;
+    API)  log "Start API processes"
+            log "#2 the API server"
+            # Cannot use an alias or a shell variable so use the full path
+            $CAMS/node_modules/forever/bin/forever --no-colors start server.js
+            ;;
+  esac
+
+
   echo
-  log "#1 Web app"
-  npm run dev&
-  log "#2 the API server"
-  # Cannot use an alias or a shell variable so use the full path
-  $CAMS/node_modules/forever/bin/forever --no-colors start server.js
   log "Waiting $SOMETIME seconds"
   sleep $SOMETIME
   cd $curdir
@@ -113,6 +132,27 @@ then
   echo
   exit 1
 fi
+if [ -z $2 ]
+then
+  proclist="ALL"
+else
+  procselector=`echo $2 | tr a-z A-Z`
+  case $procselector in 
+    'ALL')  
+            proclist="ALL"
+            ;;
+    'WEB')  
+            proclist="WEB"
+            ;;
+    'API')  
+            proclist="API"
+            ;;
+    *)      log "Invalid selector : $procselector"
+            Usage
+            exit 1
+            ;;
+  esac
+fi
 
 case $1 in 
   'start')  NodeStart
@@ -120,6 +160,8 @@ case $1 in
   'stop')   NodeStop
             ;;
   'status') NodeStatus
+            ;;
+  *)        NodeStatus
             ;;
 esac
 
