@@ -5,8 +5,10 @@
 #	Jan 28 2019  	Add code to the three utility routines
 #	Jan 29 2019  	Startup procedure
 #               Minor details, date format...
+#	Jan 30 2019  	Shorten log message
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.22, Jan 29 2019 "
+VERSION="nodeadmin.sh v 1.22, "
+VERSIONDATE="Jan 29 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------

@@ -28,9 +28,10 @@
 //    Jan 25 2019   passwort jwt is back
 //    Jan 26 2019   Some readings about jwt an passport drives to more tests
 //                  Add a find user ByID a d by email services
+//    Jan 30 2019   Small change in a log message
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.25, Jan 26 2019 ';
+const Version = 'userController.js 2.26, Jan 30 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -112,7 +113,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('login'), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
-        console.log(Version + 'signing the token with a 24h expiration time');
+        console.log(Version + 'signing the token with a 3h expiration time');
         const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 10800}); // 3 hours
         console.log(Version + 'User ' + req.user.email + ' logged');
         res.json( { message: req.user.email + ' logged', token });
