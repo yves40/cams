@@ -7,9 +7,10 @@
 #               Minor details, date format...
 #	Jan 30 2019  	Shorten log message
 #               Capability to strat only one component
+#	Jan 31 2019  	No tail -f
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.28, "
-VERSIONDATE="Jan 30 2019 "
+VERSION="nodeadmin.sh v 1.29, "
+VERSIONDATE="Jan 31 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
@@ -70,7 +71,6 @@ NodeStart()
   sleep $SOMETIME
   cd $curdir
   tput sgr0
-  tail -n 40 $LOG
   echo
 }
 #---------------------------------------------------------------------------------------
