@@ -10,6 +10,7 @@
   Jan 23 2019   Check user is logged
   Jan 24 2019   WIP on displayed information
   Jan 30 2019   No longer need jwt stuff
+                WIP on authorization header
   
 -->
 <template>
@@ -69,7 +70,7 @@ import myenv from '../../config/myenv';
 
 export default {
   data: () => ({
-    Version: '1.43, Jan 30 2019 ',
+    Version: '1.45, Jan 30 2019 ',
     token: '',
     payload: '',
     theuser: 'unknown',
@@ -83,14 +84,14 @@ export default {
         method: 'get',
         url: prefix + '/users/current_user',
         withCredentials: 'true',
-        headers: { Authorization: `jwt ${token}` },
+        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         if (response.data.current_user === 'anonymous') {
           this.$router.push({ name: 'Login' });
         }
         else {
-          this.theuser = response.data.current_user;
+          this.theuser = response.data.current_user.email;
         }
       })
       .catch(() => {

@@ -31,7 +31,7 @@
 //    Jan 30 2019   Small change in a log message
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.30, Jan 30 2019 ';
+const Version = 'userController.js 2.32, Jan 30 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -51,23 +51,6 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 jwtOptions.secretOrKey = jwtconfig.jwtSecret;
 
 module.exports.controller = (app) => {
-
-    //-----------------------------------------------------------------------------------
-    // passport initialization stuff
-    // jwt strategy
-    //-----------------------------------------------------------------------------------
-    passport.use('jwt', new JwtStrategy(jwtOptions,
-        (token, done) => {
-            console.log('Hello, in jwtStrategy module : ' + token);
-            try {
-                return done(null, token);
-            }
-            catch(error) {
-                done(error);
-            }
-        }
-    ));
-
 
     //-----------------------------------------------------------------------------------
     // passport initialization stuff
@@ -105,6 +88,22 @@ module.exports.controller = (app) => {
     });
 
     //-----------------------------------------------------------------------------------
+    // passport initialization stuff
+    // jwt strategy
+    //-----------------------------------------------------------------------------------
+    passport.use('jwt', new JwtStrategy(jwtOptions,
+        (token, done) => {
+            console.log(Version + 'Hello, in jwtStrategy module');
+            try {
+                return done(null, token);
+            }
+            catch(error) {
+                done(error);
+            }
+        }
+    ));
+
+    //-----------------------------------------------------------------------------------
     // login a user : local strategy
     //-----------------------------------------------------------------------------------
     app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('login'), (req, res) => {
@@ -118,7 +117,8 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
-    app.get('/users/current_user', cors(myenv.getCORS()), passport.authenticate('jwt', { session : false }), (req, res) => {
+    app.get('/users/current_user', cors(myenv.getCORS()), passport.authenticate('jwt'), (req, res) => {
+        console.log(Version + req.user.email);
         if (req.user) {
             res.json( {current_user: req.user} );
         }
