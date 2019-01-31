@@ -12,7 +12,7 @@
   Jan 30 2019   No longer need jwt stuff
                 WIP on authorization header
   Jan 31 2019   Fix problems with login response
-  
+                axios default authorization header 
 -->
 <template>
     <div class="grid3x5">
@@ -69,9 +69,10 @@ import axios from 'axios';
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../../config/myenv';
 
+
 export default {
   data: () => ({
-    Version: '1.48, Jan 31 2019 ',
+    Version: '1.49, Jan 31 2019 ',
     payload: '',
     theuser: null,
   }),
@@ -80,11 +81,12 @@ export default {
     fetchUser() {
       const prefix = myenv.getURLprefix();
       this.$log.debug('fetchuser : ', prefix + '/users/current_user');
+      // Configure axios to include a jwt header in every request
+      axios.defaults.headers.authorization = 'jwt ' + window.localStorage.getItem('jwt');
       return axios({
         method: 'get',
         url: prefix + '/users/current_user',
         withCredentials: 'true',
-        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         this.theuser = response.data.current_user;

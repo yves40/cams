@@ -101,11 +101,12 @@ export default {
     fetchUser() {
       const prefix = myenv.getURLprefix();
       this.$log.debug('fetchuser : ', prefix + '/users/current_user');
+      // Configure axios to include a jwt header in every request
+      axios.defaults.headers.authorization = 'jwt ' + window.localStorage.getItem('jwt');
       return axios({
         method: 'get',
         url: prefix + '/users/current_user',
         withCredentials: 'true',
-        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         this.current_user = response.data.current_user;
