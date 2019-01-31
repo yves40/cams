@@ -71,16 +71,15 @@ import myenv from '../../config/myenv';
 
 export default {
   data: () => ({
-    Version: '1.46, Jan 31 2019 ',
-    token: '',
+    Version: '1.48, Jan 31 2019 ',
     payload: '',
-    theuser: {},
+    theuser: null,
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
       const prefix = myenv.getURLprefix();
-      this.$log.debug('fetchuser service prefix is : ', prefix);
+      this.$log.debug('fetchuser : ', prefix + '/users/current_user');
       return axios({
         method: 'get',
         url: prefix + '/users/current_user',
@@ -88,23 +87,20 @@ export default {
         headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
-        if (response.data.current_user === 'anonymous') {
-          this.$router.push({ name: 'Login' });
-        }
-        else {
-          this.theuser = response.data.current_user;
-        }
+        this.theuser = response.data.current_user;
+        this.$log.debug('Fetched ' + this.theuser.email);
       })
       .catch(() => {
-        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
         this.theuser = null;
+        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        this.$router.push({ name: 'Login' });
       });
     },
   },
   mounted() {
     this.fetchUser();
-    if (this.token !== null) {
-      const base64Url = this.token.split('.')[1];
+    if (window.localStorage.getItem('jwt')) {
+      const base64Url = window.localStorage.getItem('jwt').split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const buff = new Buffer(base64, 'base64');
       const payloadinit = buff.toString('ascii');

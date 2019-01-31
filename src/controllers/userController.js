@@ -122,9 +122,6 @@ module.exports.controller = (app) => {
         if (req.user) {
             res.json( {current_user: req.user} );
         }
-        else {
-            res.json({ current_user: 'anonymous' });
-        }
     }); 
 
     //-----------------------------------------------------------------------------------

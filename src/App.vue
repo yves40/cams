@@ -82,7 +82,7 @@ const myenv = require('../config/myenv');
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.24, Jan 31 2019 ',
+    Version: 'Cams 1.25, Jan 31 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -108,12 +108,7 @@ export default {
         headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
-        if (response.data.current_user === 'anonymous') {
-          this.current_user = null;
-        }
-        else {
-          this.current_user = response.data.current_user;
-        }
+        this.current_user = response.data.current_user;
       })
       .catch(() => {
         this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
