@@ -29,13 +29,14 @@
 //    Jan 26 2019   Some readings about jwt an passport drives to more tests
 //                  Add a find user ByID a d by email services
 //    Jan 30 2019   Small change in a log message
-//    Jan 31 2019   axios default header
+//    Jan 31 2019   Code reorg, now use a separate file auth.js for JWT stuff
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.38, Jan 31 2019 ';
+const Version = 'userController.js 2.39, Jan 31 2019 ';
 
 /* Enable JWT */
 const auth = require('../auth');
+
 const jwtconfig = require('../../config/jwtconfig');
 const myenv = require("../../config/myenv");
 
