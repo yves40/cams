@@ -31,7 +31,7 @@
 //    Jan 30 2019   Small change in a log message
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.32, Jan 30 2019 ';
+const Version = 'userController.js 2.34, Jan 30 2019 ';
 
 const User = require('../models/userModel');
 const jwtconfig = require('../../config/jwtconfig');
@@ -118,7 +118,7 @@ module.exports.controller = (app) => {
     // get current user
     //-----------------------------------------------------------------------------------
     app.get('/users/current_user', cors(myenv.getCORS()), passport.authenticate('jwt'), (req, res) => {
-        console.log(Version + req.user.email);
+        console.log(Version + '/users/current_user callback for ' + req.user.email);
         if (req.user) {
             res.json( {current_user: req.user} );
         }
@@ -128,20 +128,9 @@ module.exports.controller = (app) => {
     }); 
 
     //-----------------------------------------------------------------------------------
-    // login a user : jwt strategy
-    //-----------------------------------------------------------------------------------
-    app.post('/users/loginjwt', cors(myenv.getCORS()), passport.authenticate('jwt'), (req, res) => {
-        const payload = { id: req.user.id, email: req.user.email };
-        console.log(Version + 'signing the token with a 24h expiration time');
-        const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 86400}); // 24 hours
-        console.log(Version + 'User ' + req.user.email + ' logged');
-        res.json( { message: req.user.email + ' logged', token });
-    });
-
-    //-----------------------------------------------------------------------------------
     // logout a user
     //-----------------------------------------------------------------------------------
-    app.post('/users/logout', cors(myenv.getCORS()), (req, res) => {
+    app.post('/users/logout', cors(myenv.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
             console.log(Version + 'logging ' + req.user.email +  ' out');
             const useremail = req.user.email;

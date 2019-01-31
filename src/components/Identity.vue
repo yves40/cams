@@ -11,6 +11,7 @@
   Jan 24 2019   WIP on displayed information
   Jan 30 2019   No longer need jwt stuff
                 WIP on authorization header
+  Jan 31 2019   Fix problems with login response
   
 -->
 <template>
@@ -70,10 +71,10 @@ import myenv from '../../config/myenv';
 
 export default {
   data: () => ({
-    Version: '1.45, Jan 30 2019 ',
+    Version: '1.46, Jan 31 2019 ',
     token: '',
     payload: '',
-    theuser: 'unknown',
+    theuser: {},
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
@@ -91,7 +92,7 @@ export default {
           this.$router.push({ name: 'Login' });
         }
         else {
-          this.theuser = response.data.current_user.email;
+          this.theuser = response.data.current_user;
         }
       })
       .catch(() => {
@@ -101,7 +102,6 @@ export default {
     },
   },
   mounted() {
-    this.token = window.localStorage.getItem('jwt');
     this.fetchUser();
     if (this.token !== null) {
       const base64Url = this.token.split('.')[1];

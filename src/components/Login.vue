@@ -19,6 +19,7 @@
   Jan 22 2019   Send a refresh after login to update the top bar
   Jan 23 2019   WIP on user Identity
   Jan 25 2019   Play with passport jwt strategy
+  Jan 31 2019   Remove loginJWT button
   
 -->
 <template>
@@ -79,9 +80,6 @@
             <div class="col">
               <v-btn color="primary" @click="submit" :disabled="invalid || !validated">Login</v-btn>
             </div>
-            <div class="col">
-              <v-btn color="primary" @click="submitjwt" :disabled="invalid || !validated">Login JWT</v-btn>
-            </div>
             <div class="col"></div>
           </v-card-actions>
       </div>
@@ -117,7 +115,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '1.33, Jan 25 2019 ',
+    Version: '1.34, Jan 31 2019 ',
     email: '',
     password: '',
   }),
@@ -141,34 +139,6 @@ export default {
                 password: this.password,
             },
             url: prefix + '/users/login',
-            withCredentials: 'true',
-        },
-      )
-      .then((response) => {
-          window.localStorage.setItem('jwt', response.data.token);
-          this.$swal('Great!', 'Welcome ' + response.data.message, 'success');
-          bus.$emit('refreshUser');
-          this.$router.push({ name: 'Identity' });
-        },
-      )
-      .catch((error) => {
-          this.$swal('Damned, not logged!', 'Invalid credentials', 'error');
-          this.$router.push({ name: 'Login' });
-        },
-      );
-    },
-    // Login request test with jwt instead of local
-    submitjwt() {      
-      this.$log.debug('jwt Login request called ');
-      const prefix = myenv.getURLprefix();
-      return axios(
-        {
-            method: 'post',
-            data: {
-                email: this.email,
-                password: this.password,
-            },
-            url: prefix + '/users/loginjwt',
             withCredentials: 'true',
         },
       )

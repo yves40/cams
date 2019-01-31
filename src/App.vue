@@ -9,6 +9,7 @@
   Jan 22 2019   Add top bar management now...
   Jan 23 2019   Logout process completed
   Jan 24 2019   css
+  Jan 31 2019   current_user problem
 
 -->
 <template>
@@ -35,7 +36,7 @@
         <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
         <v-btn id="register_btn" flat v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
         <v-btn id="login_btn" flat v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
-        <v-btn id="logout_btn" flat @click="logout" v-if="current_user">Logout</v-btn>
+        <v-btn id="logout_btn" flat v-bind:to="{ name: 'Logout' }" v-if="current_user">Logout</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <!--Content -->
@@ -81,7 +82,7 @@ const myenv = require('../config/myenv');
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.18, Jan 23 2019 ',
+    Version: 'Cams 1.24, Jan 31 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -97,13 +98,14 @@ export default {
       });
     },
     // --------------------------------- Is user logged ? ------------------------------
-    async fetchUser() {
+    fetchUser() {
       const prefix = myenv.getURLprefix();
-      this.$log.debug('fetchuser service prefix is : ', prefix);
+      this.$log.debug('fetchuser : ', prefix + '/users/current_user');
       return axios({
         method: 'get',
         url: prefix + '/users/current_user',
         withCredentials: 'true',
+        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         if (response.data.current_user === 'anonymous') {
@@ -117,23 +119,6 @@ export default {
         this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
         this.current_user = null;
       });
-    },
-    // --------------------------------- Logging out  --------------------------------
-    logout() {
-      const prefix = myenv.getURLprefix();
-      this.$log.debug('Logout the user :', prefix + '/users/logout');
-      return axios({
-        method: 'get',
-        url: prefix + '/users/logout',
-        withCredentials: 'true',
-      })
-      .then((response) => {
-        this.$log.debug(response.data.message);
-        bus.$emit('refreshUser');
-        window.localStorage.removeItem('jwt');
-        this.$router.push({ name: 'Home' });
-      })
-      .catch(() => {});
     },
   },
 
