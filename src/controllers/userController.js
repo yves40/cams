@@ -29,87 +29,27 @@
 //    Jan 26 2019   Some readings about jwt an passport drives to more tests
 //                  Add a find user ByID a d by email services
 //    Jan 30 2019   Small change in a log message
+//    Jan 31 2019   axios default header
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.34, Jan 30 2019 ';
+const Version = 'userController.js 2.38, Jan 31 2019 ';
 
-const User = require('../models/userModel');
+/* Enable JWT */
+const auth = require('../auth');
 const jwtconfig = require('../../config/jwtconfig');
 const myenv = require("../../config/myenv");
 
-const LocalStrategy = require('passport-local').Strategy;
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const passportJWT = require('passport-jwt');
-const JwtStrategy = passportJWT.Strategy;
-
 const cors = require('cors');
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const jwtOptions = {};
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-jwtOptions.secretOrKey = jwtconfig.jwtSecret;
-
 module.exports.controller = (app) => {
-
-    //-----------------------------------------------------------------------------------
-    // passport initialization stuff
-    // Local strategy
-    //-----------------------------------------------------------------------------------
-    passport.use('login',  new LocalStrategy({
-        usernameField: 'email',
-        passwordField: 'password',
-        }, 
-        (email, password, done) => {
-            User.getUserByEmail(email, (err, loggeduser) => {
-                if(err) { return done(err); }
-                if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
-                User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
-                    if (isMatch) {
-                        console.log(Version + email + ' identified');
-                        return done(null, loggeduser)   // Success login !!!
-                    }
-                    return done( null, false, {message: 'Wrong password'} ); // Error
-                });
-            });
-        }
-    ));
-
-    passport.serializeUser((loggeduser, done) => {
-        console.log(Version + 'serializeUser with mail : ' + loggeduser.email);
-        done(null, loggeduser.id);
-    });
-
-    passport.deserializeUser((id, done) => { 
-        console.log(Version + 'deserializeUser with ID : ' + id);
-        User.findById(id, (err, loggeduser) => {
-            done(err, loggeduser);
-        });
-    });
-
-    //-----------------------------------------------------------------------------------
-    // passport initialization stuff
-    // jwt strategy
-    //-----------------------------------------------------------------------------------
-    passport.use('jwt', new JwtStrategy(jwtOptions,
-        (token, done) => {
-            console.log(Version + 'Hello, in jwtStrategy module');
-            try {
-                return done(null, token);
-            }
-            catch(error) {
-                done(error);
-            }
-        }
-    ));
 
     //-----------------------------------------------------------------------------------
     // login a user : local strategy
     //-----------------------------------------------------------------------------------
     app.post('/users/login', cors(myenv.getCORS()),passport.authenticate('login'), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
-        console.log(Version + 'signing the token with a 3h expiration time');
-        const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 10800}); // 3 hours
+        const token = auth.signToken(payload);
         console.log(Version + 'User ' + req.user.email + ' logged');
         res.json( { message: req.user.email + ' logged', token });
     });
