@@ -8,13 +8,15 @@
 //    Jan 20 2019    CORS ;-(
 //    Jan 21 2019    CORS ! Found the problem. Seeking for the best solution
 //                   Then some work on passport
+//    Feb 01 2019    CORS moved to a separate file
 //----------------------------------------------------------------------------
-const Version = "server.js, Jan 21 2019, 1.39 ";
+const Version = "server.js, Feb 01 2019, 1.40 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
 const myenv = require("./config/myenv");
+const corsutility = require("./config/corsutility");
 const jwtconfig = require("./config/jwtconfig");  
 
 const express = require("express");
@@ -105,12 +107,12 @@ console.log('\nCORS Security setting, sites list:');
 console.log("---------------------------------------------------------");
 
 let loop = 0;
-let sitelist = myenv.getCORSwhitelist();
+let sitelist = corsutility.getCORSwhitelist();
 for (; loop < sitelist.length; ++loop) {
   console.log('\t\t\tSite : ' + sitelist[loop]);
 }
 
-app.use(cors(myenv.getCORS()));
+app.use(cors(corsutility.getCORS()));
 
 //----------------------------------------------------------------------------
 // Check prefix used for services calls, depending on whether using DEV
