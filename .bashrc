@@ -2,6 +2,7 @@
 # .bashrc
 #
 #	Jan 29 2019		Alias for nodeadmin.sh
+#	Feb 01 2019		Change alias for nodeadmin.sh
 #----------------------------------------------------------------------------------------
 
 # Source global definitions
@@ -56,6 +57,6 @@ alias mongo='mongo --port 4100 --quiet'
 alias nodemon='nodemon --no-colors'
 alias renv='. ~/.bashrc'
 alias forever='$CAMS/node_modules/forever/bin/forever --no-colors'
-alias nodem='$CAMS/shell/nodeadmin.sh'
+alias nod='$CAMS/shell/nodeadmin.sh'
 
 
