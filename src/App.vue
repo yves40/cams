@@ -79,18 +79,19 @@ import './assets/stylesheets/cams.css';
 
 
 const myenv = require('../config/myenv');  
-/*
+
+
 const axiosinstance = axios.create({
   baseURL: myenv.getURLprefix(),
   timeout: 1000,
   headers: { 'authorization': 'jwt ' + window.localStorage.getItem('jwt') }
 });
-*/
+
 
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.26, Feb 03 2019 ',
+    Version: 'Cams 1.29, Feb 03 2019 ',
     drawer: null,
     current_user: null,
   }),
