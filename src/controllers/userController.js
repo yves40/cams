@@ -32,9 +32,10 @@
 //    Jan 31 2019   Code reorg, now use a separate file auth.js for JWT stuff
 //    Feb 01 2019   Cleanup
 //                  Extract CORS to cors.js
+//    Feb 06 2019   current_user, reorder the log 
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.42, Feb 01 2019 ';
+const Version = 'userController.js 2.43, Feb 06 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -62,8 +63,8 @@ module.exports.controller = (app) => {
     // get current user
     //-----------------------------------------------------------------------------------
     app.get('/users/current_user', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
-        console.log(Version + '/users/current_user callback for ' + req.user.email);
         if (req.user) {
+            console.log(Version + '/users/current_user callback for ' + req.user.email);
             res.json( {current_user: req.user} );
         }
     }); 
