@@ -8,9 +8,10 @@
 #	Jan 30 2019  	Shorten log message
 #               Capability to strat only one component
 #	Jan 31 2019  	No tail -f
+#	Feb 06 2019  	Manage mongo DB
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.29, "
-VERSIONDATE="Jan 31 2019 "
+VERSION="nodeadmin.sh v 1.30, "
+VERSIONDATE="Feb 062019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ Usage()
   echo "./nodeadmin.sh start|stop|status [procselector]"
   echo 
   echo "With start, can optionnaly specify a procselector."
-  echo "Possible values are : all|web|api"
+  echo "Possible values are : all|web|api|mongo"
   echo
   echo
 }
@@ -63,6 +64,10 @@ NodeStart()
             # Cannot use an alias or a shell variable so use the full path
             $CAMS/node_modules/forever/bin/forever --no-colors start server.js
             ;;
+    MONGO)  log "Start mongodb"
+            log "#3 the DB server"
+            su - mongo startmongo
+            ;;
   esac
 
 
@@ -84,6 +89,7 @@ NodeStop()
   echo
   ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
 nodemon
+mongod
 /TOOLS/node/bin/node' > processlist
 
   while read line
@@ -106,7 +112,8 @@ NodeStatus()
   echo
   ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
 nodemon
-/TOOLS/node/bin/node' > processlist
+/TOOLS/node/bin/node
+mongod' > processlist
 
   while read line
   do  
