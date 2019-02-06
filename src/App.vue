@@ -77,16 +77,9 @@ import axios from 'axios';
 
 import bus from './bus';
 import './assets/stylesheets/cams.css';
-
+import axiosinstance from '../config/axiosutility';
 
 const myenv = require('../config/myenv');  
-
-
-const axiosinstance = axios.create({
-  baseURL: myenv.getURLprefix(),
-  timeout: 1000,
-  headers: { 'authorization': 'jwt ' + window.localStorage.getItem('jwt') }
-});
 
 
 export default {
