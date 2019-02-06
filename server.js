@@ -9,8 +9,9 @@
 //    Jan 21 2019    CORS ! Found the problem. Seeking for the best solution
 //                   Then some work on passport
 //    Feb 01 2019    CORS moved to a separate file
+//    Feb 05 2019    Remove exprsession, used a month ago when learning JWT
 //----------------------------------------------------------------------------
-const Version = "server.js, Feb 01 2019, 1.40 ";
+const Version = "server.js, Feb 05 2019, 1.43 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -25,8 +26,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
 const passport = require('passport');
-const exprsession = require('express-session');
-
 
 console.log('\n\n' +Version + '\n\n');
 
@@ -37,24 +36,10 @@ const app = express();
 const router = express.Router();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/dist"));
-
 //----------------------------------------------------------------------------
 //  Session management : Use Passport
 //  Beware, the order of app.use() calls is mandatory
 //----------------------------------------------------------------------------
-console.log('\nInitializing passport session parameters');
-console.log("---------------------------------------------------------");
-app.use(exprsession({
-  secret: jwtconfig.jwtSecret,
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: false,
-    httpOnly: false,
-    maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
-},
-}));
-
 app.use(passport.initialize());
 app.use(passport.session());
 //----------------------------------------------------------------------------
