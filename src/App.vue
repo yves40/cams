@@ -10,7 +10,8 @@
   Jan 23 2019   Logout process completed
   Jan 24 2019   css
   Jan 31 2019   current_user problem
-  Feb 03 2019   Tests with axios
+  Feb 03 2019   Tests with axios.
+  Feb 06 2019   Tests with axios..
 
 -->
 <template>
@@ -91,7 +92,7 @@ const axiosinstance = axios.create({
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.29, Feb 03 2019 ',
+    Version: 'Cams 1.34, Feb 06 2019 ',
     drawer: null,
     current_user: null,
   }),
