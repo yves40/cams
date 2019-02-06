@@ -11,7 +11,7 @@
   Jan 24 2019   css
   Jan 31 2019   current_user problem
   Feb 03 2019   Tests with axios.
-  Feb 06 2019   Tests with axios..
+  Feb 06 2019   Tests with axios..OK now, externalized in axiosutility
 
 -->
 <template>
@@ -78,14 +78,13 @@ import axios from 'axios';
 import bus from './bus';
 import './assets/stylesheets/cams.css';
 import axiosinstance from '../config/axiosutility';
-
-const myenv = require('../config/myenv');  
+import myenv from '../config/myenv';  
 
 
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.34, Feb 06 2019 ',
+    Version: 'Cams 1.37, Feb 06 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -104,12 +103,8 @@ export default {
     fetchUser() {
       const prefix = myenv.getURLprefix();
       this.$log.debug('fetchuser : ', prefix + '/users/current_user');
-      // Configure axios to include a jwt header in every request
-      axios.defaults.headers.authorization = 'jwt ' + window.localStorage.getItem('jwt');
-      return axios({
-        method: 'get',
+      return axiosinstance.get({
         url: prefix + '/users/current_user',
-        withCredentials: 'true',
       })
       .then((response) => {
         this.current_user = response.data.current_user;

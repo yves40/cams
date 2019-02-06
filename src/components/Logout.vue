@@ -4,7 +4,7 @@
 
   
   Jan 31 2019   Initial
-  
+  Feb 06 2019   Simplify axios   
 -->
 <template>
 
@@ -37,7 +37,7 @@ const myenv = require('../../config/myenv');
 
 export default {
   data: () => ({
-    Version: '1.04, Jan 31 2019 ',
+    Version: '1.05, Feb 06 2019 ',
   }),
   mounted() {
     this.logout();
@@ -47,12 +47,9 @@ export default {
     logout() {
       const prefix = myenv.getURLprefix();
       this.$log.debug('Logout the user :', prefix + '/users/logout');
-      // Configure axios to include a jwt header in every request
-      axios.defaults.headers.authorization = 'jwt ' + window.localStorage.getItem('jwt');
-      return axios({
-        method: 'post',
+
+      return axiosinstance.post({
         url: prefix + '/users/logout',
-        withCredentials: 'true',
       })
       .then((response) => {
         this.$log.debug(response.data.message);
