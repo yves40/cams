@@ -69,7 +69,7 @@ import axios from 'axios';
 
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../../config/myenv';
-import axiosinstance from '../config/axiosutility';
+import axiosinstance from '../../config/axiosutility';
 
 
 export default {

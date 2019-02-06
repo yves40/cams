@@ -10,8 +10,9 @@
 //                   Then some work on passport
 //    Feb 01 2019    CORS moved to a separate file
 //    Feb 05 2019    Remove exprsession, used a month ago when learning JWT
+//    Feb 06 2019    Mongodb reorg
 //----------------------------------------------------------------------------
-const Version = "server.js, Feb 05 2019, 1.43 ";
+const Version = "server.js, Feb 06 2019, 1.44 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -59,11 +60,11 @@ mongoose.connect(jwtconfig.mongodb,
   function() {
     console.log('\nMONGODB connection :');
     console.log("---------------------------------------------------------");
-    console.log("\t\t\tmongoose connected on DB movie");
+    console.log("\t\t\tmongoose connected on mongo DB");
   } )
   .catch(
     err => {
-      console.error('\t\t\tProblem during mongo connection on DB movie');
+      console.error('\t\t\tProblem during mongo connection on mongodb');
       console.log(err.stack);
       process.exit(1);
     }

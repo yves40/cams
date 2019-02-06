@@ -8,8 +8,9 @@
 //    Jan 17 2019   Transfered to the CAMS project
 //    Jan 22 2019   Add a user profile
 //    Jan 25 2019   Add getUserByID()
+//    Feb 06 2019   Some mongodb reorg
 //----------------------------------------------------------------------------
-const Version = 'userModel.js 1.24 Jan 25 2019 ';
+const Version = 'userModel.js 1.25 Feb 06 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -25,7 +26,7 @@ const userschema = new schema(
         profilecode: 0,
     }
 );
-const User = mongoose.model("user", userschema);
+const User = mongoose.model("camsusers", userschema);
 
 module.exports = User;
 

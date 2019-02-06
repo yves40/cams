@@ -110,8 +110,8 @@
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 import bus from '../bus';
-import axiosinstance from '../config/axiosutility';
-import myenv from '../config/myenv';  
+import axiosinstance from '../../config/axiosutility';
+import myenv from '../../config/myenv';  
 
 export default {
   data: () => ({

@@ -7,15 +7,16 @@
 //    Dec 09 2018   GOOGLE and LINKEDIN, prepare future ;-)
 //    Dec 31 2018   Clean up
 //    Jan 21 2019   NODESECRET
+//    Feb 06 2019   Switch mongo schema to cams
 //----------------------------------------------------------------------------
-const Version = 'jwtconfig 1.05, Jan 21 2019';
+const Version = 'jwtconfig 1.06, Feb 062019';
 
 module.exports = {  
     jwtSecret: process.env.NODESECRET || 'thisisthesecretkey' ,
     jwtSession: {
         session: false
     },
-    mongodb: 'mongodb://localhost:4100/movie',
+    mongodb: 'mongodb://localhost:4100/cams',
     TWITTER_APP_ID: '',
     TWITTER_APP_SECRET: '',
     TWITTER_CALLBACK: '',
