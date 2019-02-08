@@ -33,9 +33,10 @@
 //    Feb 01 2019   Cleanup
 //                  Extract CORS to cors.js
 //    Feb 06 2019   current_user, reorder the log 
+//    Feb 08 2019   user description
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.43, Feb 06 2019 ';
+const Version = 'userController: 2.44, Feb 08 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -107,7 +108,8 @@ module.exports.controller = (app) => {
                 const name = req.body.name;
                 const email = req.body.email;
                 const password = req.body.password;
-                const newuser = new User({name, email, password, profilecode: 0});
+                const description = req.body.description;
+                const newuser = new User({name, email, password, profilecode: 0, description});
                 User.createUser(newuser, (error, user) => {
                     if(error) { 
                         res.status(422).json({

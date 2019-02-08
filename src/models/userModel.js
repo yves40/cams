@@ -11,8 +11,9 @@
 //    Feb 06 2019   Some mongodb reorg
 //    Feb 07 2019   Mongo switch to cams DB
 //    Feb 08 2019   Normalize version
+//                  Add a description
 //----------------------------------------------------------------------------
-const Version = 'userModel:1.27, Feb 08 2019 ';
+const Version = 'userModel:1.28, Feb 08 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -29,6 +30,7 @@ const userschema = new schema(
         email: String,
         password: String,
         profilecode: STDUSER,
+        description: String,
     }
 );
 const User = mongoose.model("camsusers", userschema);
@@ -44,6 +46,7 @@ module.exports.createUser = (newuser, callback) => {
             // Store the hashed password
             const newuseresource = newuser;
             newuseresource.profilecode = newuser.profilecode;
+            newuseresource.description = newuser.description;
             newuseresource.password = hash;
             newuseresource.save(callback);
         });

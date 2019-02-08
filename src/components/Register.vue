@@ -25,6 +25,7 @@
   Jan 19 2019   Some CORS tests, once more
   Feb 07 2019   axiosinstance
   Feb 08 2019   axiosutility...
+                user description field
 
 -->
 <template>
@@ -52,6 +53,23 @@
                   :error-messages="errors"
                   :success="valid"
                   label="Name"
+                  required
+                ></v-text-field>
+              </ValidationProvider>
+            </div>
+            <div class="col-4"></div>
+          </div>
+          <!-- User description -->
+          <div class="row">
+            <div class="col-4"></div>
+            <div class="form-group col-4">
+              <ValidationProvider name="name" rules="required|min:4|max:40">
+                <v-text-field
+                  slot-scope="{ errors, valid }"
+                  v-model="description"
+                  :error-messages="errors"
+                  :success="valid"
+                  label="Description"
                   required
                 ></v-text-field>
               </ValidationProvider>
@@ -156,8 +174,9 @@ const axiosinstance = axiosutility.getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register:2.59, Feb 08 2019',
+    Version: 'Register:2.60, Feb 08 2019',
     name: '',
+    description: '',
     email: '',
     password: '',
     passwordctl: '',
@@ -181,6 +200,7 @@ export default {
                 name: this.name,
                 email: this.email,
                 password: this.password,
+                description: this.description,
             },
         },
       )
