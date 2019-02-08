@@ -10,7 +10,7 @@
 //    Jan 22 2019   Remove some logging
 //    Feb 01 2019   Extract CORS to cors.js
 //----------------------------------------------------------------------------
-const Version = "myenv 1.18, Feb 01 2019 ";
+const Version = "myenv:1.18, Feb 01 2019 ";
 
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
