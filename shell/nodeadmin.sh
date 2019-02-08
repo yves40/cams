@@ -9,9 +9,10 @@
 #               Capability to strat only one component
 #	Jan 31 2019  	No tail -f
 #	Feb 06 2019  	Manage mongo DB
+#	Feb 08 2019  	Manage mongo DB, but separate from node...
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.30, "
-VERSIONDATE="Feb 062019 "
+VERSION="nodeadmin.sh v 1.33, "
+VERSIONDATE="Feb 08 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
@@ -65,11 +66,10 @@ NodeStart()
             $CAMS/node_modules/forever/bin/forever --no-colors start server.js
             ;;
     MONGO)  log "Start mongodb"
-            log "#3 the DB server"
-            su - mongo startmongo
+            log "#3 the DB server: log in mongo account"
+            su - mongo startmongo.sh
             ;;
   esac
-
 
   echo
   log "Waiting $SOMETIME seconds"
@@ -85,20 +85,47 @@ NodeStop()
 {
   echo
   echo
-  log 'Stopping all node processes'
   echo
-  ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
-nodemon
-mongod
-/TOOLS/node/bin/node' > processlist
 
-  while read line
-  do  
-    pid=`echo "$line" | awk '/ / { print $2 }';`
-    log "[!!!] $pid killed"
-    kill $pid
-  done < processlist
-  rm -f processlist
+  case $proclist in 
+    ALL)    log "Stop all node processes"
+            ps -edf | grep -v grep | grep -i -e 'webpack-dev-server
+nodemon
+/TOOLS/node/bin/node' > processlist
+            while read line
+            do  
+              pid=`echo "$line" | awk '/ / { print $2 }';`
+              log "[!!!] $pid killed"
+              kill $pid
+            done < processlist
+            rm -f processlist
+            ;;
+    WEB)    log "Stop the WEBpack node process"
+            ps -edf | grep -v grep | grep -i -e 'webpack-dev-server' > processlist
+            while read line
+            do  
+              pid=`echo "$line" | awk '/ / { print $2 }';`
+              log "[!!!] $pid killed"
+              kill $pid
+            done < processlist
+            rm -f processlist
+            ;;
+    API)    log "Stop the API node process"
+            ps -edf | grep -v grep | grep -i -e 'nodemon
+/TOOLS/node/bin/node' > processlist
+            while read line
+            do  
+              pid=`echo "$line" | awk '/ / { print $2 }';`
+              log "[!!!] $pid killed"
+              kill $pid
+            done < processlist
+            rm -f processlist
+            ;;
+    MONGO)  log "Stop mongodb"
+            log "#3 the DB server: log in mongo account"
+            su - mongo stopmongo.sh
+            ;;
+  esac
   echo
   echo
 }
@@ -131,7 +158,7 @@ mongod' > processlist
 #---------------------------------------------------------------------------------------
 clear
 echo
-echo $VERSION
+echo $VERSION $VERSIONDATE
 echo
 if [ -z $1 ]
 then
@@ -153,6 +180,9 @@ else
             ;;
     'API')  
             proclist="API"
+            ;;
+    'MONGO')  
+            proclist="MONGO"
             ;;
     *)      log "Invalid selector : $procselector"
             Usage
