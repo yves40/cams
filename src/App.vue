@@ -85,7 +85,7 @@ const axiosinstance = require('../config/axiosutility').getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.39:Feb 08 2019 ',
+    Version: 'Cams 1.40:Feb 08 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -109,6 +109,7 @@ export default {
       })
       .then((response) => {
         this.current_user = response.data.current_user;
+        this.$log.debug('App.vue: Identified user is ' + this.current_user); // User is not logged, err 403 received
       })
       .catch(() => {
         this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
