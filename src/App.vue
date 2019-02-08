@@ -80,12 +80,13 @@ import bus from './bus';
 import './assets/stylesheets/cams.css';
 
 const myenv = require('../config/myenv');  
-const axiosinstance = require('../config/axiosutility').getAxios();
+const axiosutility = require('../config/axiosutility');
+const axiosinstance = axiosutility.getAxios();
 
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.40:Feb 08 2019 ',
+    Version: 'App.vue: 1.47, Feb 08 2019 ',
     drawer: null,
     current_user: null,
   }),
@@ -102,17 +103,19 @@ export default {
     },
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      this.$log.debug('fetchuser on /users/current_user');
+      this.$log.debug(this.Version + ':Fetch user request called using ' + axiosutility.getVersion());
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
+        withCredentials: 'true',
+        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         this.current_user = response.data.current_user;
-        this.$log.debug('App.vue: Identified user is ' + this.current_user); // User is not logged, err 403 received
+        this.$log.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
       })
       .catch(() => {
-        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        this.$log.debug(this.Version + ':fetchUser catch(), current_user set to null'); // User is not logged, err 403 received
         this.current_user = null;
       });
     },

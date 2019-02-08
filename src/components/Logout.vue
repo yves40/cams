@@ -38,7 +38,7 @@ const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Logout:1.09, Feb 08 2019 ',
+    Version: 'Logout:1.10, Feb 08 2019 ',
   }),
   mounted() {
     this.logout();
@@ -46,15 +46,17 @@ export default {
   methods: {
     // --------------------------------- Logging out  --------------------------------
     logout() {
-      this.$log.debug('Logout the user : /users/logout');
+      this.$log.debug(this.Version + ': Logout the user : /users/logout');
       return axiosinstance({
         url: '/users/logout',
+        withCredentials: 'true',
+        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
         method: 'post',
       })
       .then((response) => {
         window.localStorage.removeItem('jwt');
         bus.$emit('refreshUser');
-        this.$log.debug(response.data.message);
+        this.$log.debug(this.Version + ':' + response.data.message);
         this.$router.push({ name: 'Home' });
       })
       .catch(() => {});

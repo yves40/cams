@@ -116,7 +116,7 @@ const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: '1.36: Feb 08 2019 ',
+    Version: 'Login:1.37, Feb 08 2019 ',
     email: '',
     password: '',
   }),
@@ -130,11 +130,13 @@ export default {
     },
     // Login request
     submit() {      
-      this.$log.debug('Login request called ');
+      this.$log.debug(this.Version +':Login request called ');
       return axiosinstance(
         {
             url: '/users/login',
             method: 'post',
+            withCredentials: 'true',
+            headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
             data: {
                 email: this.email,
                 password: this.password,

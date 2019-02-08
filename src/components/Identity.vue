@@ -21,11 +21,7 @@
     <div class="grid3x5">
         <div class="header">{{Version}}</div>
         <div class="content3cols">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+          <p>{{email}}</p>
         </div>
         <div class="content2cols">
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
@@ -75,25 +71,30 @@ const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.52, Feb 08 2019 ',
+    Version: 'Identity:1.57, Feb 08 2019 ',
     payload: '',
     theuser: null,
+    email: '',
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      this.$log.debug('fetchuser /users/current_user');
+      this.$log.debug(this.Version + ': fetchuser /users/current_user');
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
+        withCredentials: 'true',
+        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         this.theuser = response.data.current_user;
-        this.$log.debug('Fetched ' + this.theuser.email);
+        this.email = this.theuser.email;
+        this.$log.debug(this.Version + ': Identity.vue:Fetched ' + this.theuser.email);
       })
       .catch(() => {
         this.theuser = null;
-        this.$log.debug('fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        this.email = '';
+        this.$log.debug(this.Version + ': fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
         this.$router.push({ name: 'Login' });
       });
     },

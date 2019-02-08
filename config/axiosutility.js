@@ -7,13 +7,12 @@
 const axios = require('axios');
 const myenv = require('./myenv');
 
-const Version = 'axiosutility:1.07, Feb 08 2019';
+const Version = 'axiosutility:1.09, Feb 08 2019';
 
 module.exports.getAxios = function getAxios() {
   return axios.create({
     baseURL: myenv.getURLprefix(),
     timeout: 1000,
-    headers: { 'authorization': 'jwt ' + window.localStorage.getItem('jwt') }
   });  
 }
 
