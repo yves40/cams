@@ -11,14 +11,16 @@
 //    Feb 01 2019    CORS moved to a separate file
 //    Feb 05 2019    Remove exprsession, used a month ago when learning JWT
 //    Feb 06 2019    Mongodb reorg
+//    Feb 08 2019    Test axiosutility
 //----------------------------------------------------------------------------
-const Version = "server.js, Feb 06 2019, 1.44 ";
+const Version = "server.js, Feb 08 2019, 1.46 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
 const myenv = require("./config/myenv");
 const corsutility = require("./config/corsutility");
+const axiosutility = require("./config/axiosutility");
 const jwtconfig = require("./config/jwtconfig");  
 
 const express = require("express");
@@ -69,7 +71,12 @@ mongoose.connect(jwtconfig.mongodb,
       process.exit(1);
     }
   );
-
+//----------------------------------------------------------------------------
+// axiosutility test
+//----------------------------------------------------------------------------
+console.log('\AXIOS :');
+console.log("---------------------------------------------------------");
+console.log('\t\t\tUsing axiosutility: ' + axiosutility.getVersion());
 //----------------------------------------------------------------------------
 // Application controllers
 // Find and load deployed controllers : js files in the controllers folder
@@ -83,8 +90,6 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 		modul.controller(app);
   }
 })
-
-
 //----------------------------------------------------------------------------
 // Cross-Origin Resource Sharing
 // https://github.com/expressjs/cors/blob/master/README.md

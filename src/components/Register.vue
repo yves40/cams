@@ -23,6 +23,8 @@
   Jan 02 2019   Debug vee-validate ;-(((
   Jan 17 2019   Some CORS tests
   Jan 19 2019   Some CORS tests, once more
+  Feb 07 2019   axiosinstance
+  Feb 08 2019   axiosutility...
 
 -->
 <template>
@@ -149,10 +151,11 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 
 const myenv = require('../../config/myenv');  
+const axioinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: '2.45, Jan 22 2019',
+    Version: 'Register.vue:2.55, Feb 08 2019',
     name: '',
     email: '',
     password: '',
@@ -170,15 +173,15 @@ export default {
     submit() {      
       const prefix = myenv.getURLprefix();
       this.$log.debug('Submit called to : ' + prefix);
-      return axios(
+      return axioinstance(
         {
+            url: '/users/register',
             method: 'post',
             data: {
                 name: this.name,
                 email: this.email,
                 password: this.password,
             },
-            url: prefix + '/users/register',
             headers: {
                 'Content-Type': 'application/json',
             },
