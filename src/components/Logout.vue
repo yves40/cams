@@ -1,10 +1,11 @@
 <!--
 
   Logout.vue
-
   
   Jan 31 2019   Initial
   Feb 06 2019   Simplify axios   
+  Feb 08 2019   axiosutility...
+ 
 -->
 <template>
 
@@ -32,12 +33,12 @@
 import axios from 'axios';
 import bus from '../bus';
 
-const myenv = require('../../config/myenv');  
-
+const myenv = require('../../config/myenv');
+const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: '1.05, Feb 06 2019 ',
+    Version: 'Logout:1.06, Feb 08 2019 ',
   }),
   mounted() {
     this.logout();
@@ -48,8 +49,9 @@ export default {
       const prefix = myenv.getURLprefix();
       this.$log.debug('Logout the user :', prefix + '/users/logout');
 
-      return axiosinstance.post({
-        url: prefix + '/users/logout',
+      return axiosinstance({
+        url: '/users/logout',
+        method: 'post',
       })
       .then((response) => {
         this.$log.debug(response.data.message);

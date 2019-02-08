@@ -151,11 +151,11 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 
 const myenv = require('../../config/myenv');  
-const axioinstance = require('../../config/axiosutility').getAxios();
+const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register.vue:2.55, Feb 08 2019',
+    Version: 'Register:2.57, Feb 08 2019',
     name: '',
     email: '',
     password: '',
@@ -171,9 +171,8 @@ export default {
     },
     // All rules satisfied otherwise button is disabled
     submit() {      
-      const prefix = myenv.getURLprefix();
-      this.$log.debug('Submit called to : ' + prefix);
-      return axioinstance(
+      this.$log.debug('Register request called ');
+      return axiosinstance(
         {
             url: '/users/register',
             method: 'post',

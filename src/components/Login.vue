@@ -21,7 +21,8 @@
   Jan 25 2019   Play with passport jwt strategy
   Jan 31 2019   Remove loginJWT button
   Feb 06 2019   Simplify axios   
-  
+  Feb 08 2019   axiosutility...
+
 -->
 <template>
 
@@ -110,12 +111,12 @@
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 import bus from '../bus';
-import axiosinstance from '../../config/axiosutility';
 import myenv from '../../config/myenv';  
+const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: '1.35, feb 06 2019 ',
+    Version: '1.36, feb 08 2019 ',
     email: '',
     password: '',
   }),
@@ -130,14 +131,14 @@ export default {
     // Login request
     submit() {      
       this.$log.debug('Login request called ');
-      const prefix = myenv.getURLprefix();
-      return axiosinstance.post(
+      return axiosinstance(
         {
+            url: '/users/login',
+            method: 'post',
             data: {
                 email: this.email,
                 password: this.password,
             },
-            url: prefix + '/users/login',
         },
       )
       .then((response) => {

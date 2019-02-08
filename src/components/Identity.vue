@@ -14,6 +14,8 @@
   Jan 31 2019   Fix problems with login response
                 axios default authorization header 
   Feb 06 2019   Simplify axios 
+  Feb 08 2019   axiosutility...
+
 -->
 <template>
     <div class="grid3x5">
@@ -69,22 +71,21 @@ import axios from 'axios';
 
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../../config/myenv';
-import axiosinstance from '../../config/axiosutility';
-
+const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: '1.50, Feb 06 2019 ',
+    Version: 'Identity:1.52, Feb 08 2019 ',
     payload: '',
     theuser: null,
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      const prefix = myenv.getURLprefix();
-      this.$log.debug('fetchuser : ', prefix + '/users/current_user');
-      return axiosinstance.get({
-        url: prefix + '/users/current_user',
+      this.$log.debug('fetchuser /users/current_user');
+      return axiosinstance({
+        url: '/users/current_user',
+        method: 'get',
       })
       .then((response) => {
         this.theuser = response.data.current_user;
