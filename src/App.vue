@@ -107,8 +107,7 @@ export default {
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
-        withCredentials: 'true',
-        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
+        headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
         this.current_user = response.data.current_user;

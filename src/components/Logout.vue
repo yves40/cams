@@ -49,8 +49,7 @@ export default {
       this.$log.debug(this.Version + ': Logout the user : /users/logout');
       return axiosinstance({
         url: '/users/logout',
-        withCredentials: 'true',
-        headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
+        headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
         method: 'post',
       })
       .then((response) => {

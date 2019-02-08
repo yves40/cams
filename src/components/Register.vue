@@ -156,7 +156,7 @@ const axiosinstance = axiosutility.getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register:2.58, Feb 08 2019',
+    Version: 'Register:2.59, Feb 08 2019',
     name: '',
     email: '',
     password: '',
@@ -181,9 +181,6 @@ export default {
                 name: this.name,
                 email: this.email,
                 password: this.password,
-            },
-            headers: {
-                'Content-Type': 'application/json',
             },
         },
       )

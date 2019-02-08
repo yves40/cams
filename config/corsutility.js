@@ -2,8 +2,9 @@
 //    corsutility.js
 //
 //    Feb 01 2019   Initial, from myenv.js
+//    Feb 08 2019   Add jwt as an allowed header
 //----------------------------------------------------------------------------
-const Version = "corsutility:1.12, Feb 01 2019 ";
+const Version = "corsutility:1.13, Feb 08 2019 ";
 
 const whitelist = [
   'http://vboxweb:8080',
@@ -29,7 +30,7 @@ const corsOptions = {
   'preflightContinue': false,
   'optionsSuccessStatus': 204,
   'credentials': true,
-  'allowedHeaders': ['Content-Type', 'Authorization'],
+  'allowedHeaders': ['Content-Type', 'Authorization', 'jwt'],
 };
 
 module.exports.getCORS = function getCORS() {

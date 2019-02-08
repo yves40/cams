@@ -135,8 +135,7 @@ export default {
         {
             url: '/users/login',
             method: 'post',
-            withCredentials: 'true',
-            headers: { Authorization: 'jwt ' + window.localStorage.getItem('jwt') },
+            headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
             data: {
                 email: this.email,
                 password: this.password,
