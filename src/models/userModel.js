@@ -9,12 +9,17 @@
 //    Jan 22 2019   Add a user profile
 //    Jan 25 2019   Add getUserByID()
 //    Feb 06 2019   Some mongodb reorg
+//    Feb 07 2019   Mongo switch to cams DB
+//    Feb 08 2019   Normalize version
 //----------------------------------------------------------------------------
-const Version = 'userModel.js 1.25 Feb 06 2019 ';
+const Version = 'userModel:1.27, Feb 08 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
+const STDUSER = 0;
+const ADMINUSER = 100;
+const CAMADMIN = 50;
 
 const schema = mongoose.Schema;
 
@@ -23,7 +28,7 @@ const userschema = new schema(
         name: String,
         email: String,
         password: String,
-        profilecode: 0,
+        profilecode: STDUSER,
     }
 );
 const User = mongoose.model("camsusers", userschema);
