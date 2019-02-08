@@ -75,7 +75,7 @@ const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.52, Feb 08 2019 ',
+    Version: 'Identity:1.52 Feb 08 2019 ',
     payload: '',
     theuser: null,
   }),

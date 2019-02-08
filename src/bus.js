@@ -9,7 +9,7 @@
 
 import Vue from 'vue';
 
-const Version = 'bus.js, Jan 22 2019, 1.03 ';
+const Version = 'bus.js:Jan 22 2019, 1.03 ';
 
 
 const bus = new Vue();

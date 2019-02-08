@@ -35,7 +35,7 @@
 //    Feb 06 2019   current_user, reorder the log 
 //----------------------------------------------------------------------------
 
-const Version = 'userController.js 2.43, Feb 06 2019 ';
+const Version = 'userController: 2.43, Feb 06 2019 ';
 
 // Enable JWT
 const auth = require('../auth');

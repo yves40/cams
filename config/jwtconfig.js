@@ -9,7 +9,7 @@
 //    Jan 21 2019   NODESECRET
 //    Feb 06 2019   Switch mongo schema to cams
 //----------------------------------------------------------------------------
-const Version = 'jwtconfig 1.06, Feb 062019';
+const Version = 'jwtconfig:1.06, Feb 062019';
 
 module.exports = {  
     jwtSecret: process.env.NODESECRET || 'thisisthesecretkey' ,

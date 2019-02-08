@@ -3,7 +3,7 @@
 //
 //    Feb 01 2019   Initial, from myenv.js
 //----------------------------------------------------------------------------
-const Version = "corsutility 1.12, Feb 01 2019 ";
+const Version = "corsutility:1.12, Feb 01 2019 ";
 
 const whitelist = [
   'http://vboxweb:8080',

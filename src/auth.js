@@ -4,7 +4,7 @@
 //    Jan 30 2019    Initial
 //    Jan 31 2019    Get userController code 
 //----------------------------------------------------------------------------
-const Version = 'auth.js 1.08, Jan 31 2019 ';
+const Version = 'auth.js:1.08, Jan 31 2019 ';
 
 const jwtconfig = require('../config/jwtconfig');
 const User = require('./models/userModel');

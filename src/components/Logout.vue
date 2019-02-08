@@ -38,7 +38,7 @@ const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Logout:1.06, Feb 08 2019 ',
+    Version: 'Logout:1.07, Feb 08 2019 ',
   }),
   mounted() {
     this.logout();
@@ -46,9 +46,7 @@ export default {
   methods: {
     // --------------------------------- Logging out  --------------------------------
     logout() {
-      const prefix = myenv.getURLprefix();
-      this.$log.debug('Logout the user :', prefix + '/users/logout');
-
+      this.$log.debug('Logout the user : /users/logout');
       return axiosinstance({
         url: '/users/logout',
         method: 'post',

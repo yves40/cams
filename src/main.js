@@ -3,7 +3,7 @@
 //
 //    Dec 31 2018   Initial
 //----------------------------------------------------------------------------
-const Version = 'main 1.00, Dec 31 2018';
+const Version = 'main 1.00: Dec 31 2018';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';

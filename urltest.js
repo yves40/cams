@@ -6,7 +6,7 @@
 //    Dec 22 2018    Cams tests
 //----------------------------------------------------------------------------
 
-const Version = "urltest.js, Dec 22 2018, 1.33 ";
+const Version = "urltest.js: Dec 22 2018, 1.33 ";
 
 const fetch = require("node-fetch");
 

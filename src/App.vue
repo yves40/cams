@@ -85,7 +85,7 @@ const axiosinstance = require('../config/axiosutility').getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'Cams 1.39, Feb 08 2019 ',
+    Version: 'Cams 1.39:Feb 08 2019 ',
     drawer: null,
     current_user: null,
   }),

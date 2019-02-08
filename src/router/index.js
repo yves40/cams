@@ -6,7 +6,7 @@
 //    Jan 31 2019    Logout route
 //----------------------------------------------------------------------------
 
-const Version = "index.js, Jan 31 2019, 1.05 ";
+const Version = "index.js: Jan 31 2019, 1.05 ";
 
 import Vue from "vue";
 import Router from "vue-router";
@@ -46,7 +46,7 @@ export default new Router({
       component: Logout,
     },
     {
-      path: '/identity',
+      path: '/users/identity',
       name: 'Identity',
       component: Identity,
     },

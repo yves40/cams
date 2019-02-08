@@ -16,7 +16,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      Version: 'HelloWorld 1.03, Dec 21 2018',
+      Version: 'HelloWorld 1.03: Dec 21 2018',
       msg: 'Welcome to Your Vue.js App'
     }
   }
