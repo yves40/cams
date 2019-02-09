@@ -4,8 +4,8 @@
 #	Feb 062019  	Initial
 #--------------------------------------------------------------------------------
 VERSION="stopmongo.sh v 1.00, "
-VERSIONDATE="Feb 062019 "
-LOG="/tmp/camsnode.log"
+VERSIONDATE="Feb 06 2019 "
+LOG="/tmp/mongo.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
 # Logger
