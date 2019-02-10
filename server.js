@@ -12,8 +12,9 @@
 //    Feb 05 2019    Remove exprsession, used a month ago when learning JWT
 //    Feb 06 2019    Mongodb reorg
 //    Feb 08 2019    Test axiosutility
+//    Feb 09 2019    Error handler ????
 //----------------------------------------------------------------------------
-const Version = "server.js:Feb 08 2019, 1.46 ";
+const Version = "server.js:Feb 09 2019, 1.47 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -30,7 +31,7 @@ const cors = require('cors');
 const fs = require('fs');
 const passport = require('passport');
 
-console.log('\n\n' +Version + '\n\n');
+console.log('\n\n');
 
 //----------------------------------------------------------------------------
 // Initialize Express
@@ -122,10 +123,19 @@ router.get("/", function(req, res) {
 });
 
 
+//----------------------------------------------------------------------------
+// Error handler middleware
+//----------------------------------------------------------------------------
+app.use(function(error, req, res, next) {
+  // Any request to this server will get here, and will send an HTTP
+  // response with the error message 'woops'
+  res.json({ message: error.message });
+});
+
 console.log("\nServer status :");
 console.log("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
 app.listen(port, function() {
-  console.log(`\t\t\tcams server started on ${port}`);
+  console.log('\t\t\t' + Version + ': started on ${port}');
 });
