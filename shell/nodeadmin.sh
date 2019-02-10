@@ -10,9 +10,10 @@
 #	Jan 31 2019  	No tail -f
 #	Feb 06 2019  	Manage mongo DB
 #	Feb 08 2019  	Manage mongo DB, but separate from node...
+#	Feb 10 2019  	No wait after start stop actions
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.33, "
-VERSIONDATE="Feb 08 2019 "
+VERSION="nodeadmin.sh v 1.34, "
+VERSIONDATE="Feb 10 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
 #--------------------------------------------------------------------------------
@@ -72,8 +73,6 @@ NodeStart()
   esac
 
   echo
-  log "Waiting $SOMETIME seconds"
-  sleep $SOMETIME
   cd $curdir
   tput sgr0
   echo
