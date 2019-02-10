@@ -13,8 +13,9 @@
 //    Feb 06 2019    Mongodb reorg
 //    Feb 08 2019    Test axiosutility
 //    Feb 09 2019    Error handler ????
+//    Feb 10 2019    Change the way mongodb connection is handled
 //----------------------------------------------------------------------------
-const Version = "server.js:Feb 09 2019, 1.47 ";
+const Version = "server.js:Feb 10 2019, 1.53 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -22,7 +23,6 @@ const Version = "server.js:Feb 09 2019, 1.47 ";
 const myenv = require("./config/myenv");
 const corsutility = require("./config/corsutility");
 const axiosutility = require("./config/axiosutility");
-const jwtconfig = require("./config/jwtconfig");  
 
 const express = require("express");
 const bodyParser  = require('body-parser');
@@ -58,19 +58,23 @@ app.use(function(req, res, next) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
-mongoose.connect(jwtconfig.mongodb, 
-  { useNewUrlParser: true },
-  function() {
-    console.log('\nMONGODB connection :');
-    console.log("---------------------------------------------------------");
-    console.log("\t\t\tmongoose connected on mongo DB");
-  } )
-  .catch(
+console.log('Connect to : ' + myenv.getMongoDB());
+mongoose.connect(myenv.getMongoDB(), 
+  { useNewUrlParser: true,
+    reconnectTries: 3, 
+    reconnectInterval: 1000,
+    keepAlive: true,
+  })
+  .then(
+    () => {
+      console.log('\MONGODB :');
+      console.log("---------------------------------------------------------");
+      console.log('\t\t\tmongodb status : '+ (myenv.getMongoDBStatus())?true: 'Connected', 'Disconnected'  );
+      console.log();
+    }, 
     err => {
-      console.error('\t\t\tProblem during mongo connection on mongodb');
-      console.log(err.stack);
-      process.exit(1);
-    }
+      console.log(err.message);
+    },
   );
 //----------------------------------------------------------------------------
 // axiosutility test
@@ -127,11 +131,9 @@ router.get("/", function(req, res) {
 // Error handler middleware
 //----------------------------------------------------------------------------
 app.use(function(error, req, res, next) {
-  // Any request to this server will get here, and will send an HTTP
-  // response with the error message 'woops'
-  res.json({ message: error.message });
+  console.log(error.message);
+  res.sendStatus(403); // The request was valid, but the server is refusing action. The user might not have the necessary permissions for a resource, or may need an account of some sort.
 });
-
 console.log("\nServer status :");
 console.log("---------------------------------------------------------");
 const port = myenv.getPort();

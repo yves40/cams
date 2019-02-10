@@ -9,9 +9,15 @@
 //    Jan 21 2019   CORS
 //    Jan 22 2019   Remove some logging
 //    Feb 01 2019   Extract CORS to cors.js
+//    Feb 10 2019   mongodb param here
+//                  Work on mongo status
 //----------------------------------------------------------------------------
-const Version = "myenv:1.18, Feb 01 2019 ";
+const Version = "myenv:1.29, Feb 10 2019 ";
+var mongoose = require('mongoose');
 
+const DOWN = false;
+const UP = true;
+const mongodb = 'mongodb://localhost:4100/cams';
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
 // For the server.js
@@ -45,5 +51,25 @@ module.exports.getVersion = function getVersion() {
 
 module.exports.getPort = function getPort() {
   return port;
+};
+
+module.exports.getMongoDB = function getMongoDB() {
+  return mongodb;
+};
+
+/*
+  Check mongodb state
+  0: disconnected
+  1: connected
+  2: connecting
+  3: disconnecting
+*/
+module.exports.getMongoDBStatus = function getMongoDBStatus() {
+  switch(mongoose.connection.readyState) {
+    case 0:   return DOWN;
+              break;
+    case 1:  return UP;
+              break;
+  }
 };
 

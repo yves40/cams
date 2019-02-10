@@ -8,15 +8,15 @@
 //    Dec 31 2018   Clean up
 //    Jan 21 2019   NODESECRET
 //    Feb 06 2019   Switch mongo schema to cams
+//    Feb 10 2019   mongodb param pushed to myenv
 //----------------------------------------------------------------------------
-const Version = 'jwtconfig:1.06, Feb 062019';
+const Version = 'jwtconfig:1.07, Feb 10 2019';
 
 module.exports = {  
     jwtSecret: process.env.NODESECRET || 'thisisthesecretkey' ,
     jwtSession: {
         session: false
     },
-    mongodb: 'mongodb://localhost:4100/cams',
     TWITTER_APP_ID: '',
     TWITTER_APP_SECRET: '',
     TWITTER_CALLBACK: '',

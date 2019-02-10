@@ -13,6 +13,7 @@
   Feb 03 2019   Tests with axios.
   Feb 06 2019   Tests with axios..OK now, externalized in axiosutility
   Feb 08 2019   axiosutility...
+  Feb 10 2019   Get mongodb status
 
 -->
 <template>
@@ -36,6 +37,8 @@
       <v-toolbar-title>&copy; {{Version}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
+        <div v-if="mongostatus">MONGO ON</div>
+        <div v-else>MONGO OFF</div>
         <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
         <v-btn id="register_btn" flat v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
         <v-btn id="login_btn" flat v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
@@ -86,9 +89,10 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.47, Feb 08 2019 ',
+    Version: 'App.vue: 1.52, Feb 10 2019 ',
     drawer: null,
     current_user: null,
+    mongostatus: false,
   }),
   mounted() {
     this.fetchUser();
@@ -103,6 +107,7 @@ export default {
     },
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
+      this.mongostatus = myenv.getMongoDBStatus();
       this.$log.debug(this.Version + ':Fetch user request called using ' + axiosutility.getVersion());
       return axiosinstance({
         url: '/users/current_user',
