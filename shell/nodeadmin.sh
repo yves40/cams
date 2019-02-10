@@ -12,7 +12,7 @@
 #	Feb 08 2019  	Manage mongo DB, but separate from node...
 #	Feb 10 2019  	No wait after start stop actions
 #--------------------------------------------------------------------------------
-VERSION="nodeadmin.sh v 1.34, "
+VERSION="nodeadmin.sh v 1.35, "
 VERSIONDATE="Feb 10 2019 "
 LOG="/tmp/camsnode.log"
 SOMETIME=20
@@ -43,7 +43,6 @@ Usage()
 #---------------------------------------------------------------------------------------
 NodeStart()
 {
-  NodeStop    # In case processes are already there
   curdir=`pwd`
   cd $CAMS
   echo
