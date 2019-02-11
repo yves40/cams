@@ -1,10 +1,11 @@
 //----------------------------------------------------------------------------
 //    mongotest.js
 //
-//    Jan 10 2019    Initial
+//    Feb 10 2019    Initial
+//    Feb 11 2019    Tests
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js: Jan 10 2019, 1.06 ";
+const Version = "mongotest.js: Feb 11 2019, 1.08 ";
 
 const myenv = require("./config/myenv");  
 
@@ -16,8 +17,8 @@ console.log('\n\n' + Version + '----------------- mongotest --------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
 console.log('Using ' + myenv.getVersion());
-console.log('Connect to : ' + myenv.getMongoDB());
-mongoose.connect(myenv.getMongoDB(), 
+console.log('Connect to : ' + myenv.getMongoDBURI());
+mongoose.connect(myenv.getMongoDBURI(), 
   { useNewUrlParser: true,
     reconnectTries: 3, 
     reconnectInterval: 1000,
@@ -25,15 +26,16 @@ mongoose.connect(myenv.getMongoDB(),
   })
   .then(
     () => {
-      console.log('\t\t\tmongodb up and running');
+      console.log('mongodb up and running');
+      console.log('-------------------------');
+      console.log('Mongo status : ' + myenv.getMongoDBStatus());
+      mongoose.connection.close();
       process.exit(0);
     }, 
     err => {
       console.error('\t\t\tProblem during mongo connection on mongodb');
+      console.log('Mongo status : ' + myenv.getMongoDBStatus());
       console.log(err.message);
       process.exit(1);
     }
   )
-console.log('Mongo status : ' + myenv.getMongoDBStatus());
-mongoose.connection.close()
-console.log('Done');
