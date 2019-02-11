@@ -14,6 +14,7 @@
   Feb 06 2019   Tests with axios..OK now, externalized in axiosutility
   Feb 08 2019   axiosutility...
   Feb 10 2019   Get mongodb status
+  Feb 11 2019   mongodb status, check
 
 -->
 <template>
@@ -89,13 +90,14 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.52, Feb 10 2019 ',
+    Version: 'App.vue: 1.57, Feb 11 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,
   }),
   mounted() {
     this.fetchUser();
+    this.getMongoStatus();
     this.listenToEvents();
   },
   methods: {
@@ -105,10 +107,25 @@ export default {
         this.fetchUser();
       });
     },
+    // --------------------------------- Refresh mongodb status ------------------------------
+    getMongoStatus() {
+      return axiosinstance({
+        url: '/mongo/status',
+        method: 'get',
+      })
+      .then((response) => {
+        this.current_user = response.data.current_user;
+        this.mongostatus = response.data.mongostatus;
+        this.$log.debug(this.Version + ': Mongo status is ' + this.mongostatus);
+      })
+      .catch(() => {
+        this.$log.debug(this.Version + ':Problem when enquiring mongodb status');
+        this.mongostatus = myenv.unknown;
+      });
+
+    },
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      this.mongostatus = myenv.getMongoDBStatus();
-      this.$log.debug(this.Version + ':Fetch user request called using ' + axiosutility.getVersion());
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
@@ -116,6 +133,7 @@ export default {
       })
       .then((response) => {
         this.current_user = response.data.current_user;
+        this.mongostatus = response.data.mongostatus;
         this.$log.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
       })
       .catch(() => {
