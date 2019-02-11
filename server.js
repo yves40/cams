@@ -14,8 +14,9 @@
 //    Feb 08 2019    Test axiosutility
 //    Feb 09 2019    Error handler ????
 //    Feb 10 2019    Change the way mongodb connection is handled
+//    Feb 11 2019    WIP on mongodb status checking
 //----------------------------------------------------------------------------
-const Version = "server.js:Feb 10 2019, 1.53 ";
+const Version = "server.js:Feb 11 2019, 1.56 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -58,8 +59,8 @@ app.use(function(req, res, next) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
-console.log('Connect to : ' + myenv.getMongoDB());
-mongoose.connect(myenv.getMongoDB(), 
+console.log('Connect to : ' + myenv.getMongoDBURI());
+mongoose.connect(myenv.getMongoDBURI(), 
   { useNewUrlParser: true,
     reconnectTries: 3, 
     reconnectInterval: 1000,
@@ -67,19 +68,23 @@ mongoose.connect(myenv.getMongoDB(),
   })
   .then(
     () => {
-      console.log('\MONGODB :');
+      console.log('\nMONGODB :');
       console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : '+ (myenv.getMongoDBStatus())?true: 'Connected', 'Disconnected'  );
+      console.log('\t\t\tmongodb status : ' + ((myenv.getMongoDBStatus()) ? true :'Connected', 'Disconnected'  ));
       console.log();
     }, 
     err => {
+      console.log('\nMONGODB :');
+      console.log("---------------------------------------------------------");
+      console.log('\t\t\tmongodb status : ' + ((myenv.getMongoDBStatus()) ? true :'Connected', 'Disconnected'  ));
       console.log(err.message);
+      console.log();
     },
   );
 //----------------------------------------------------------------------------
 // axiosutility test
 //----------------------------------------------------------------------------
-console.log('\AXIOS :');
+console.log('\nAXIOS :');
 console.log("---------------------------------------------------------");
 console.log('\t\t\tUsing axiosutility: ' + axiosutility.getVersion());
 //----------------------------------------------------------------------------

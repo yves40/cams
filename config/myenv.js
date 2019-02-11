@@ -11,13 +11,19 @@
 //    Feb 01 2019   Extract CORS to cors.js
 //    Feb 10 2019   mongodb param here
 //                  Work on mongo status
+//    Feb 11 2019   mongo status check
+//                  Change mongo URI to remote node
 //----------------------------------------------------------------------------
-const Version = "myenv:1.29, Feb 10 2019 ";
+const Version = "myenv:1.35, Feb 11 2019 ";
 var mongoose = require('mongoose');
 
-const DOWN = false;
-const UP = true;
-const mongodb = 'mongodb://localhost:4100/cams';
+module.exports = {
+  down:     DOWN = false,
+  up:       UP = true,
+  unknown:  UNKNOWN = false,
+  }
+
+const mongodb = 'mongodb://vboxweb:4100/cams';
 // URL prefix used to call the services node
 const prefix = process.env.NODEURLPREFIX || "http://vboxweb:8081";
 // For the server.js
@@ -53,7 +59,7 @@ module.exports.getPort = function getPort() {
   return port;
 };
 
-module.exports.getMongoDB = function getMongoDB() {
+module.exports.getMongoDBURI = function getMongoDBURI() {
   return mongodb;
 };
 
@@ -66,9 +72,11 @@ module.exports.getMongoDB = function getMongoDB() {
 */
 module.exports.getMongoDBStatus = function getMongoDBStatus() {
   switch(mongoose.connection.readyState) {
-    case 0:   return DOWN;
+    case 0:   return this.down;
               break;
-    case 1:  return UP;
+    case 1:  return this.up;
+              break;
+    default: return this.unknown;
               break;
   }
 };

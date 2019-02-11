@@ -34,9 +34,10 @@
 //                  Extract CORS to cors.js
 //    Feb 06 2019   current_user, reorder the log 
 //    Feb 08 2019   user description
+//    Feb 11 2019  current_user now sends back the mongo status
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.44, Feb 08 2019 ';
+const Version = 'userController: 2.45, Feb 11 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -44,6 +45,8 @@ const auth = require('../auth');
 const corsutility = require("../../config/corsutility");
 // User definition
 const User = require('../models/userModel')
+// To access mongodb status
+const myenv = require("../../config/myenv");
 
 const passport = require('passport');
 const cors = require('cors');
@@ -66,7 +69,8 @@ module.exports.controller = (app) => {
     app.get('/users/current_user', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
             console.log(Version + '/users/current_user callback for ' + req.user.email);
-            res.json( {current_user: req.user} );
+            mongostatus = myenv.getMongoDBStatus();
+            res.json( {current_user: req.user, mongostatus: mongostatus} );
         }
     }); 
 
