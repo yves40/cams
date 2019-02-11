@@ -7,7 +7,7 @@
 
 const Version = "mongotest.js: Feb 11 2019, 1.08 ";
 
-const myenv = require("./config/myenv");  
+const myenv = require("../config/myenv");  
 
 const mongoose = require('mongoose');
 
