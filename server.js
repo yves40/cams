@@ -15,8 +15,9 @@
 //    Feb 09 2019    Error handler ????
 //    Feb 10 2019    Change the way mongodb connection is handled
 //    Feb 11 2019    WIP on mongodb status checking
+//    Feb 20 2019    WIP on mongodb status checking, phase 2
 //----------------------------------------------------------------------------
-const Version = "server.js:Feb 11 2019, 1.56 ";
+const Version = "server.js:Feb 20 2019, 1.57 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -70,13 +71,13 @@ mongoose.connect(myenv.getMongoDBURI(),
     () => {
       console.log('\nMONGODB :');
       console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : ' + ((myenv.getMongoDBStatus()) ? true :'Connected', 'Disconnected'  ));
+      console.log('\t\t\tmongodb status : Up');
       console.log();
     }, 
     err => {
       console.log('\nMONGODB :');
       console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : ' + ((myenv.getMongoDBStatus()) ? true :'Connected', 'Disconnected'  ));
+      console.log('\t\t\tmongodb status : Down');
       console.log(err.message);
       console.log();
     },
