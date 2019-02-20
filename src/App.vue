@@ -15,6 +15,8 @@
   Feb 08 2019   axiosutility...
   Feb 10 2019   Get mongodb status
   Feb 11 2019   mongodb status, check
+  Feb 15 2019   mongodb status indicator
+  Feb 20 2019   mongodb status indicator.2
 
 -->
 <template>
@@ -36,10 +38,12 @@
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>&copy; {{Version}}</v-toolbar-title>
+      <v-toolbar-side-icon>
+        <span v-if="mongostatus"><img src="./assets/valid.png"></span>
+        <span v-else><img src="./assets/invalid.png"></span>
+      </v-toolbar-side-icon>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <div v-if="mongostatus">MONGO ON</div>
-        <div v-else>MONGO OFF</div>
         <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
         <v-btn id="register_btn" flat v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
         <v-btn id="login_btn" flat v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
@@ -90,7 +94,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.57, Feb 11 2019 ',
+    Version: 'App.vue: 1.62, Feb 20 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,

@@ -145,5 +145,5 @@ console.log("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
 app.listen(port, function() {
-  console.log('\t\t\t' + Version + ': started on ${port}');
+  console.log('\t\t\t' + Version + ': started on ' + port);
 });
