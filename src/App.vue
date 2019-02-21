@@ -123,9 +123,8 @@ export default {
         this.mongostatus = response.data.mongostatus;
         this.$log.debug(this.Version + ': Mongo status is ' + this.mongostatus);
       })
-      .catch(() => {
+      .catch((err) => {
         this.$log.debug(this.Version + ':Problem when enquiring mongodb status');
-        this.mongostatus = myenv.unknown;
       });
 
     },
