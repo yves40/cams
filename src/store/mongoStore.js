@@ -7,6 +7,16 @@
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
+const mongoose = require('mongoose');
+const myenv = require('../../config/myenv');
+const axiosutility = require('../../config/axiosutility');
+const axiosinstance = axiosutility.getAxios();
+
+const DOWN = false;
+const UP = true;
+const TIMEDELAYCHECK = 1000;
+const MONGODELAYCHECK = 15000;
+
 Vue.use(Vuex);
 
 export default { 
@@ -15,11 +25,12 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.30, Feb 21 2019 ',
+        Version: 'mongoStore:1.45, Feb 21 2019 ',
         clock: '',
         logs: [],
         logschanged: 'false',
         MAXLOG:16,
+        mongostatus: DOWN,
     },
     /*----------------------------------------------------------------------------
         VUEX Getters
@@ -30,6 +41,9 @@ export default {
         },
         getTime(state) {
             return state.clock;
+        },
+        getMongoStatus(state) {
+            return state.mongostatus===UP ? 'Mongo running': 'Mongo Down';
         },
     },
     /*----------------------------------------------------------------------------
@@ -42,6 +56,21 @@ export default {
         updateTime(state) {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
+        updateMongoStatus(state) {  // Check mongo status every 10 seconds
+            console.log(state.Version + 'Connect to : ' + myenv.getMongoDBURI());
+            return axiosinstance({
+                url: '/mongo/status',
+                method: 'get',
+              })
+              .then((response) => {
+                state.mongostatus = response.data.mongostatus;
+                console.log(state.Version + (state.mongostatus===UP ? 'Mongo running': 'Mongo Down'));
+              })
+              .catch(() => {
+                state.mongostatus = DOWN;
+                console.log(state.Version + ' Problem when enquiring mongodb status');
+              });
+        },
     },
     /*----------------------------------------------------------------------------
         VUEX actions
@@ -50,11 +79,15 @@ export default {
         clearlog(context) {
             context.commit('clearlog');
         },
-        settimer(context) {
+        setClockTimer(context) {
             setInterval(() => {
                 context.commit('updateTime')
-              }, 1000);
-            console.log(context.state.Version + 'action settimer');
+              }, TIMEDELAYCHECK);
+        },
+        setMongoTimer(context) {
+            setInterval(() => {
+                context.commit('updateMongoStatus')
+              }, MONGODELAYCHECK);
         },
     },
     /*----------------------------------------------------------------------------

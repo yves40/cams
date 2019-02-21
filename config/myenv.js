@@ -13,15 +13,11 @@
 //                  Work on mongo status
 //    Feb 11 2019   mongo status check
 //                  Change mongo URI to remote node
+//    Feb 21 2019   WIP on mongodb status check
 //----------------------------------------------------------------------------
-const Version = "myenv:1.35, Feb 11 2019 ";
-var mongoose = require('mongoose');
+const Version = "myenv:1.43, Feb 21 2019 ";
 
-module.exports = {
-  down:     DOWN = false,
-  up:       UP = true,
-  unknown:  UNKNOWN = false,
-  }
+var mongoose = require('mongoose');
 
 const mongodb = 'mongodb://vboxweb:4100/cams';
 // URL prefix used to call the services node
@@ -70,14 +66,55 @@ module.exports.getMongoDBURI = function getMongoDBURI() {
   2: connecting
   3: disconnecting
 */
+const DOWN = false;
+const UP = true;
+const UNKNOWN = false;
+let connected = false;
+
 module.exports.getMongoDBStatus = function getMongoDBStatus() {
-  switch(mongoose.connection.readyState) {
-    case 0:   return this.down;
-              break;
-    case 1:  return this.up;
-              break;
-    default: return this.unknown;
-              break;
+  console.log(Version + 'Test mongodb status now');
+  try {
+    mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false});
+    // Get Mongoose to use the global promise library
+    mongoose.Promise = global.Promise;
+    //Get the default connection
+    var db = mongoose.connection;
+    //Bind connection to error event (to get notification of connection errors)
+    db.on('error', console.error.bind(console, 'MongoDB connection error:'));    
+  }
+  catch(err) {
+    console.log(Version + 'CRASH');
   }
 };
 
+
+/*
+    mongoose.connection.on('open', function (ref) {
+      connected=true;
+      console.log('open connection to mongo server.');
+    });
+    mongoose.connection.on('connected', function (ref) {
+      connected=true;
+      console.log('connected to mongo server.');
+    });
+    
+    mongoose.connection.on('disconnected', function (ref) {
+      connected=false;
+      console.log('disconnected from mongo server.');
+    });
+    
+    mongoose.connection.on('close', function (ref) {
+      connected=false;
+      console.log('close connection to mongo server');
+    });  
+    mongoose.connection.on('error', function (err) {
+      connected=false;
+      console.log('error connection to mongo server!');
+      console.log(err);
+    });
+    mongoose.connection.db.on('reconnect', function (ref) {
+      connected=true;
+      console.log('reconnect to mongo server.');
+    });
+
+*/

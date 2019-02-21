@@ -6,7 +6,7 @@
 //    Feb 21 2019    mongodb synchronous call...
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js: Feb 21 2019, 1.10 ";
+const Version = "mongotest.js: Feb 21 2019, 1.11 ";
 
 const myenv = require("../config/myenv");  
 
@@ -19,24 +19,4 @@ console.log('\n\n' + Version + '----------------- mongotest --------------------
 //----------------------------------------------------------------------------
 console.log('Using ' + myenv.getVersion());
 console.log('Connect to : ' + myenv.getMongoDBURI());
-mongoose.connect(myenv.getMongoDBURI(), 
-  { useNewUrlParser: true,
-    reconnectTries: 3, 
-    reconnectInterval: 1000,
-    keepAlive: true,
-  })
-  .then(
-    () => {
-      console.log('mongodb up and running');
-      console.log('-------------------------');
-      console.log('Mongo status : ' + myenv.getMongoDBStatus());
-      mongoose.connection.close();
-      process.exit(0);
-    }, 
-    err => {
-      console.error('\t\t\tProblem during mongo connection on mongodb');
-      console.log('Mongo status : ' + myenv.getMongoDBStatus());
-      console.log(err.message);
-      process.exit(1);
-    }
-  )
+console.log('Mongo status : ' + myenv.getMongoDBStatus());

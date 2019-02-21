@@ -2,9 +2,10 @@
 //    mongoController.js
 //
 //    Feb 11 2019   Initial
+//    Feb 21 2019   WIP on mongodb status check
 //----------------------------------------------------------------------------
 
-const Version = 'mongoController: 1.01, Feb 11 2019 ';
+const Version = 'mongoController: 1.02, Feb 21 2019 ';
 
 const auth = require('../auth');
 const corsutility = require("../../config/corsutility");
