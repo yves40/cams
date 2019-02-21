@@ -12,6 +12,7 @@
     <p class="time">Time is  @ {{getTime}}</p>    
     <p>@ {{getVersion}}</p>    
     <p>@ {{getCamVersion}}</p>    
+    <p>@ {{getMongoStatus}}</p>    
   </v-content>
 </template>
 
@@ -23,12 +24,13 @@ export default {
   name: 'Welcome',
   data () {
     return {
-      Version: 'Welcome: 1.11, Feb 21 2019',
+      Version: 'Welcome: 1.13, Feb 21 2019',
     }
   },
   computed: mapGetters( {
     getVersion: 'mongoStore/getVersion',
     getTime:  'mongoStore/getTime',
+    getMongoStatus:  'mongoStore/getMongoStatus',
     getCamVersion: 'camStore/getVersion',
   }), 
   methods: 
@@ -36,7 +38,8 @@ export default {
       'clearlog',
     ]),
   mounted() {   // Start the clock timer 
-    this.$store.dispatch('mongoStore/settimer');
+    this.$store.dispatch('mongoStore/setClockTimer');
+    this.$store.dispatch('mongoStore/setMongoTimer');
   }
 }
 </script>
