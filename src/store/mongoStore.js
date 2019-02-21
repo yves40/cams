@@ -2,15 +2,12 @@
     mongoStore.js    
 
     Feb 20 2019     Initial
+    Feb 21 2019     Finalize timer code
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
-
-function timeClock(state) {
-    state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
-}
 
 export default { 
     namespaced: true,
