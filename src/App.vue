@@ -17,6 +17,7 @@
   Feb 11 2019   mongodb status, check
   Feb 15 2019   mongodb status indicator
   Feb 20 2019   mongodb status indicator.2
+  Feb 21 2019   Helloworld changed for welcome
 
 -->
 <template>
@@ -94,7 +95,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.62, Feb 20 2019 ',
+    Version: 'App.vue: 1.63, Feb 21 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,

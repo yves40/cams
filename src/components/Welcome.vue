@@ -1,16 +1,17 @@
 <!--
-  HelloWorld.vue
+  Welcome.vue
 
   Dec 31 2018   Initial
   Feb 20 2019   use this Vue to refresh Vuex knowledge ;-)
+  Feb 21 2019   Renamed : More tests with the store
 
 -->
 <template>
   <v-content>
-    Hello from {{Version}}, Happy to see you<v-spacer></v-spacer>
-    {{msg}}
+    @ {{Version}}, Happy to see you<v-spacer></v-spacer>
     <p class="time">Time is  @ {{getTime}}</p>    
     <p>@ {{getVersion}}</p>    
+    <p>@ {{getCamVersion}}</p>    
   </v-content>
 </template>
 
@@ -19,22 +20,22 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'HelloWorld',
+  name: 'Welcome',
   data () {
     return {
-      Version: 'HelloWorld: 1.09, Feb 20 2019',
-      msg: 'Welcome to Your Vue.js App'
+      Version: 'Welcome: 1.11, Feb 21 2019',
     }
   },
   computed: mapGetters( {
     getVersion: 'mongoStore/getVersion',
     getTime:  'mongoStore/getTime',
+    getCamVersion: 'camStore/getVersion',
   }), 
   methods: 
     mapActions([
       'clearlog',
     ]),
-  mounted() {
+  mounted() {   // Start the clock timer 
     this.$store.dispatch('mongoStore/settimer');
   }
 }

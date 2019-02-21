@@ -4,13 +4,14 @@
 //    Jan 16 2019    Remove RegisterDBG
 //    Jan 17 2019    WIP on user services
 //    Jan 31 2019    Logout route
+//    Feb 21 2019    Helloworld changed to Welcome
 //----------------------------------------------------------------------------
 
-const Version = "index.js: Jan 31 2019, 1.05 ";
+const Version = "index.js: Feb 21 2019, 1.06 ";
 
 import Vue from "vue";
 import Router from "vue-router";
-import HelloWorld from "@/components/HelloWorld";
+import Welcome from "@/components/Welcome";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
 import Identity from "@/components/Identity";
@@ -22,13 +23,13 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "HelloWorld",
-      component: HelloWorld
+      name: "Welcome",
+      component: Welcome
     },
     {
       path: "/",
       name: "Home",
-      component: HelloWorld
+      component: Welcome
     },
     {
       path: "/users/register",
