@@ -10,6 +10,7 @@
     Hello from {{Version}}, Happy to see you<v-spacer></v-spacer>
     {{msg}}
     <p class="time">Time is  @ {{getTime}}</p>    
+    <p>@ {{getVersion}}</p>    
   </v-content>
 </template>
 
@@ -21,16 +22,21 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      Version: 'HelloWorld 1.04: Feb 20 2019',
+      Version: 'HelloWorld: 1.09, Feb 20 2019',
       msg: 'Welcome to Your Vue.js App'
     }
   },
-  computed: mapGetters( [ 'getVersion', 'getTime'] ),
+  computed: mapGetters( {
+    getVersion: 'mongoStore/getVersion',
+    getTime:  'mongoStore/getTime',
+  }), 
   methods: 
     mapActions([
       'clearlog',
     ]),
-
+  mounted() {
+    this.$store.dispatch('mongoStore/settimer');
+  }
 }
 </script>
 

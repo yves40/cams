@@ -4,7 +4,7 @@
 //    Dec 31 2018   Initial
 //    Feb 20 2019   Vuex coming in the loop
 //----------------------------------------------------------------------------
-const Version = 'main.js: 1.03, Feb 20 2019';
+const Version = 'main.js: 1.04, Feb 20 2019';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -19,7 +19,7 @@ import VueLogger from 'vuejs-logger';
 
 
 import router from './router';
-import  { store } from './store/mongoStore';
+import store from './store/store';
  
 Vue.use(Vuetify);
 Vue.use(BootstrapVue);
