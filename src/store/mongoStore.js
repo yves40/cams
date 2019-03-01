@@ -57,7 +57,7 @@ export default {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
         updateMongoStatus(state) {  // Check mongo status every 10 seconds
-            console.log(state.Version + 'Connect to : ' + myenv.getMongoDBURI());
+            console.log(state.Version + 'Connect to : ' + mongo.getMongoDBURI());
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
