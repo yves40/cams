@@ -3,12 +3,13 @@
 
     Feb 20 2019     Initial
     Feb 21 2019     Finalize timer code
+    Mar 01 2019     Mongo utils in a specific file
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
 const mongoose = require('mongoose');
-const myenv = require('../../config/myenv');
+const mongo = require('../../config/mongo');
 const axiosutility = require('../../config/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 

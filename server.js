@@ -18,12 +18,12 @@
 //    Feb 20 2019    WIP on mongodb status checking, phase 2
 //    Mar 01 2019    mongo utilities in a specific file
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 01 2019, 1.58 ";
+const Version = "server.js:Mar 01 2019, 1.59 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
-const myenv = require("./config/mongo");
+const mongo = require("./config/mongo");
 const myenv = require("./config/myenv");
 const corsutility = require("./config/corsutility");
 const axiosutility = require("./config/axiosutility");
@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
-console.log('Connect to : ' + myenv.getMongoDBURI());
+console.log('Connect to : ' + mongo.getMongoDBURI());
 mongoose.connect(mongo.getMongoDBURI(), 
   { useNewUrlParser: true,
     reconnectTries: 3, 
