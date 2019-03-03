@@ -1,28 +1,23 @@
 //----------------------------------------------------------------------------
 //    mongo.js
 //
-//    Dec 02 2018   Initial
-//    Dec 03 2018   Prefix not hard coded
-//    Dec 07 2018   Problem with mono node config and CORS
-//    Jan 16 2019   Start working on services in the CAMS app
-//    Jan 17 2019   Port 8081
-//    Jan 21 2019   CORS
-//    Jan 22 2019   Remove some logging
-//    Feb 01 2019   Extract CORS to cors.js
-//    Feb 10 2019   mongodb param here
-//                  Work on mongo status
-//    Feb 11 2019   mongo status check
-//                  Change mongo URI to remote node
-//    Feb 21 2019   WIP on mongodb status check
-//    Feb 28 2019    WIP on mongodb connection checking
-//    Mar 01 2019    WIP on mongodb connection checking II
+//    Mar 01 2019   Initial
 //----------------------------------------------------------------------------
-const Version = "mongo:1.00, Mar 01 2019 ";
+const Version = "mongo:1.09, Mar 01 2019 ";
 
 var mongoose = require('mongoose');
 
 const mongodb = 'mongodb://vboxweb:4100/cams';
+//----------------------------------------------------------------------------
+// Version
+//----------------------------------------------------------------------------
+module.exports.getVersion = function getVersion() {
+  return Version;
+}
 
+//----------------------------------------------------------------------------
+// Where's mongo server ?
+//----------------------------------------------------------------------------
 module.exports.getMongoDBURI = function getMongoDBURI() {
   return mongodb;
 };
@@ -33,28 +28,48 @@ module.exports.getMongoDBURI = function getMongoDBURI() {
   1: connected
   2: connecting
   3: disconnecting
-*/
-const DOWN = false;
-const UP = true;
-const UNKNOWN = false;
-let connected = false;
 
-module.exports.getMongoDBStatus = function getMongoDBStatus() {
-  console.log(Version + 'Test mongodb status now');
+  module.exports = Object.freeze( {
+   DISCONNECTED: 0,
+   CONNECTED : 1,
+   CONNECTING : 2,
+   DISCONNECTING : 3,
+});
+
+  */
+const DISCONNECTED = 0;
+const CONNECTED = 1;
+const CONNECTING = 2;
+const DISCONNECTING = 3; 
+
+module.exports.DISCONNECTED = DISCONNECTED;
+module.exports.CONNECTED = CONNECTED;
+module.exports.CONNECTING = CONNECTING;
+module.exports.DISCONNECTING = DISCONNECTING;
+
+let DB = null;
+
+//----------------------------------------------------------------------------
+// Open mongo connection
+//----------------------------------------------------------------------------
+module.exports.getMongoDBConnection = function getMongoDBConnection() {
+  console.log(Version + 'Connect to : ' + mongodb);
   try {
     mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false});
     // Get Mongoose to use the global promise library
     mongoose.Promise = global.Promise;
-
-    mongoose.connection.on('error',function (err) {  
-      console.log(Version + 'Mongoose default connection error: ' + err);
-    });
-    return UNKNOWN;   
+    DB = mongoose.connection;
+    return DB;
   }
   catch(err) {
-    console.log(Version + 'CRASH');
-    return DOWN;
+    console.log(Version + err);
   }
+};
+//----------------------------------------------------------------------------
+// Get mongo status
+//----------------------------------------------------------------------------
+module.exports.getMongoDBStatus = function getMongoDBStatus() {
+  return DB.readyState;
 };
 
 
