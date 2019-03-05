@@ -18,7 +18,7 @@
 //    Feb 20 2019    WIP on mongodb status checking, phase 2
 //    Mar 01 2019    mongo utilities in a specific file
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 01 2019, 1.59 ";
+const Version = "server.js:Mar 01 2019, 1.60 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -73,13 +73,13 @@ mongoose.connect(mongo.getMongoDBURI(),
     () => {
       console.log('\nMONGODB :');
       console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : Up');
+      console.log('\t\t\tmongodb status : ' + mongo.getMongoDBFlag()?true: 'UP', 'DOWN');
       console.log();
     }, 
     err => {
       console.log('\nMONGODB :');
       console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : Down');
+      console.log('\t\t\tmongodb status : ' + mongo.getMongoDBFlag()?true: 'UP', 'DOWN');
       console.log(err.message);
       console.log();
     },
