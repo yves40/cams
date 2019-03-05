@@ -65,7 +65,7 @@ import passportJWT from 'passport-jwt';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-import jwtconfig from '../../config/jwtconfig';
+import jwtconfig from '../utilities/jwtconfig';
 import myenv from '../utilities/myenv';
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 

@@ -6,7 +6,7 @@
 //----------------------------------------------------------------------------
 const Version = 'auth.js:1.08, Jan 31 2019 ';
 
-const jwtconfig = require('../config/jwtconfig');
+const jwtconfig = require('./utilities/jwtconfig');
 const User = require('./models/userModel');
 
 const jwt = require('jsonwebtoken');
