@@ -34,7 +34,7 @@ import axios from 'axios';
 import bus from '../bus';
 
 const myenv = require('../utilities/myenv');
-const axiosinstance = require('../../config/axiosutility').getAxios();
+const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({

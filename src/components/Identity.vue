@@ -67,7 +67,7 @@ import axios from 'axios';
 
 import jwtconfig from '../../config/jwtconfig';
 import myenv from '../utilities/myenv';
-const axiosinstance = require('../../config/axiosutility').getAxios();
+const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({

@@ -92,7 +92,7 @@ import bus from './bus';
 import './assets/stylesheets/cams.css';
 
 const myenv = require('./utilities/myenv');  
-const axiosutility = require('../config/axiosutility');
+const axiosutility = require('./utilities/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
 export default {
