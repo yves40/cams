@@ -4,6 +4,7 @@
     Feb 20 2019     Initial
     Feb 21 2019     Finalize timer code
     Mar 01 2019     Mongo utils in a specific file
+    Mar 05 2019     Store not working, report mongo as down : fix pb
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -13,8 +14,8 @@ const mongo = require('../../config/mongo');
 const axiosutility = require('../../config/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
-const DOWN = false;
-const UP = true;
+const DOWN = 0;
+const UP = 1;
 const TIMEDELAYCHECK = 1000;
 const MONGODELAYCHECK = 15000;
 
@@ -26,7 +27,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.45, Feb 21 2019 ',
+        Version: 'mongoStore:1.48, Mar 05 2019 ',
         clock: '',
         logs: [],
         logschanged: 'false',

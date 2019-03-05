@@ -18,7 +18,7 @@
 //    Feb 20 2019    WIP on mongodb status checking, phase 2
 //    Mar 01 2019    mongo utilities in a specific file
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 01 2019, 1.60 ";
+const Version = "server.js:Mar 01 2019, 1.62 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -63,27 +63,7 @@ app.use(function(req, res, next) {
 // Connect to mongo 
 //----------------------------------------------------------------------------
 console.log('Connect to : ' + mongo.getMongoDBURI());
-mongoose.connect(mongo.getMongoDBURI(), 
-  { useNewUrlParser: true,
-    reconnectTries: 3, 
-    reconnectInterval: 1000,
-    keepAlive: true,
-  })
-  .then(
-    () => {
-      console.log('\nMONGODB :');
-      console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : ' + mongo.getMongoDBFlag()?true: 'UP', 'DOWN');
-      console.log();
-    }, 
-    err => {
-      console.log('\nMONGODB :');
-      console.log("---------------------------------------------------------");
-      console.log('\t\t\tmongodb status : ' + mongo.getMongoDBFlag()?true: 'UP', 'DOWN');
-      console.log(err.message);
-      console.log();
-    },
-  );
+let _DB = mongo.getMongoDBConnection();
 //----------------------------------------------------------------------------
 // axiosutility test
 //----------------------------------------------------------------------------
