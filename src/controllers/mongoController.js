@@ -7,9 +7,8 @@
 //                  CORS not used to check mongo status
 //----------------------------------------------------------------------------
 
-const Version = 'mongoController: 1.07, Mar 05 2019 ';
+const Version = 'mongoController: 1.12, Mar 05 2019 ';
 
-const auth = require('../auth');
 const corsutility = require("../../config/corsutility");
 const mongo = require("../../config/mongo");
 
@@ -23,9 +22,9 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.get('/mongo/status', cors(corsutility.getCORS()), (req, res) => {
             let mongostatus = mongo.getMongoDBStatus();
-            let mongoflag = mongo.getMongoDBFlag();
-            console.log(Version + 'mongostatus = ' + mongostatus);
-            res.json( { mongostatus: mongostatus, mongoflag: mongoflag } );
+            let mongodown = mongo.IsMongoDown();
+            console.log(Version + 'mongodown = ' + mongodown);
+            res.json( { mongostatus: mongostatus, mongodown: mongodown } );
         }
     ); 
 

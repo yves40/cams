@@ -18,6 +18,8 @@
   Feb 15 2019   mongodb status indicator
   Feb 20 2019   mongodb status indicator.2
   Feb 21 2019   Helloworld changed for welcome
+  Mar 05 2019   Mongo status used to manage menu items 
+                Use mongostore
 
 -->
 <template>
@@ -40,15 +42,15 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>&copy; {{Version}}</v-toolbar-title>
       <v-toolbar-side-icon>
-        <span v-if="mongostatus"><img src="./assets/valid.png"></span>
-        <span v-else><img src="./assets/invalid.png"></span>
+        <span v-if="IsMongoDown"><img src="./assets/invalid.png"></span>
+        <span v-else><img src="./assets/valid.png"></span>
       </v-toolbar-side-icon>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
-        <v-btn id="register_btn" flat v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
-        <v-btn id="login_btn" flat v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
-        <v-btn id="logout_btn" flat v-bind:to="{ name: 'Logout' }" v-if="current_user">Logout</v-btn>
+        <v-btn id="register_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
+        <v-btn id="login_btn" flat  :disabled=IsMongoDown v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
+        <v-btn id="logout_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Logout' }" v-if="current_user">Logout</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <!--Content -->
@@ -84,6 +86,7 @@
 /* eslint no-multi-assign: "off" */
 
 import axios from 'axios';
+import { mapGetters, mapActions } from 'vuex';
 
 import bus from './bus';
 import './assets/stylesheets/cams.css';
@@ -95,14 +98,21 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.63, Feb 21 2019 ',
+    Version: 'App.vue: 1.76, Mar 05 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,
+    mongodown: true,
   }),
+  computed: mapGetters( {
+    getVersion: 'mongoStore/getVersion',
+    getTime:  'mongoStore/getTime',
+    getMongoStatus:  'mongoStore/getMongoStatus',
+    IsMongoDown:  'mongoStore/IsMongoDown',
+    getCamVersion: 'camStore/getVersion',
+  }), 
   mounted() {
     this.fetchUser();
-    this.getMongoStatus();
     this.listenToEvents();
   },
   methods: {
@@ -111,22 +121,6 @@ export default {
       bus.$on('refreshUser', () => {
         this.fetchUser();
       });
-    },
-    // --------------------------------- Refresh mongodb status ------------------------------
-    getMongoStatus() {
-      return axiosinstance({
-        url: '/mongo/status',
-        method: 'get',
-      })
-      .then((response) => {
-        this.current_user = response.data.current_user;
-        this.mongostatus = response.data.mongostatus;
-        this.$log.debug(this.Version + ': Mongo status is ' + this.mongostatus);
-      })
-      .catch((err) => {
-        this.$log.debug(this.Version + ':Problem when enquiring mongodb status');
-      });
-
     },
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {

@@ -3,8 +3,9 @@
 //
 //    Mar 01 2019   Initial
 //    Mar 05 2019   Monitor mongo connection status with DB.on()
+//                  Add mongodown test routine
 //----------------------------------------------------------------------------
-const Version = "mongo:1.13, Mar 05 2019 ";
+const Version = "mongo:1.14, Mar 05 2019 ";
 
 var mongoose = require('mongoose');
 
@@ -96,6 +97,21 @@ module.exports.getMongoDBFlag = function getMongoDBFlag() {
     case CONNECTED:
       return true;
       break;
+  }
+};
+//----------------------------------------------------------------------------
+// mongo is down ? 
+//----------------------------------------------------------------------------
+module.exports.IsMongoDown = function IsMongoDown() {
+  switch ( DB.readyState ) {
+    case DISCONNECTED:
+    case CONNECTING:
+    case DISCONNECTING:
+      return true;
+    case CONNECTED:
+      return false;
+    default:
+      return false;
   }
 };
 

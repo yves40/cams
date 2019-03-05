@@ -5,11 +5,11 @@
     Feb 21 2019     Finalize timer code
     Mar 01 2019     Mongo utils in a specific file
     Mar 05 2019     Store not working, report mongo as down : fix pb
+                    Add mongodown flag
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
-const mongoose = require('mongoose');
 const mongo = require('../../config/mongo');
 const axiosutility = require('../../config/axiosutility');
 const axiosinstance = axiosutility.getAxios();
@@ -17,7 +17,7 @@ const axiosinstance = axiosutility.getAxios();
 const DOWN = 0;
 const UP = 1;
 const TIMEDELAYCHECK = 1000;
-const MONGODELAYCHECK = 15000;
+const MONGODELAYCHECK = 10000;
 
 Vue.use(Vuex);
 
@@ -27,12 +27,13 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.48, Mar 05 2019 ',
+        Version: 'mongoStore:1.55, Mar 05 2019 ',
         clock: '',
         logs: [],
         logschanged: 'false',
         MAXLOG:16,
         mongostatus: DOWN,
+        mongodown: true,        // TRUE if mongodb is down
     },
     /*----------------------------------------------------------------------------
         VUEX Getters
@@ -46,6 +47,9 @@ export default {
         },
         getMongoStatus(state) {
             return state.mongostatus===UP ? 'Mongo running': 'Mongo Down';
+        },
+        IsMongoDown(state) {
+            return state.mongodown;
         },
     },
     /*----------------------------------------------------------------------------
@@ -66,7 +70,8 @@ export default {
               })
               .then((response) => {
                 state.mongostatus = response.data.mongostatus;
-                console.log(state.Version + (state.mongostatus===UP ? 'Mongo running': 'Mongo Down'));
+                state.mongodown = response.data.mongodown;
+                console.log(state.Version + 'Mongo flag is : ' + state.mongodown);
               })
               .catch(() => {
                 state.mongostatus = DOWN;

@@ -46,7 +46,7 @@ const corsutility = require("../../config/corsutility");
 // User definition
 const User = require('../models/userModel')
 // To access mongodb status
-const myenv = require("../../config/myenv");
+const mongo = require("../../config/mongo");
 
 const passport = require('passport');
 const cors = require('cors');
@@ -69,7 +69,7 @@ module.exports.controller = (app) => {
     app.get('/users/current_user', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
             console.log(Version + '/users/current_user callback for ' + req.user.email);
-            mongostatus = myenv.getMongoDBStatus();
+            mongostatus = mongo.getMongoDBStatus();
             res.json( {current_user: req.user, mongostatus: mongostatus} );
         }
     }); 
