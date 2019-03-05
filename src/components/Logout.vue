@@ -33,7 +33,7 @@
 import axios from 'axios';
 import bus from '../bus';
 
-const myenv = require('../../config/myenv');
+const myenv = require('../utilities/myenv');
 const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {

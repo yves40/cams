@@ -66,7 +66,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 import jwtconfig from '../../config/jwtconfig';
-import myenv from '../../config/myenv';
+import myenv from '../utilities/myenv';
 const axiosinstance = require('../../config/axiosutility').getAxios();
 
 export default {

@@ -91,7 +91,7 @@ import { mapGetters, mapActions } from 'vuex';
 import bus from './bus';
 import './assets/stylesheets/cams.css';
 
-const myenv = require('../config/myenv');  
+const myenv = require('./utilities/myenv');  
 const axiosutility = require('../config/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
