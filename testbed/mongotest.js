@@ -9,9 +9,10 @@
 //    Mar 02 2019    mongodb connection checking III
 //                   Async functions
 //    Mar 03 2019    mongodb connection checking IV
+//    Mar 05 2019    mongodb connection checking V
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js:1.28 Mar 03 2019 ";
+const Version = "mongotest.js:1.30 Mar 05 2019 ";
 
 const mongo = require("../config/mongo");  
 
@@ -33,16 +34,6 @@ function sleep(ms) {
 //----------------------------------------------------------------------------
 console.log(Version + 'Using ' + mongo.getVersion());
 _DB = mongo.getMongoDBConnection();
-_DB.on('error',function () {  
-  console.log('Mongoose default connection error: ');
-}); 
-_DB.on('disconnected',function () {  
-  console.log('Mongoose disconnected: ');
-}); 
-_DB.on('connected',function () {  
-  console.log('Mongoose connected: ');
-}); 
-
 let iter = 1;
 //----------------------------------------------------------------------------
 // Go
@@ -55,6 +46,7 @@ checkMongo();
 async function checkMongo() {
 
   while (iter < LOOPS+1) {
+    console.log(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
     await sleep(INTERVAL);
     let status = mongo.getMongoDBStatus();
     switch ( status ) {
@@ -71,6 +63,7 @@ async function checkMongo() {
         console.log(Version + 'Disconnecting' + '[' + iter + ']');
         break;
     }
+    console.log(Version + 'Mongo flag : ' + mongo.getMongoDBFlag());
     ++iter;
   }
   console.log(Version + 'Exit now after ' + --iter + ' iterations');

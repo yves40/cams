@@ -2,8 +2,9 @@
 //    mongo.js
 //
 //    Mar 01 2019   Initial
+//    Mar 05 2019   Monitor mongo connection status with DB.on()
 //----------------------------------------------------------------------------
-const Version = "mongo:1.09, Mar 01 2019 ";
+const Version = "mongo:1.12, Mar 05 2019 ";
 
 var mongoose = require('mongoose');
 
@@ -59,6 +60,17 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
     // Get Mongoose to use the global promise library
     mongoose.Promise = global.Promise;
     DB = mongoose.connection;
+
+    DB.on('error',function (err) {  
+      console.log(Version + 'Mongoose error: ' + err);
+    }); 
+    DB.on('disconnected',function () {  
+      console.log(Version + 'Mongoose disconnected: ');
+    }); 
+    DB.on('connected',function () {  
+      console.log(Version + 'Mongoose connected: ');
+    }); 
+    
     return DB;
   }
   catch(err) {
@@ -66,10 +78,25 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
   }
 };
 //----------------------------------------------------------------------------
-// Get mongo status
+// Get mongo detailed status
 //----------------------------------------------------------------------------
 module.exports.getMongoDBStatus = function getMongoDBStatus() {
   return DB.readyState;
+};
+//----------------------------------------------------------------------------
+// Get mongo runnable status
+//----------------------------------------------------------------------------
+module.exports.getMongoDBFlag = function getMongoDBFlag() {
+  switch ( DB.readyState ) {
+    case DISCONNECTED:
+    case CONNECTING:
+    case DISCONNECTING:
+      return false;
+      break;
+    case CONNECTED:
+      return true;
+      break;
+  }
 };
 
 
