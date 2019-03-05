@@ -12,9 +12,9 @@
 //    Mar 05 2019    mongodb connection checking V
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js:1.30 Mar 05 2019 ";
+const Version = "mongotest.js:1.31 Mar 05 2019 ";
 
-const mongo = require("../config/mongo");  
+const mongo = require("../src/utilities/mongo");  
 
 const INTERVAL = 4000;
 const LOOPS = 10;

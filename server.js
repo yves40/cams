@@ -17,13 +17,14 @@
 //    Feb 11 2019    WIP on mongodb status checking
 //    Feb 20 2019    WIP on mongodb status checking, phase 2
 //    Mar 01 2019    mongo utilities in a specific file
+//    Mar 05 2019    Fix some errors and move utilities code
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 01 2019, 1.62 ";
+const Version = "server.js:Mar 05 2019, 1.63 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
-const mongo = require("./config/mongo");
+const mongo = require("./src/utilities/mongo");
 const myenv = require("./config/myenv");
 const corsutility = require("./config/corsutility");
 const axiosutility = require("./config/axiosutility");

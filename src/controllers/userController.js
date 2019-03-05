@@ -46,7 +46,7 @@ const corsutility = require("../../config/corsutility");
 // User definition
 const User = require('../models/userModel')
 // To access mongodb status
-const mongo = require("../../config/mongo");
+const mongo = require("../utilities/mongo");
 
 const passport = require('passport');
 const cors = require('cors');

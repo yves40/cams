@@ -10,7 +10,7 @@
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
-const mongo = require('../../config/mongo');
+const mongo = require('../utilities/mongo');
 const axiosutility = require('../../config/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 

@@ -10,7 +10,7 @@
 const Version = 'mongoController: 1.12, Mar 05 2019 ';
 
 const corsutility = require("../../config/corsutility");
-const mongo = require("../../config/mongo");
+const mongo = require("../utilities/mongo");
 
 const passport = require('passport');
 const cors = require('cors');
