@@ -42,7 +42,7 @@ const Version = 'userController: 2.45, Feb 11 2019 ';
 // Enable JWT
 const auth = require('../auth');
 // CORS
-const corsutility = require("../../config/corsutility");
+const corsutility = require("../utilities/corsutility");
 // User definition
 const User = require('../models/userModel')
 // To access mongodb status

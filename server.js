@@ -26,7 +26,7 @@ const Version = "server.js:Mar 05 2019, 1.63 ";
 //----------------------------------------------------------------------------
 const mongo = require("./src/utilities/mongo");
 const myenv = require("./src/utilities/myenv");
-const corsutility = require("./config/corsutility");
+const corsutility = require("./src/utilities/corsutility");
 const axiosutility = require("./src/utilities/axiosutility");
 
 const express = require("express");
