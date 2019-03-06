@@ -53,7 +53,7 @@ async function checkMongo() {
   logger.disableconsole();
 
   while (iter < LOOPS+1) {
-    logger.info(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
+    logger.infos(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
     await sleep(INTERVAL);
     logger.debugs(Version + mongo.getMongoDBStatusText() + ' [' + iter + ']');
     ++iter;
