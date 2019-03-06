@@ -11,14 +11,15 @@
 //    Mar 03 2019    mongodb connection checking IV
 //    Mar 05 2019    mongodb connection checking V
 //                   Start using my tiny logger
+//    Mar 06 2019    Test trace to a file
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js:1.32 Mar 05 2019 ";
+const Version = "mongotest.js:1.43 Mar 06 2019 ";
 
 const mongo = require("../src/utilities/mongo");  
-const logger = require("../src/utilities/logger");  
+const logger = require("../src/utilities/logger");
 
-const INTERVAL = 4000;
+const INTERVAL = 2000;
 const LOOPS = 10;
 let _DB = null;
 
@@ -47,6 +48,10 @@ checkMongo();
 //----------------------------------------------------------------------------
 async function checkMongo() {
 
+  logger.tracetofile();
+  logger.info(Version + 'Disabling the console log');
+  logger.disableconsole();
+
   while (iter < LOOPS+1) {
     logger.info(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
     await sleep(INTERVAL);
@@ -68,6 +73,7 @@ async function checkMongo() {
     logger.debug(Version + 'Mongo flag : ' + mongo.getMongoDBFlag());
     ++iter;
   }
+  logger.enableconsole();
   logger.info(Version + 'Exit now after ' + --iter + ' iterations');
   process.exit(0);
 }

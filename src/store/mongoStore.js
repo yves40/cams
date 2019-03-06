@@ -6,11 +6,13 @@
     Mar 01 2019     Mongo utils in a specific file
     Mar 05 2019     Store not working, report mongo as down : fix pb
                     Add mongodown flag
+    Mar 06 2019     Use logger
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
 const mongo = require('../utilities/mongo');
+const logger = require('../utilities/logger');
 const axiosutility = require('../utilities/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
@@ -27,7 +29,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.55, Mar 05 2019 ',
+        Version: 'mongoStore:1.56, Mar 0 2019 ',
         clock: '',
         logs: [],
         logschanged: 'false',
@@ -63,7 +65,7 @@ export default {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
         updateMongoStatus(state) {  // Check mongo status every 10 seconds
-            console.log(state.Version + 'Connect to : ' + mongo.getMongoDBURI());
+            logger.info(state.Version + 'Connect to : ' + mongo.getMongoDBURI());
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
@@ -71,11 +73,11 @@ export default {
               .then((response) => {
                 state.mongostatus = response.data.mongostatus;
                 state.mongodown = response.data.mongodown;
-                console.log(state.Version + 'Mongo flag is : ' + state.mongodown);
+                logger.debug(state.Version + 'Mongo Down flag is : ' + state.mongodown);
               })
               .catch(() => {
                 state.mongostatus = DOWN;
-                console.log(state.Version + ' Problem when enquiring mongodb status');
+                logger.error(state.Version + ' Problem when enquiring mongodb status');
               });
         },
     },
