@@ -14,7 +14,7 @@
 //                  Add a description
 //    Mar 06 2019   console.log replaced by logger
 //----------------------------------------------------------------------------
-const Version = 'userModel:1.29, Mar 06 2019 ';
+const Version = 'userModel:1.30, Mar 06 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -22,7 +22,7 @@ const bcryptjs = require('bcryptjs');
 const STDUSER = 0;
 const ADMINUSER = 100;
 const CAMADMIN = 50;
-const logger = require('./utilities/logger');
+const logger = require('../utilities/logger');
 
 logger.disableconsole();
 logger.tracetofile('/tmp/webapp.log')

@@ -6,7 +6,7 @@
     Mar 01 2019     Mongo utils in a specific file
     Mar 05 2019     Store not working, report mongo as down : fix pb
                     Add mongodown flag
-    Mar 06 2019     Use logger
+    Mar 06 2019     Use logger. Not to a file, just in the console
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -29,7 +29,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.56, Mar 0 2019 ',
+        Version: 'mongoStore:1.58, Mar 06 2019 ',
         clock: '',
         logs: [],
         logschanged: 'false',

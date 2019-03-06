@@ -8,7 +8,7 @@
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
-const logger = require('./utilities/logger');
+const logger = require('../utilities/logger');
 
 Vue.use(Vuex);
 
@@ -18,7 +18,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'camStore:1.01, Mar 06 2019 ',
+        Version: 'camStore:1.02, Mar 06 2019 ',
         clock: '',
     },
     /*----------------------------------------------------------------------------
