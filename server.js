@@ -19,8 +19,9 @@
 //    Mar 01 2019    mongo utilities in a specific file
 //    Mar 05 2019    Fix some errors and move utilities code
 //                   Some work on a logger
+//    Mar 06 2019    console.log replaced by logger
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 05 2019, 1.65 ";
+const Version = "server.js:Mar 06 2019, 1.68 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -39,6 +40,10 @@ const fs = require('fs');
 const passport = require('passport');
 
 console.log('\n\n');
+
+// Some directives for my super logger
+logger.enableconsole();
+logger.tracetofile('/tmp/nodeserver.log');
 
 //----------------------------------------------------------------------------
 // Initialize Express
@@ -65,24 +70,23 @@ app.use(function(req, res, next) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
-logger.debug('Connect to : ' + mongo.getMongoDBURI());
-console.log('Connect to : ' + mongo.getMongoDBURI());
+logger.info('Connect to : ' + mongo.getMongoDBURI());
 let _DB = mongo.getMongoDBConnection();
 //----------------------------------------------------------------------------
 // axiosutility test
 //----------------------------------------------------------------------------
-console.log('\nAXIOS :');
-console.log("---------------------------------------------------------");
-console.log('\t\t\tUsing axiosutility: ' + axiosutility.getVersion());
+logger.info('AXIOS :');
+logger.info("---------------------------------------------------------");
+logger.info('\tUsing axiosutility: ' + axiosutility.getVersion());
 //----------------------------------------------------------------------------
 // Application controllers
 // Find and load deployed controllers : js files in the controllers folder
 //----------------------------------------------------------------------------
-console.log('\nUtility modules :');
-console.log("---------------------------------------------------------");
+logger.info('Utility modules :');
+logger.info("---------------------------------------------------------");
 fs.readdirSync('./src/controllers').forEach( function (file) {
 	if( file.substr(-3) === '.js' ) {
-    console.log("\t\t\tLoading ./src/controllers/" + file);
+    logger.info("\tLoading ./src/controllers/" + file);
     const modul = require('./src/controllers/' + file);
 		modul.controller(app);
   }
@@ -91,13 +95,13 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 // Cross-Origin Resource Sharing
 // https://github.com/expressjs/cors/blob/master/README.md
 //----------------------------------------------------------------------------
-console.log('\nCORS Security setting, sites list:');
-console.log("---------------------------------------------------------");
+logger.info('CORS Security setting, sites list:');
+logger.info("---------------------------------------------------------");
 
 let loop = 0;
 let sitelist = corsutility.getCORSwhitelist();
 for (; loop < sitelist.length; ++loop) {
-  console.log('\t\t\tSite : ' + sitelist[loop]);
+  logger.info('\tSite : ' + sitelist[loop]);
 }
 
 app.use(cors(corsutility.getCORS()));
@@ -106,12 +110,12 @@ app.use(cors(corsutility.getCORS()));
 // Check prefix used for services calls, depending on whether using DEV
 // or PROD environment
 //----------------------------------------------------------------------------
-console.log('\nURL prefix mode :');
-console.log("---------------------------------------------------------");
-console.log('\t\t\t' + myenv.getVersion());
-console.log('\t\t\tRun in mode : ' + myenv.getMode());
-console.log('\t\t\tURL prefix  : ' + myenv.getURLprefix());
-console.log('\t\t\tComing from : ' + myenv.getPrefixSource());
+logger.info('URL prefix mode :');
+logger.info("---------------------------------------------------------");
+logger.info('\t' + myenv.getVersion());
+logger.info('\tRun in mode : ' + myenv.getMode());
+logger.info('\tURL prefix  : ' + myenv.getURLprefix());
+logger.info('\tComing from : ' + myenv.getPrefixSource());
 
 // Home URL
 router.get("/", function(req, res) {
@@ -123,13 +127,13 @@ router.get("/", function(req, res) {
 // Error handler middleware
 //----------------------------------------------------------------------------
 app.use(function(error, req, res, next) {
-  console.log(error.message);
-  res.sendStatus(403); // The request was valid, but the server is refusing action. The user might not have the necessary permissions for a resource, or may need an account of some sort.
+  logger.error(error.message);
+  res.sendStatus(403); // The request was valid, but the server is rejecting action. The user might not have the necessary permissions for a resource, or may need an account of some sort.
 });
-console.log("\nServer status :");
-console.log("---------------------------------------------------------");
+logger.info("Server status :");
+logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
 app.listen(port, function() {
-  console.log('\t\t\t' + Version + ': started on ' + port + '\n\n');
+  logger.info('\t' + Version + ': started on ' + port + '\n\n');
 });
