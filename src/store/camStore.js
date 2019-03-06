@@ -1,11 +1,14 @@
 /*----------------------------------------------------------------------------
     camStore.js    
 
-    Feb 20 2019     Initial
-    Feb 21 2019     Finalize timer code
+    Feb 20 2019   Initial
+    Feb 21 2019   Finalize timer code
+    Mar 06 2019   console.log replaced by logger
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
+
+const logger = require('./utilities/logger');
 
 Vue.use(Vuex);
 
@@ -15,7 +18,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'camStore:1.00, Feb 21 2019 ',
+        Version: 'camStore:1.01, Mar 06 2019 ',
         clock: '',
     },
     /*----------------------------------------------------------------------------
@@ -51,7 +54,7 @@ export default {
             setInterval(() => {
                 context.commit('updateTime')
               }, 1000);
-            console.log(context.state.Version + 'action settimer');
+            logger.debug(context.state.Version + 'action settimer');
         },
     },}
 

@@ -12,8 +12,9 @@
 //    Feb 07 2019   Mongo switch to cams DB
 //    Feb 08 2019   Normalize version
 //                  Add a description
+//    Mar 06 2019   console.log replaced by logger
 //----------------------------------------------------------------------------
-const Version = 'userModel:1.28, Feb 08 2019 ';
+const Version = 'userModel:1.29, Mar 06 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -21,6 +22,10 @@ const bcryptjs = require('bcryptjs');
 const STDUSER = 0;
 const ADMINUSER = 100;
 const CAMADMIN = 50;
+const logger = require('./utilities/logger');
+
+logger.disableconsole();
+logger.tracetofile('/tmp/webapp.log')
 
 const schema = mongoose.Schema;
 
@@ -57,7 +62,6 @@ module.exports.createUser = (newuser, callback) => {
 // List users
 //-----------------------------------------------------------------------------------
 module.exports.listUsers = (callback) => {
-    console.log(Version + 'GET all users');
     User.find({}, 'name email password profilecode', callback); 
 };
 
@@ -96,7 +100,7 @@ module.exports.deleteoneUserByID = (id, callback) => {
         User.collection.deleteOne( { "_id": objectid(id) }, callback );
     }
     catch(e) {
-        console.log(e);
+        logger.error(e);
     }
 };
 
@@ -108,7 +112,7 @@ module.exports.deleteoneUserByName = (name, callback) => {
         User.collection.deleteOne( { "name":  name }, callback );
     }
     catch(e) {
-        console.log(e);
+        logger.error(e);
     }
 };
 

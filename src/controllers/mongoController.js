@@ -23,7 +23,6 @@ module.exports.controller = (app) => {
     app.get('/mongo/status', cors(corsutility.getCORS()), (req, res) => {
             let mongostatus = mongo.getMongoDBStatus();
             let mongodown = mongo.IsMongoDown();
-            console.log(Version + 'mongodown = ' + mongodown);
             res.json( { mongostatus: mongostatus, mongodown: mongodown } );
         }
     ); 

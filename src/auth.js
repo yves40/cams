@@ -3,10 +3,12 @@
 //
 //    Jan 30 2019    Initial
 //    Jan 31 2019    Get userController code 
+//    Mar 06 2019    console.log replaced by logger
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.08, Jan 31 2019 ';
+const Version = 'auth.js:1.09, Mar 06 2019 ';
 
 const jwtconfig = require('./utilities/jwtconfig');
+const logger = require('./utilities/logger');
 const User = require('./models/userModel');
 
 const jwt = require('jsonwebtoken');
@@ -21,11 +23,14 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 jwtOptions.secretOrKey = jwtconfig.jwtSecret;
 
 
+logger.disableconsole();
+logger.tracetofile('/tmp/webapp.log')
+
 //-----------------------------------------------------------------------------------
 // Sign a token
 //-----------------------------------------------------------------------------------
 module.exports.signToken = function signToken(payload) {
-    console.log(Version + 'signing the token with a 3h expiration time');
+    logger.debug(Version + 'signing the token with a 3h expiration time');
     const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 10800}); // 3 hours
     return token;
 };
@@ -60,7 +65,7 @@ passport.use('login',  new LocalStrategy({
             if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
             User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
-                    console.log(Version + email + ' identified');
+                    logger.debug(Version + email + ' identified');
                     return done(null, loggeduser)   // Success login !!!
                 }
                 return done( null, false, {message: 'Wrong password'} ); // Error
@@ -73,12 +78,12 @@ passport.use('login',  new LocalStrategy({
 // Utility routines for passport
 //-----------------------------------------------------------------------------------
 passport.serializeUser((loggeduser, done) => {
-    console.log(Version + 'serializeUser with mail : ' + loggeduser.email);
+    logger.debug(Version + 'serializeUser with mail : ' + loggeduser.email);
     done(null, loggeduser.id);
 });
 
 passport.deserializeUser((id, done) => { 
-    console.log(Version + 'deserializeUser with ID : ' + id);
+    logger.debug(Version + 'deserializeUser with ID : ' + id);
     User.findById(id, (err, loggeduser) => {
         done(err, loggeduser);
     });
