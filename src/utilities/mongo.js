@@ -4,10 +4,12 @@
 //    Mar 01 2019   Initial
 //    Mar 05 2019   Monitor mongo connection status with DB.on()
 //                  Add mongodown test routine
+//    Mar 06 2019   Code Cleanup
 //----------------------------------------------------------------------------
 const Version = "mongo:1.14, Mar 05 2019 ";
 
 var mongoose = require('mongoose');
+const logger = require('./logger');
 
 const mongodb = 'mongodb://vboxweb:4100/cams';
 //----------------------------------------------------------------------------
@@ -24,21 +26,6 @@ module.exports.getMongoDBURI = function getMongoDBURI() {
   return mongodb;
 };
 
-/*
-  Check mongodb state
-  0: disconnected
-  1: connected
-  2: connecting
-  3: disconnecting
-
-  module.exports = Object.freeze( {
-   DISCONNECTED: 0,
-   CONNECTED : 1,
-   CONNECTING : 2,
-   DISCONNECTING : 3,
-});
-
-  */
 const DISCONNECTED = 0;
 const CONNECTED = 1;
 const CONNECTING = 2;
@@ -55,27 +42,27 @@ let DB = null;
 // Open mongo connection
 //----------------------------------------------------------------------------
 module.exports.getMongoDBConnection = function getMongoDBConnection() {
-  console.log(Version + 'Connect to : ' + mongodb);
+  logger.debug(Version + 'Connect to : ' + mongodb);
   try {
     mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false});
     // Get Mongoose to use the global promise library
     mongoose.Promise = global.Promise;
     DB = mongoose.connection;
-
+    // Set up handlers
     DB.on('error',function (err) {  
-      console.log(Version + 'Mongoose error: ' + err);
+      logger.error(Version + 'Mongoose error: ' + err);
     }); 
     DB.on('disconnected',function () {  
-      console.log(Version + 'Mongoose disconnected');
+      logger.debug(Version + 'Mongoose disconnected');
     }); 
     DB.on('connected',function () {  
-      console.log(Version + 'Mongoose connected');
+      logger.debug(Version + 'Mongoose connected');
     }); 
     
     return DB;
   }
   catch(err) {
-    console.log(Version + err);
+    logger.error(Version + err);
   }
 };
 //----------------------------------------------------------------------------
@@ -86,6 +73,7 @@ module.exports.getMongoDBStatus = function getMongoDBStatus() {
 };
 //----------------------------------------------------------------------------
 // Get mongo runnable status
+// TRUE if connected
 //----------------------------------------------------------------------------
 module.exports.getMongoDBFlag = function getMongoDBFlag() {
   switch ( DB.readyState ) {
@@ -97,10 +85,13 @@ module.exports.getMongoDBFlag = function getMongoDBFlag() {
     case CONNECTED:
       return true;
       break;
+    default:
+      return false;
   }
 };
 //----------------------------------------------------------------------------
 // mongo is down ? 
+// TRUE if dsiconnected
 //----------------------------------------------------------------------------
 module.exports.IsMongoDown = function IsMongoDown() {
   switch ( DB.readyState ) {
@@ -114,35 +105,3 @@ module.exports.IsMongoDown = function IsMongoDown() {
       return false;
   }
 };
-
-
-/*
-    mongoose.connection.on('open', function (ref) {
-      connected=true;
-      console.log('open connection to mongo server.');
-    });
-    mongoose.connection.on('connected', function (ref) {
-      connected=true;
-      console.log('connected to mongo server.');
-    });
-    
-    mongoose.connection.on('disconnected', function (ref) {
-      connected=false;
-      console.log('disconnected from mongo server.');
-    });
-    
-    mongoose.connection.on('close', function (ref) {
-      connected=false;
-      console.log('close connection to mongo server');
-    });  
-    mongoose.connection.on('error', function (err) {
-      connected=false;
-      console.log('error connection to mongo server!');
-      console.log(err);
-    });
-    mongoose.connection.db.on('reconnect', function (ref) {
-      connected=true;
-      console.log('reconnect to mongo server.');
-    });
-
-*/

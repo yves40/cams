@@ -18,14 +18,16 @@
 //    Feb 20 2019    WIP on mongodb status checking, phase 2
 //    Mar 01 2019    mongo utilities in a specific file
 //    Mar 05 2019    Fix some errors and move utilities code
+//                   Some work on a logger
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 05 2019, 1.63 ";
+const Version = "server.js:Mar 05 2019, 1.65 ";
 
 //----------------------------------------------------------------------------
 // Get modules
 //----------------------------------------------------------------------------
 const mongo = require("./src/utilities/mongo");
 const myenv = require("./src/utilities/myenv");
+const logger = require("./src/utilities/logger");
 const corsutility = require("./src/utilities/corsutility");
 const axiosutility = require("./src/utilities/axiosutility");
 
@@ -63,6 +65,7 @@ app.use(function(req, res, next) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
+logger.debug('Connect to : ' + mongo.getMongoDBURI());
 console.log('Connect to : ' + mongo.getMongoDBURI());
 let _DB = mongo.getMongoDBConnection();
 //----------------------------------------------------------------------------

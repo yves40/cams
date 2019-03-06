@@ -10,11 +10,13 @@
 //                   Async functions
 //    Mar 03 2019    mongodb connection checking IV
 //    Mar 05 2019    mongodb connection checking V
+//                   Start using my tiny logger
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js:1.31 Mar 05 2019 ";
+const Version = "mongotest.js:1.32 Mar 05 2019 ";
 
 const mongo = require("../src/utilities/mongo");  
+const logger = require("../src/utilities/logger");  
 
 const INTERVAL = 4000;
 const LOOPS = 10;
@@ -32,7 +34,7 @@ function sleep(ms) {
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
-console.log(Version + 'Using ' + mongo.getVersion());
+logger.debug(Version + 'Using ' + mongo.getVersion());
 _DB = mongo.getMongoDBConnection();
 let iter = 1;
 //----------------------------------------------------------------------------
@@ -46,26 +48,26 @@ checkMongo();
 async function checkMongo() {
 
   while (iter < LOOPS+1) {
-    console.log(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
+    logger.info(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
     await sleep(INTERVAL);
     let status = mongo.getMongoDBStatus();
     switch ( status ) {
       case mongo.DISCONNECTED:
-        console.log(Version + 'Disconnected' + '[' + iter + ']');
+        logger.debug(Version + 'Disconnected' + '[' + iter + ']');
         break;
       case mongo.CONNECTED:
-        console.log(Version + 'Connected' + '[' + iter + ']');
+        logger.debug(Version + 'Connected' + '[' + iter + ']');
         break;
       case mongo.CONNECTING:
-        console.log(Version + 'Connecting' + '[' + iter + ']');
+        logger.debug(Version + 'Connecting' + '[' + iter + ']');
         break;
       case mongo.DISCONNECTING:
-        console.log(Version + 'Disconnecting' + '[' + iter + ']');
+        logger.debug(Version + 'Disconnecting' + '[' + iter + ']');
         break;
     }
-    console.log(Version + 'Mongo flag : ' + mongo.getMongoDBFlag());
+    logger.debug(Version + 'Mongo flag : ' + mongo.getMongoDBFlag());
     ++iter;
   }
-  console.log(Version + 'Exit now after ' + --iter + ' iterations');
+  logger.info(Version + 'Exit now after ' + --iter + ' iterations');
   process.exit(0);
 }
