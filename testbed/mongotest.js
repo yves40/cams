@@ -14,7 +14,7 @@
 //    Mar 06 2019    Test trace to a file
 //----------------------------------------------------------------------------
 
-const Version = "mongotest.js:1.43 Mar 06 2019 ";
+const Version = "mongotest.js:1.45 Mar 06 2019 ";
 
 const mongo = require("../src/utilities/mongo");  
 const logger = require("../src/utilities/logger");
@@ -55,25 +55,10 @@ async function checkMongo() {
   while (iter < LOOPS+1) {
     logger.info(Version + 'Waiting for ' + INTERVAL/1000 + ' seconds');
     await sleep(INTERVAL);
-    let status = mongo.getMongoDBStatus();
-    switch ( status ) {
-      case mongo.DISCONNECTED:
-        logger.debug(Version + 'Disconnected' + '[' + iter + ']');
-        break;
-      case mongo.CONNECTED:
-        logger.debug(Version + 'Connected' + '[' + iter + ']');
-        break;
-      case mongo.CONNECTING:
-        logger.debug(Version + 'Connecting' + '[' + iter + ']');
-        break;
-      case mongo.DISCONNECTING:
-        logger.debug(Version + 'Disconnecting' + '[' + iter + ']');
-        break;
-    }
-    logger.debug(Version + 'Mongo flag : ' + mongo.getMongoDBFlag());
+    logger.debugs(Version + mongo.getMongoDBStatusText() + ' [' + iter + ']');
     ++iter;
   }
   logger.enableconsole();
-  logger.info(Version + 'Exit now after ' + --iter + ' iterations');
+  logger.infos(Version + 'Exit now after ' + --iter + ' iterations');
   process.exit(0);
 }

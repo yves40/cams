@@ -4,7 +4,7 @@
 //    Mar 05 2019   Initial (Toulouse ENAC)
 //    Mar 06 2019   Add log level to the trace
 //----------------------------------------------------------------------------
-const Version = 'logger:1.12, Mar 06 2019';
+const Version = 'logger:1.15, Mar 06 2019';
 
 const fs = require('fs'); 
 
@@ -28,6 +28,7 @@ module.exports.WARNING = WARNING;
 module.exports.ERROR = ERROR;
 module.exports.FATAL = FATAL;
 
+// Small func to return a readable status
 function levelToString(level) {
     switch (level) {
         case DEBUG: return 'DBG';
@@ -39,7 +40,9 @@ function levelToString(level) {
     }
 }
 
-function log(mess, level) {
+// The logger 
+// syncmode set to TRUE if waiting for the I/O to complete
+function log(mess, level, syncmode = false) {
     if (level >= LOGMODE) {
         let d = new Date();
         if (logs.length === MAXLOGS) {
@@ -54,14 +57,22 @@ function log(mess, level) {
             console.log(logstring);
         // trace to a file ?
         if (tracetofileflag) {
-            fs.appendFile(OUTFILE,logstring + '\n', 'utf8', function(err) {
-                if (err) {
-                    throw 'Error opening the trace file. Set LOGFILE environment variable to the desired location';
-                }
-            });
+            if (syncmode) 
+                fs.appendFileSync(OUTFILE,logstring + '\n', 'utf8', function(err) {
+                    if (err) {
+                        throw 'Error opening the trace file. Set LOGFILE environment variable to the desired location';
+                    }
+                });
+            else {
+                fs.appendFile(OUTFILE,logstring + '\n', 'utf8', function(err) {
+                    if (err) {
+                        throw 'Error opening the trace file. Set LOGFILE environment variable to the desired location';
+                    }
+                });
+            }
         }
-    }
     return;
+    }
 }
 
 module.exports.enableconsole = function enableconsole() {
@@ -73,6 +84,9 @@ module.exports.disableconsole = function disableconsole() {
         tracetoconsoleflag = false;
 }
 
+//-----------------------------------------------------
+// For ASync mode
+//-----------------------------------------------------
 module.exports.tracetofile = function tracetofile(filename = OUTFILE) {
     tracetofileflag = true;
     OUTFILE = filename;
@@ -95,5 +109,28 @@ module.exports.error = function error(mess) {
 }
 module.exports.fatal = function fatal(mess) {
     log(mess, FATAL);
+    return;
+}
+//-----------------------------------------------------
+// For Sync mode
+//-----------------------------------------------------
+module.exports.debugs = function debugs(mess) {
+    log(mess, DEBUG, true);
+    return;
+}
+module.exports.infos = function infos(mess) {
+    log(mess, INFORMATIONAL, true);
+    return;
+}
+module.exports.warnings = function warnings(mess) {
+    log(mess, WARNING, true);
+    return;
+}
+module.exports.errors = function errors(mess) {
+    log(mess, ERROR, true);
+    return;
+}
+module.exports.fatals = function fatals(mess) {
+    log(mess, FATAL, true);
     return;
 }
