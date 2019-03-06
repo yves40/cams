@@ -6,7 +6,7 @@
 //                  Add mongodown test routine
 //    Mar 06 2019   Code Cleanup
 //----------------------------------------------------------------------------
-const Version = "mongo:1.14, Mar 05 2019 ";
+const Version = "mongo:1.15, Mar 05 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
@@ -66,10 +66,26 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
   }
 };
 //----------------------------------------------------------------------------
-// Get mongo detailed status
+// Get mongo raw status
 //----------------------------------------------------------------------------
 module.exports.getMongoDBStatus = function getMongoDBStatus() {
   return DB.readyState;
+};
+//----------------------------------------------------------------------------
+// Get mongo status in human readable format
+//----------------------------------------------------------------------------
+module.exports.getMongoDBStatusText = function getMongoDBStatusText() {
+  switch ( DB.readyState ) {
+    case DISCONNECTED:
+      return(Version + 'Disconnected');
+    case CONNECTED:
+      return(Version + 'Connected');
+    case CONNECTING:
+      return(Version + 'Connecting');
+    case DISCONNECTING:
+      return(Version + 'Disconnecting');
+    default: return('Unknown')
+  }
 };
 //----------------------------------------------------------------------------
 // Get mongo runnable status
@@ -91,7 +107,7 @@ module.exports.getMongoDBFlag = function getMongoDBFlag() {
 };
 //----------------------------------------------------------------------------
 // mongo is down ? 
-// TRUE if dsiconnected
+// TRUE if disconnected
 //----------------------------------------------------------------------------
 module.exports.IsMongoDown = function IsMongoDown() {
   switch ( DB.readyState ) {
