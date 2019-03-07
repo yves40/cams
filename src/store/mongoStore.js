@@ -7,6 +7,7 @@
     Mar 05 2019     Store not working, report mongo as down : fix pb
                     Add mongodown flag
     Mar 06 2019     Use logger. Not to a file, just in the console
+    Mar 07 2019     Cleanup some code
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -29,10 +30,8 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.58, Mar 06 2019 ',
+        Version: 'mongoStore:1.59, Mar 07 2019 ',
         clock: '',
-        logs: [],
-        logschanged: 'false',
         MAXLOG:16,
         mongostatus: DOWN,
         mongodown: true,        // TRUE if mongodb is down
@@ -98,22 +97,6 @@ export default {
                 context.commit('updateMongoStatus')
               }, MONGODELAYCHECK);
         },
-    },
-    /*----------------------------------------------------------------------------
-        Utilities
-    ----------------------------------------------------------------------------*/
-    // Add a message to the log table
-    months: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
-    log: (mess) => {
-        let d = new Date();
-        if (state.logs.length === state.MAXLOG) {
-            state.logs.shift();
-        }
-        state.logs.push({ 
-                date: months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
-                                + d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"), 
-                message: id + ' ' + mess });
-        state.logschanged = true;
     },
 }
 
