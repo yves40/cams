@@ -35,9 +35,10 @@
 //    Feb 06 2019   current_user, reorder the log 
 //    Feb 08 2019   user description
 //    Feb 11 2019  current_user now sends back the mongo status
+//    Mar 08 2019  use logger
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.45, Feb 11 2019 ';
+const Version = 'userController: 2.46,Mar 08 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -47,6 +48,7 @@ const corsutility = require("../utilities/corsutility");
 const User = require('../models/userModel')
 // To access mongodb status
 const mongo = require("../utilities/mongo");
+const logger = require("../utilities/logger");
 
 const passport = require('passport');
 const cors = require('cors');
@@ -59,7 +61,7 @@ module.exports.controller = (app) => {
     app.post('/users/login', cors(corsutility.getCORS()),passport.authenticate('login'), (req, res) => {
         const payload = { id: req.user.id, email: req.user.email };
         const token = auth.signToken(payload);
-        console.log(Version + 'User ' + req.user.email + ' logged');
+        logger.debug(Version + 'User ' + req.user.email + ' logged');
         res.json( { message: req.user.email + ' logged', token });
     });
 
@@ -68,7 +70,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.get('/users/current_user', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
-            console.log(Version + '/users/current_user callback for ' + req.user.email);
+            logger.debug(Version + '/users/current_user callback for ' + req.user.email);
             mongostatus = mongo.getMongoDBStatus();
             res.json( {current_user: req.user, mongostatus: mongostatus} );
         }
@@ -79,7 +81,7 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/logout', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
-            console.log(Version + 'logging ' + req.user.email +  ' out');
+            logger.debug(Version + 'logging ' + req.user.email +  ' out');
             const useremail = req.user.email;
             req.logout();
             const message = useremail + ' logged out';
@@ -95,8 +97,8 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.get('/users/list', cors(corsutility.getCORS()), (req, res) => {
         User.listUsers( (error, userlist) => {
-            if(error) { console.log(error);}
-            console.log(Version + "Fetched " + userlist.length + " users"); 
+            if(error) { logger.debug(error);}
+            logger.debug(Version + "Fetched " + userlist.length + " users"); 
             res.send(userlist);   
         })
     });
@@ -120,7 +122,7 @@ module.exports.controller = (app) => {
                             message: 'Something went wrong, try again later',
                         });
                     }
-                    console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
+                    logger.debug(Version + 'Added '+ user.email + ' with password ' + user.password);
                     res.send({
                         user: user, 
                         message: 'User ' + user.email + ' registered',
@@ -129,7 +131,7 @@ module.exports.controller = (app) => {
                 });
             }
             else {
-                console.log(Version + 'User ' + req.body.email + ' already registered');
+                logger.debug(Version + 'User ' + req.body.email + ' already registered');
                 res.send({
                     user: null, 
                     message: 'User ' + req.body.email + ' already registered',
@@ -143,18 +145,18 @@ module.exports.controller = (app) => {
     // Register users
     //-----------------------------------------------------------------------------------
     app.post('/users/registers', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Adding users');
+        logger.debug(Version + 'Adding users');
         let allusers = {};
         allusers = req.body.allusers;
-        console.log(Version + 'Received a package for ' + allusers.length + ' users.');
+        logger.debug(Version + 'Received a package for ' + allusers.length + ' users.');
         allusers.forEach((oneuser) => {
             let name = oneuser.name;
             let email = oneuser.email;
             let password = oneuser.password;
             let newuser = new user({name,email,password});
             user.createUser(newuser, (error, user) => {
-                if(error) { console.log(error) };
-                console.log(Version + 'Added '+ user.email + ' with password ' + user.password);
+                if(error) { logger.debug(error) };
+                logger.debug(Version + 'Added '+ user.email + ' with password ' + user.password);
             });
         });
         res.send('success');
@@ -163,10 +165,10 @@ module.exports.controller = (app) => {
     // Find a user by ID
     //-----------------------------------------------------------------------------------
     app.get('/users/find/ID/:id', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Search user with ID : ' + req.params.id);
+        logger.debug(Version + 'Search user with ID : ' + req.params.id);
         User.findById( req.params.id, (error, user) => {
             if(error) { 
-                console.log(error); 
+                logger.debug(error); 
                 res.send( { message: 'No user matching this ID :' + req.params.id });
             }
             res.send(user);
@@ -176,10 +178,10 @@ module.exports.controller = (app) => {
     // Find a user by mail
     //-----------------------------------------------------------------------------------
     app.get('/users/find/email/:email', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Search user with mail : ' + req.params.email);
+        logger.debug(Version + 'Search user with mail : ' + req.params.email);
         User.findOne({ 'email': req.params.email },  (error, user) => {
             if(error) { 
-                console.log(error); 
+                logger.debug(error); 
                 res.send( { message: 'No user matching this email :' + req.params.email });
             }
             res.send(user);
@@ -189,15 +191,15 @@ module.exports.controller = (app) => {
     // Remove One user by ID
     //-----------------------------------------------------------------------------------
     app.post('/users/delete/ID/:id', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Removing user with ID : ' + req.params.id);
+        logger.debug(Version + 'Removing user with ID : ' + req.params.id);
         User.deleteoneUserByID( req.params.id, (error, deleted) => {
-            if(error) { console.log(error); }
+            if(error) { logger.debug(error); }
             if(deleted.result.n === 0) { 
-                console.log('No user matching this ID :' + req.params.id);
+                logger.debug('No user matching this ID :' + req.params.id);
                 res.send( { message: 'No user matching this ID :' + req.params.id });
             }
             else{
-                console.log(Version + ' Done.' );
+                logger.debug(Version + ' Done.' );
             }
             res.send(deleted);
         });
@@ -206,14 +208,14 @@ module.exports.controller = (app) => {
     // Remove One user by name
     //-----------------------------------------------------------------------------------
     app.post('/users/delete/name/:name', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Removing user with name : ' + req.params.name);
+        logger.debug(Version + 'Removing user with name : ' + req.params.name);
         User.deleteoneUserByName( req.params.name, (error, deleted) => {
-            if(error) { console.log(error); }
+            if(error) { logger.debug(error); }
             if(deleted.result.n === 0) { 
-                console.log('No user matching this name :' + req.params.name);
+                logger.debug('No user matching this name :' + req.params.name);
             }
             else{
-                console.log(Version + ' Done.' );
+                logger.debug(Version + ' Done.' );
             }
             res.send(deleted);
         });
@@ -222,9 +224,9 @@ module.exports.controller = (app) => {
     // Remove all users
     //-----------------------------------------------------------------------------------
     app.post('/users/deleteall', cors(corsutility.getCORS()), (req, res) => {
-        console.log(Version + 'Deleting all users !!!');
+        logger.debug(Version + 'Deleting all users !!!');
         User.deleteallUsers( () => {
-            console.log(Version + ' done !!');
+            logger.debug(Version + ' done !!');
             res.send('success');
         });
     })

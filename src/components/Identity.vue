@@ -66,7 +66,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 import jwtconfig from '../utilities/jwtconfig';
-const logger = require('./utilities/logger');
+const logger = require('../utilities/logger');
 import myenv from '../utilities/myenv';
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 
@@ -89,7 +89,7 @@ export default {
       .then((response) => {
         this.theuser = response.data.current_user;
         this.email = this.theuser.email;
-        logger.debug(this.Version + ': Identity.vue:Fetched ' + this.theuser.email);
+        logger.debug(this.Version + ': User fetched ' + this.theuser.email);
       })
       .catch(() => {
         this.theuser = null;

@@ -169,7 +169,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 
 const myenv = require('../utilities/myenv');  
-const logger = require('./utilities/logger');
+const logger = require('../utilities/logger');
 const axiosutility = require('../utilities/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
