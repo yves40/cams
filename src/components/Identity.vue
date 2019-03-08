@@ -66,12 +66,13 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
 import jwtconfig from '../utilities/jwtconfig';
+const logger = require('./utilities/logger');
 import myenv from '../utilities/myenv';
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.57, Feb 08 2019 ',
+    Version: 'Identity:1.58, Mar 08 2019 ',
     payload: '',
     theuser: null,
     email: '',
@@ -79,7 +80,7 @@ export default {
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      this.$log.debug(this.Version + ': fetchuser /users/current_user');
+      logger.debug(this.Version + ': fetchuser /users/current_user');
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
@@ -88,12 +89,12 @@ export default {
       .then((response) => {
         this.theuser = response.data.current_user;
         this.email = this.theuser.email;
-        this.$log.debug(this.Version + ': Identity.vue:Fetched ' + this.theuser.email);
+        logger.debug(this.Version + ': Identity.vue:Fetched ' + this.theuser.email);
       })
       .catch(() => {
         this.theuser = null;
         this.email = '';
-        this.$log.debug(this.Version + ': fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        logger.debug(this.Version + ': fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
         this.$router.push({ name: 'Login' });
       });
     },

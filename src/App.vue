@@ -20,6 +20,8 @@
   Feb 21 2019   Helloworld changed for welcome
   Mar 05 2019   Mongo status used to manage menu items 
                 Use mongostore
+  Mar 07 2019   test a new log method from the Vue with logger
+  Mar 08 2019   Logger
 
 -->
 <template>
@@ -93,12 +95,13 @@ import './assets/stylesheets/cams.css';
 
 const myenv = require('./utilities/myenv');  
 const axiosutility = require('./utilities/axiosutility');
+const logger = require('./utilities/logger');
 const axiosinstance = axiosutility.getAxios();
 
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.76, Mar 05 2019 ',
+    Version: 'App.vue: 1.85, Mar 08 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,
@@ -132,10 +135,10 @@ export default {
       .then((response) => {
         this.current_user = response.data.current_user;
         this.mongostatus = response.data.mongostatus;
-        this.$log.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
+        logger.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
       })
       .catch(() => {
-        this.$log.debug(this.Version + ':fetchUser catch(), current_user set to null'); // User is not logged, err 403 received
+        logger.debug(this.Version + ':fetchUser catch(), current_user set to null'); // User is not logged, err 403 received
         this.current_user = null;
       });
     },

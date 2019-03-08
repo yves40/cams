@@ -3,8 +3,9 @@
 //
 //    Mar 05 2019   Initial (Toulouse ENAC)
 //    Mar 06 2019   Add log level to the trace
+//    Mar 08 2019   test a cal from App.vue
 //----------------------------------------------------------------------------
-const Version = 'logger:1.15, Mar 06 2019';
+const Version = 'logger:1.17, Mar 08 2019';
 
 const fs = require('fs'); 
 
@@ -53,8 +54,16 @@ function log(mess, level, syncmode = false) {
                 + ' [' + levelToString(level) + '] '
                 + ' ' + mess ;
         logs.push( logstring);
+        let display = null;
+        // Is the module called from a browser or from a standalone script ? 
+        if (typeof window === 'undefined') {
+            display = console;
+        }
+        else {
+             display = window.console;
+        }
         if (tracetoconsoleflag)
-            console.log(logstring);
+            display.log(logstring);
         // trace to a file ?
         if (tracetofileflag) {
             if (syncmode) 

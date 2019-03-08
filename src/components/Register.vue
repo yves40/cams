@@ -169,12 +169,13 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 
 const myenv = require('../utilities/myenv');  
+const logger = require('./utilities/logger');
 const axiosutility = require('../utilities/axiosutility');
 const axiosinstance = axiosutility.getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register:2.60, Feb 08 2019',
+    Version: 'Register:2.61, Mar 08 2019',
     name: '',
     description: '',
     email: '',
@@ -191,7 +192,7 @@ export default {
     },
     // All rules satisfied otherwise button is disabled
     submit() {      
-      this.$log.debug(this.Version + ': Register request called using ' + axiosutility.getVersion());
+      logger.debug(this.Version + ': Register request called using ' + axiosutility.getVersion());
       return axiosinstance(
         {
             url: '/users/register',

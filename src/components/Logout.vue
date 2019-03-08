@@ -34,11 +34,12 @@ import axios from 'axios';
 import bus from '../bus';
 
 const myenv = require('../utilities/myenv');
+const logger = require('./utilities/logger');
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Logout:1.10, Feb 08 2019 ',
+    Version: 'Logout:1.11, Mar 08 2019 ',
   }),
   mounted() {
     this.logout();
@@ -46,7 +47,7 @@ export default {
   methods: {
     // --------------------------------- Logging out  --------------------------------
     logout() {
-      this.$log.debug(this.Version + ': Logout the user : /users/logout');
+      logger.debug(this.Version + ': Logout the user : /users/logout');
       return axiosinstance({
         url: '/users/logout',
         headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
@@ -55,7 +56,7 @@ export default {
       .then((response) => {
         window.localStorage.removeItem('jwt');
         bus.$emit('refreshUser');
-        this.$log.debug(this.Version + ':' + response.data.message);
+        logger.debug(this.Version + ':' + response.data.message);
         this.$router.push({ name: 'Home' });
       })
       .catch(() => {});

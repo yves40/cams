@@ -112,11 +112,12 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import axios from 'axios';
 import bus from '../bus';
 import myenv from '../utilities/myenv';  
+const logger = require('./utilities/logger');
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Login:1.37, Feb 08 2019 ',
+    Version: 'Login:1.38, Mar 08 2019 ',
     email: '',
     password: '',
   }),
@@ -130,7 +131,7 @@ export default {
     },
     // Login request
     submit() {      
-      this.$log.debug(this.Version +':Login request called ');
+      logger.debug(this.Version +':Login request called ');
       return axiosinstance(
         {
             url: '/users/login',
