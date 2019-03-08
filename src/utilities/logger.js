@@ -3,9 +3,11 @@
 //
 //    Mar 05 2019   Initial (Toulouse ENAC)
 //    Mar 06 2019   Add log level to the trace
-//    Mar 08 2019   test a cal from App.vue
+//    Mar 08 2019   test a call from App.vue
+//                  Also check that tracing to a file is only possible if not 
+//                  requested from a browser
 //----------------------------------------------------------------------------
-const Version = 'logger:1.17, Mar 08 2019';
+const Version = 'logger:1.18, Mar 08 2019';
 
 const fs = require('fs'); 
 
@@ -64,8 +66,8 @@ function log(mess, level, syncmode = false) {
         }
         if (tracetoconsoleflag)
             display.log(logstring);
-        // trace to a file ?
-        if (tracetofileflag) {
+        // trace to a file ? ( only if not called from a browser )
+        if (tracetofileflag && (typeof window === 'undefined') ) {
             if (syncmode) 
                 fs.appendFileSync(OUTFILE,logstring + '\n', 'utf8', function(err) {
                     if (err) {
