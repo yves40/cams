@@ -14,7 +14,7 @@
 import Vue from 'vue';  
 import Vuex from 'vuex';
 
-const mongo = require('../utilities/mongo');
+// const mongo = require('../utilities/mongo');
 const logger = require('../utilities/logger');
 const axiosutility = require('../utilities/axiosutility');
 const axiosinstance = axiosutility.getAxios();
@@ -32,7 +32,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.61, Mar 10 2019 ',
+        Version: 'mongoStore:1.62, Mar 10 2019 ',
         clock: '',
         MAXLOG:16,
         mongostatus: DOWN,
@@ -65,7 +65,7 @@ export default {
         updateTime(state) {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
-        updateMongoStatus(state) {  // Check mongo status every 10 seconds
+        updateMongoStatus(state) {  // Check mongo status every 2 seconds
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
