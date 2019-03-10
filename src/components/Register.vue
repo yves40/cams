@@ -26,6 +26,7 @@
   Feb 07 2019   axiosinstance
   Feb 08 2019   axiosutility...
                 user description field
+  Mar 10 2019   Fix error message $watch...
 
 -->
 <template>
@@ -58,8 +59,7 @@
               </ValidationProvider>
             </div>
             <div class="col-4"></div>
-          </div>
-          <!-- User description -->
+          </div>          <!-- User description -->
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
@@ -75,8 +75,7 @@
               </ValidationProvider>
             </div>
             <div class="col-4"></div>
-          </div>
-          <!-- Mail -->
+          </div>          <!-- Mail -->
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
@@ -97,7 +96,7 @@
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
-              <ValidationProvider name="password" rules="required|min:6|confirmed:passconf" vid="passwd">
+              <ValidationProvider name="password" rules="required|min:6" vid="passwd">
                 <v-text-field
                   slot-scope="{ errors, valid }"
                   v-model="password"
@@ -126,8 +125,7 @@
               </ValidationProvider>
             </div>
             <div class="col-4"></div>
-          </div>
-        </v-form>
+          </div>        </v-form>
       </v-card-text>
       <!-- Buttons -->
       <div class="row">
@@ -175,7 +173,7 @@ const axiosinstance = axiosutility.getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register:2.61, Mar 08 2019',
+    Version: 'Register:2.62, Mar 10 2019',
     name: '',
     description: '',
     email: '',
