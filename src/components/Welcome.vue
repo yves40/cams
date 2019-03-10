@@ -6,6 +6,7 @@
   Feb 21 2019   Renamed : More tests with the store
   Feb 21 2019   More tests with the store
   Mar 05 2019   mongodown flag added 
+  Mar 10  2019  No longer set the mongo check timer; Done in App.vue
 
 -->
 <template>
@@ -15,7 +16,6 @@
     <p>@ {{getVersion}}</p>    
     <p>@ {{getCamVersion}}</p>    
     <p>@ {{getMongoStatus}}</p>    
-    <p>IsMongoDown() @ {{IsMongoDown}}</p>    
   </v-content>
 </template>
 
@@ -43,7 +43,6 @@ export default {
     ]),
   mounted() {   // Start the clock timer 
     this.$store.dispatch('mongoStore/setClockTimer');
-    this.$store.dispatch('mongoStore/setMongoTimer');
   }
 }
 </script>

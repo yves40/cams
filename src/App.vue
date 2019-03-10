@@ -22,6 +22,7 @@
                 Use mongostore
   Mar 07 2019   test a new log method from the Vue with logger
   Mar 08 2019   Logger
+  Mar 10 2019   This Vue sets the mongo status check timer now (instead of welcome)
 
 -->
 <template>
@@ -101,7 +102,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.85, Mar 08 2019 ',
+    Version: 'App.vue: 1.86, Mar 10 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,
@@ -117,6 +118,7 @@ export default {
   mounted() {
     this.fetchUser();
     this.listenToEvents();
+    this.$store.dispatch('mongoStore/setMongoTimer');
   },
   methods: {
     // --------------------------------- Event listener --------------------------------

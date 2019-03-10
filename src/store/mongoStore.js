@@ -8,6 +8,8 @@
                     Add mongodown flag
     Mar 06 2019     Use logger. Not to a file, just in the console
     Mar 07 2019     Cleanup some code
+    Mar 10 2019     Reduce checking delay for mongo to 2 seconds
+                    Suppress unnecessary log messages
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -20,7 +22,7 @@ const axiosinstance = axiosutility.getAxios();
 const DOWN = 0;
 const UP = 1;
 const TIMEDELAYCHECK = 1000;
-const MONGODELAYCHECK = 10000;
+const MONGODELAYCHECK = 2000;
 
 Vue.use(Vuex);
 
@@ -30,7 +32,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.59, Mar 07 2019 ',
+        Version: 'mongoStore:1.61, Mar 10 2019 ',
         clock: '',
         MAXLOG:16,
         mongostatus: DOWN,
@@ -64,7 +66,6 @@ export default {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
         updateMongoStatus(state) {  // Check mongo status every 10 seconds
-            logger.info(state.Version + 'Connect to : ' + mongo.getMongoDBURI());
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
@@ -72,7 +73,6 @@ export default {
               .then((response) => {
                 state.mongostatus = response.data.mongostatus;
                 state.mongodown = response.data.mongodown;
-                logger.debug(state.Version + 'Mongo Down flag is : ' + state.mongodown);
               })
               .catch(() => {
                 state.mongostatus = DOWN;
