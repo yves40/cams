@@ -102,7 +102,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.86, Mar 10 2019 ',
+    Version: 'App.vue: 1.87, Mar 10 2019 ',
     drawer: null,
     current_user: null,
     mongostatus: false,
@@ -139,8 +139,7 @@ export default {
         this.mongostatus = response.data.mongostatus;
         logger.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
       })
-      .catch(() => {
-        logger.debug(this.Version + ':fetchUser catch(), current_user set to null'); // User is not logged, err 403 received
+      .catch(() => { // User is not logged, HTTP 403 received
         this.current_user = null;
       });
     },

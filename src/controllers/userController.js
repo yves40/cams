@@ -36,9 +36,10 @@
 //    Feb 08 2019   user description
 //    Feb 11 2019  current_user now sends back the mongo status
 //    Mar 08 2019  use logger
+//    Mar 10 2019  undefined on logout
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.46,Mar 08 2019 ';
+const Version = 'userController: 2.47,Mar 10 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -85,7 +86,7 @@ module.exports.controller = (app) => {
             const useremail = req.user.email;
             req.logout();
             const message = useremail + ' logged out';
-            res.json( { message: this.message });
+            res.json( { message: message });
         }
         else {
             res.json( { message: 'Not logged '});
