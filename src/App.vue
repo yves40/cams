@@ -23,6 +23,7 @@
   Mar 07 2019   test a new log method from the Vue with logger
   Mar 08 2019   Logger
   Mar 10 2019   This Vue sets the mongo status check timer now (instead of welcome)
+                Some changes on variables names
 
 -->
 <template>
@@ -50,10 +51,10 @@
       </v-toolbar-side-icon>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn id="user_email" flat v-if="current_user">{{current_user.email}}</v-btn>
-        <v-btn id="register_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Register' }" v-if="!current_user">Register</v-btn>
-        <v-btn id="login_btn" flat  :disabled=IsMongoDown v-bind:to="{ name: 'Login' }" v-if="!current_user">Login</v-btn>
-        <v-btn id="logout_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Logout' }" v-if="current_user">Logout</v-btn>
+        <v-btn id="user_email" flat v-if="theuser">{{theuser.email}}</v-btn>
+        <v-btn id="register_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Register' }" v-if="!theuser">Register</v-btn>
+        <v-btn id="login_btn" flat  :disabled=IsMongoDown v-bind:to="{ name: 'Login' }" v-if="!theuser">Login</v-btn>
+        <v-btn id="logout_btn" flat :disabled=IsMongoDown v-bind:to="{ name: 'Logout' }" v-if="theuser">Logout</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <!--Content -->
@@ -102,9 +103,10 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.87, Mar 10 2019 ',
+    Version: 'App.vue: 1.90, Mar 10 2019 ',
     drawer: null,
-    current_user: null,
+    theuser: null,
+    email: '',
     mongostatus: false,
     mongodown: true,
   }),
@@ -135,12 +137,13 @@ export default {
         headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
-        this.current_user = response.data.current_user;
+        this.theuser = response.data.current_user;
+        this.email = this.theuser.email;
         this.mongostatus = response.data.mongostatus;
-        logger.debug(this.Version + ':Identified user is ' + this.current_user ? this.current_user.email: 'Not logged'); // User is not logged, err 403 received
+        logger.debug(this.Version + ':Identified user is ' + this.theuser.email); // User is not logged, err 403 received
       })
       .catch(() => { // User is not logged, HTTP 403 received
-        this.current_user = null;
+        this.theuser = null;
       });
     },
   },
