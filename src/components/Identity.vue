@@ -15,6 +15,7 @@
                 axios default authorization header 
   Feb 06 2019   Simplify axios 
   Feb 08 2019   axiosutility...
+  Feb 10 2019   Remove log message
 
 -->
 <template>
@@ -72,7 +73,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.58, Mar 08 2019 ',
+    Version: 'Identity:1.59, Mar 10 2019 ',
     payload: '',
     theuser: null,
     email: '',
@@ -80,7 +81,6 @@ export default {
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
-      logger.debug(this.Version + ': fetchuser /users/current_user');
       return axiosinstance({
         url: '/users/current_user',
         method: 'get',
