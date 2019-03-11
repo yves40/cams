@@ -44,7 +44,7 @@ Vue.use(VueLogger, options);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  router,
+  router: router,
   store,
   components: { App },
   template: '<App/>'
