@@ -20,8 +20,9 @@
 //    Mar 05 2019    Fix some errors and move utilities code
 //                   Some work on a logger
 //    Mar 06 2019    console.log replaced by logger
+//    Mar 12 2019    Today, trying to understand middleware ;-)
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 06 2019, 1.68 ";
+const Version = "server.js:Mar 12 2019, 1.70 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -117,12 +118,6 @@ logger.info('\tRun in mode : ' + myenv.getMode());
 logger.info('\tURL prefix  : ' + myenv.getURLprefix());
 logger.info('\tComing from : ' + myenv.getPrefixSource());
 
-// Home URL
-router.get("/", function(req, res) {
-  res.json({ message: "API initialized" });
-});
-
-
 //----------------------------------------------------------------------------
 // Error handler middleware
 //----------------------------------------------------------------------------
@@ -130,6 +125,7 @@ app.use(function(error, req, res, next) {
   logger.error(error.message);
   res.sendStatus(403); // The request was valid, but the server is rejecting action. The user might not have the necessary permissions for a resource, or may need an account of some sort.
 });
+
 logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
