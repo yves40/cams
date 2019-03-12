@@ -95,7 +95,7 @@ export default {
       .catch(() => {
         this.theuser = null;
         this.email = '';
-        logger.debug(this.Version + ': fetchuser catch(), current_user set to null'); // User is not logged, err 403 received
+        logger.debug(this.Version + ': User not logged '); // User is not logged, err 401 received
         this.$router.push({ name: 'Login' });
       });
     },
