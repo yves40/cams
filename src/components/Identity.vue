@@ -16,6 +16,7 @@
   Feb 06 2019   Simplify axios 
   Feb 08 2019   axiosutility...
   Feb 10 2019   Remove log message
+  Mar 12 2019   whoami
 
 -->
 <template>
@@ -73,7 +74,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.59, Mar 10 2019 ',
+    Version: 'Identity:1.60, Mar 12 2019 ',
     payload: '',
     theuser: null,
     email: '',
@@ -82,12 +83,12 @@ export default {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
       return axiosinstance({
-        url: '/users/current_user',
+        url: '/users/whoami',
         method: 'get',
         headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
-        this.theuser = response.data.current_user;
+        this.theuser = response.data.whoami;
         this.email = this.theuser.email;
         logger.debug(this.Version + ': User fetched ' + this.theuser.email);
       })

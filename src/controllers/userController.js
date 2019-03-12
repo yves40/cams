@@ -37,9 +37,10 @@
 //    Feb 11 2019  current_user now sends back the mongo status
 //    Mar 08 2019  use logger
 //    Mar 10 2019  undefined on logout
+//    Mar 12 2019  whoami
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.47,Mar 10 2019 ';
+const Version = 'userController: 2.48,Mar 12 2019 ';
 
 // Enable JWT
 const auth = require('../auth');
@@ -69,11 +70,11 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     // get current user
     //-----------------------------------------------------------------------------------
-    app.get('/users/current_user', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
+    app.get('/users/whoami', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
-            logger.debug(Version + '/users/current_user callback for ' + req.user.email);
+            logger.debug(Version + '/users/whoami callback for ' + req.user.email);
             mongostatus = mongo.getMongoDBStatus();
-            res.json( {current_user: req.user, mongostatus: mongostatus} );
+            res.json( {whoami: req.user, mongostatus: mongostatus} );
         }
     }); 
 

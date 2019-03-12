@@ -24,6 +24,7 @@
   Mar 08 2019   Logger
   Mar 10 2019   This Vue sets the mongo status check timer now (instead of welcome)
                 Some changes on variables names
+  Mar 12 2019   whoami
 
 -->
 <template>
@@ -132,12 +133,12 @@ export default {
     // --------------------------------- Is user logged ? ------------------------------
     fetchUser() {
       return axiosinstance({
-        url: '/users/current_user',
+        url: '/users/whoami',
         method: 'get',
         headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
       })
       .then((response) => {
-        this.theuser = response.data.current_user;
+        this.theuser = response.data.whoami;
         this.email = this.theuser.email;
         this.mongostatus = response.data.mongostatus;
         logger.debug(this.Version + ':Identified user is ' + this.theuser.email); // User is not logged, err 403 received
