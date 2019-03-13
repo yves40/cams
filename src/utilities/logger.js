@@ -7,8 +7,9 @@
 //                  Also check that tracing to a file is only possible if not 
 //                  requested from a browser
 //    Mar 13 2019   Check LOGMODE and LOGFILE variables works
+//                  Modify file output logic
 //----------------------------------------------------------------------------
-const Version = 'logger:1.19, Mar 13 2019';
+const Version = 'logger:1.24, Mar 13 2019';
 
 const fs = require('fs'); 
 
@@ -25,7 +26,7 @@ const FATAL = 4;
 // If LOGFILE is defined, it automatically turns the logger to file output, 
 // except if used in a browser
 const LOGMODE = process.env.LOGMODE || DEBUG;
-let OUTFILE = process.env.LOGFILE || '/tmp/' + Version + '.log'
+let OUTFILE = process.env.LOGFILE || '/tmp/' + Version.replace(/[,:]/g,'_').replace(/ /g, '_') + '.log'
 let tracetofileflag = false;
 let tracetoconsoleflag = true;
 
@@ -100,12 +101,18 @@ module.exports.disableconsole = function disableconsole() {
 }
 
 //-----------------------------------------------------
-// For ASync mode
+//  Set the file trace
+//  If no filename passed, will default to OUTFILE
+//  which itsel depends on either LOGFILE environment 
+//  variable or a default (see code above)
 //-----------------------------------------------------
 module.exports.tracetofile = function tracetofile(filename = OUTFILE) {
     tracetofileflag = true;
     OUTFILE = filename;
 }
+//-----------------------------------------------------
+// For ASync mode
+//-----------------------------------------------------
 module.exports.debug = function debug(mess) {
     log(mess, DEBUG);
     return;
