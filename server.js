@@ -21,8 +21,9 @@
 //                   Some work on a logger
 //    Mar 06 2019    console.log replaced by logger
 //    Mar 12 2019    Today, trying to understand middleware ;-)
+//    Mar 13 2019    Still trying to understand middleware ;-)
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 12 2019, 1.70 ";
+const Version = "server.js:Mar 13 2019, 1.71 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -44,30 +45,14 @@ console.log('\n\n');
 
 // Some directives for my super logger
 logger.enableconsole();
-logger.tracetofile('/tmp/nodeserver.log');
+logger.tracetofile('/tmp/nodejs-server.log');
 
 //----------------------------------------------------------------------------
 // Initialize Express
 //----------------------------------------------------------------------------
 const app = express();
 const router = express.Router();
-app.use(bodyParser.json());
-app.use(express.static(__dirname + "/dist"));
-//----------------------------------------------------------------------------
-//  Session management : Use Passport
-//  Beware, the order of app.use() calls is mandatory
-//----------------------------------------------------------------------------
-app.use(passport.initialize());
-app.use(passport.session());
-//----------------------------------------------------------------------------
-// For the favicon boring request error
-//----------------------------------------------------------------------------
-app.use(function(req, res, next) {
-  if (req.originalUrl && req.originalUrl.split("/").pop() === "favicon.ico") {
-    return res.sendStatus(204);
-  }
-  return next();
-});
+
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
@@ -78,7 +63,7 @@ let _DB = mongo.getMongoDBConnection();
 //----------------------------------------------------------------------------
 logger.info('AXIOS :');
 logger.info("---------------------------------------------------------");
-logger.info('\tUsing axiosutility: ' + axiosutility.getVersion());
+logger.info('Using axiosutility: ' + axiosutility.getVersion());
 //----------------------------------------------------------------------------
 // Application controllers
 // Find and load deployed controllers : js files in the controllers folder
@@ -87,7 +72,7 @@ logger.info('Utility modules :');
 logger.info("---------------------------------------------------------");
 fs.readdirSync('./src/controllers').forEach( function (file) {
 	if( file.substr(-3) === '.js' ) {
-    logger.info("\tLoading ./src/controllers/" + file);
+    logger.info("Loading ./src/controllers/" + file);
     const modul = require('./src/controllers/' + file);
 		modul.controller(app);
   }
@@ -102,34 +87,44 @@ logger.info("---------------------------------------------------------");
 let loop = 0;
 let sitelist = corsutility.getCORSwhitelist();
 for (; loop < sitelist.length; ++loop) {
-  logger.info('\tSite : ' + sitelist[loop]);
+  logger.info('Site : ' + sitelist[loop]);
 }
-
-app.use(cors(corsutility.getCORS()));
-
 //----------------------------------------------------------------------------
 // Check prefix used for services calls, depending on whether using DEV
 // or PROD environment
 //----------------------------------------------------------------------------
 logger.info('URL prefix mode :');
 logger.info("---------------------------------------------------------");
-logger.info('\t' + myenv.getVersion());
-logger.info('\tRun in mode : ' + myenv.getMode());
-logger.info('\tURL prefix  : ' + myenv.getURLprefix());
-logger.info('\tComing from : ' + myenv.getPrefixSource());
-
+logger.info('' + myenv.getVersion());
+logger.info('Run in mode : ' + myenv.getMode());
+logger.info('URL prefix  : ' + myenv.getURLprefix());
+logger.info('Coming from : ' + myenv.getPrefixSource());
 //----------------------------------------------------------------------------
-// Error handler middleware
+// Middleware handlers
+// Beware, the order of app.use() calls is VERY important
 //----------------------------------------------------------------------------
+app.use(bodyParser.json());
+app.use(express.static(__dirname + "/dist"));
+app.use(passport.initialize()); 
+app.use(passport.session());
+app.use(function(req, res, next) {  // For the favicon boring request error
+  if (req.originalUrl && req.originalUrl.split("/").pop() === "favicon.ico") {
+    return res.sendStatus(204);
+  }
+  return next();
+});
+app.use(cors(corsutility.getCORS()));
 app.use(function(error, req, res, next) {
   logger.error(error.message);
-  res.sendStatus(403); // The request was valid, but the server is rejecting action. The user might not have the necessary permissions for a resource, or may need an account of some sort.
+  res.sendStatus(403);
 });
-
+//----------------------------------------------------------------------------
+// Starts the server
+//----------------------------------------------------------------------------
 logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
 app.listen(port, function() {
-  logger.info('\t' + Version + ': started on ' + port + '\n\n');
+  logger.info(Version + ': started on ' + port + '\n\n');
 });

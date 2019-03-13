@@ -6,8 +6,9 @@
 //    Mar 08 2019   test a call from App.vue
 //                  Also check that tracing to a file is only possible if not 
 //                  requested from a browser
+//    Mar 13 2019   Check LOGMODE and LOGFILE variables works
 //----------------------------------------------------------------------------
-const Version = 'logger:1.18, Mar 08 2019';
+const Version = 'logger:1.19, Mar 13 2019';
 
 const fs = require('fs'); 
 
@@ -20,8 +21,11 @@ const INFORMATIONAL = 1;
 const WARNING = 2;
 const ERROR = 3;
 const FATAL = 4;
+// ENV shell variables LOGMODE and LOGFILE defines log level and log destination 
+// If LOGFILE is defined, it automatically turns the logger to file output, 
+// except if used in a browser
 const LOGMODE = process.env.LOGMODE || DEBUG;
-let OUTFILE = process.env.LOGFILE || '/tmp/jslogger.log'
+let OUTFILE = process.env.LOGFILE || '/tmp/' + Version + '.log'
 let tracetofileflag = false;
 let tracetoconsoleflag = true;
 
