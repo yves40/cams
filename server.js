@@ -22,8 +22,10 @@
 //    Mar 06 2019    console.log replaced by logger
 //    Mar 12 2019    Today, trying to understand middleware ;-)
 //    Mar 13 2019    Still trying to understand middleware ;-)
+//                   Also trying to clarify importance of middleware and modules 
+//                   loading order
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 13 2019, 1.74 ";
+const Version = "server.js:Mar 13 2019, 1.79 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -67,6 +69,7 @@ const router = express.Router();
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
 logger.info('MONGODB :');
 logger.info("---------------------------------------------------------");
 logger.info('Connect to : ' + mongo.getMongoDBURI());
@@ -75,28 +78,16 @@ let _DB = mongo.getMongoDBConnection();
 //----------------------------------------------------------------------------
 // axiosutility test
 //----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
 logger.info('AXIOS :');
 logger.info("---------------------------------------------------------");
 logger.info('Using axiosutility: ' + axiosutility.getVersion());
 
 //----------------------------------------------------------------------------
-// Application controllers
-// Find and load deployed controllers : js files in the controllers folder
-//----------------------------------------------------------------------------
-logger.info('Utility modules :');
-logger.info("---------------------------------------------------------");
-fs.readdirSync('./src/controllers').forEach( function (file) {
-	if( file.substr(-3) === '.js' ) {
-    logger.info("Loading ./src/controllers/" + file);
-    const modul = require('./src/controllers/' + file);
-		modul.controller(app);
-  }
-})
-
-//----------------------------------------------------------------------------
 // Cross-Origin Resource Sharing
 // https://github.com/expressjs/cors/blob/master/README.md
 //----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
 logger.info('CORS Security setting, sites list:');
 logger.info("---------------------------------------------------------");
 
@@ -110,6 +101,7 @@ for (; loop < sitelist.length; ++loop) {
 // Check prefix used for services calls, depending on whether using DEV
 // or PROD environment
 //----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
 logger.info('URL prefix mode :');
 logger.info("---------------------------------------------------------");
 logger.info('' + myenv.getVersion());
@@ -121,6 +113,12 @@ logger.info('Coming from : ' + myenv.getPrefixSource());
 // Middleware handlers
 // Beware, the order of app.use() calls is VERY important
 //----------------------------------------------------------------------------
+
+app.use('/users/login', function(req, res, next) {  
+  logger.debug(Version + req.params);
+  return next();
+});
+
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/dist"));
 app.use(passport.initialize()); 
@@ -138,8 +136,26 @@ app.use(function(error, req, res, next) {
 });
 
 //----------------------------------------------------------------------------
+// Application controllers
+// Find and load deployed controllers : js files in the controllers folder
+// Do that after the installation of middlewares (just above code)
+//----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
+logger.info('Utility modules :');
+logger.info("---------------------------------------------------------");
+fs.readdirSync('./src/controllers').forEach( function (file) {
+	if( file.substr(-3) === '.js' ) {
+    logger.info("Loading ./src/controllers/" + file);
+    const modul = require('./src/controllers/' + file);
+    logger.info("./src/controllers/" + file + ' loaded') ;
+		modul.controller(app);
+  }
+});
+
+//----------------------------------------------------------------------------
 // Starts the server
 //----------------------------------------------------------------------------
+logger.info("---------------------------------------------------------");
 logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
