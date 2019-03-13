@@ -4,6 +4,7 @@
 
     Dec 22 2018       Initial
     Feb 06 2019       mongo scripts and cams app deployment 
+    Mar 13 2019       loggersettings
 
 ****************************************************************************************************** -->
 <project name="assessment" default="help" basedir="." >
@@ -49,6 +50,7 @@
         <copy todir="${build.workdir}" verbose="${copy.verbosemode}">
             <fileset dir="${build.srcdir}" casesensitive="true">
                 <include name="**/*nodeadmin.sh"/>
+                <include name="**/*loggersettings.sh"/>
                 <include name="**/*.html"/>
                 <include name="**/*.js"/>
                 <include name="**/*.json"/>
