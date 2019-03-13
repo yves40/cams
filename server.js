@@ -25,7 +25,7 @@
 //                   Also trying to clarify importance of middleware and modules 
 //                   loading order
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 13 2019, 1.79 ";
+const Version = "server.js:Mar 13 2019, 1.83 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -33,6 +33,7 @@ const Version = "server.js:Mar 13 2019, 1.79 ";
 const mongo = require("./src/utilities/mongo");
 const myenv = require("./src/utilities/myenv");
 const logger = require("./src/utilities/logger");
+const helpers = require("./src/utilities/helpers");
 const corsutility = require("./src/utilities/corsutility");
 const axiosutility = require("./src/utilities/axiosutility");
 
@@ -113,10 +114,12 @@ logger.info('Coming from : ' + myenv.getPrefixSource());
 // Middleware handlers
 // Beware, the order of app.use() calls is VERY important
 //----------------------------------------------------------------------------
-
 app.use('/users/login', function(req, res, next) {  
-  logger.debug(Version + req.params);
-  return next();
+  console.log();
+  logger.debug(Version + ' User login requested @ :' + helpers.getDateTime());
+  logger.debug(Version + ' User login requested @ :' + helpers.getTime());
+  logger.debug(Version + ' User login requested @ :' + helpers.getHoursMinutes());
+  next();
 });
 
 app.use(bodyParser.json());
