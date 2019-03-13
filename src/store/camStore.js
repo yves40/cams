@@ -4,6 +4,7 @@
     Feb 20 2019   Initial
     Feb 21 2019   Finalize timer code
     Mar 06 2019   console.log replaced by logger
+    Mar 13 2019   getTime() removed
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -18,7 +19,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'camStore:1.02, Mar 06 2019 ',
+        Version: 'camStore:1.03, Mar 13 2019 ',
         clock: '',
     },
     /*----------------------------------------------------------------------------
@@ -28,9 +29,6 @@ export default {
         getVersion(state) {
             return state.Version;
         },
-        getTime(state) {
-            return state.clock;
-        },
     },
     /*----------------------------------------------------------------------------
         VUEX mutations
@@ -38,9 +36,6 @@ export default {
     mutations: { // Synchronous
         clearlog(state) {
             state.logs = [];
-        },
-        updateTime(state) {
-            state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
     },
     /*----------------------------------------------------------------------------
