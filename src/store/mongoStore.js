@@ -24,7 +24,7 @@ const DOWN = 0;
 const UP = 1;
 const TIMEDELAYCHECK = 1000;
 const MONGODELAYCHECK = 2000;
-let pingnumber = 0;
+let failures = 0;
 
 Vue.use(Vuex);
 
@@ -34,7 +34,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.63, Mar 13 2019 ',
+        Version: 'mongoStore:1.65, Mar 13 2019 ',
         clock: '',
         MAXLOG:16,
         mongostatus: DOWN,
@@ -68,19 +68,24 @@ export default {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
         updateMongoStatus(state) {  // Check mongo status every 2 seconds
-            ++pingnumber;
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
               })
               .then((response) => {
+                if (failures !== 0) {
+                    failures = 0;     // Back to normal status
+                    logger.debug(state.Version + 'mongodb status service is back');
+
+                }
                 state.mongostatus = response.data.mongostatus;
                 state.mongodown = response.data.mongodown;
               })
               .catch(() => {
+                ++failures;
                 state.mongostatus = DOWN;
-                if (pingnumber % 10 === 0) {
-                    logger.error(state.Version + ' Error when calling mongodb status service ' + pingnumber);
+                if ((failures % 10 === 0)||(failures === 1)) {
+                    logger.error(state.Version + ' Error when calling mongodb status service ');
                 }
               });
         },
