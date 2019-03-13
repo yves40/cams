@@ -9,7 +9,7 @@
 //    Mar 13 2019   Check LOGMODE and LOGFILE variables works
 //                  Modify file output logic
 //----------------------------------------------------------------------------
-const Version = 'logger:1.24, Mar 13 2019';
+const Version = 'logger:1.28, Mar 13 2019';
 
 const fs = require('fs'); 
 
@@ -36,7 +36,9 @@ module.exports.WARNING = WARNING;
 module.exports.ERROR = ERROR;
 module.exports.FATAL = FATAL;
 
+//----------------------------------------------------------------------------
 // Small func to return a readable status
+//----------------------------------------------------------------------------
 function levelToString(level) {
     switch (level) {
         case DEBUG: return 'DBG';
@@ -48,8 +50,43 @@ function levelToString(level) {
     }
 }
 
+//-----------------------------------------------------
+// Logger infos
+// Returns an object with logger data
+//-----------------------------------------------------
+module.exports.getLoggerInfo = function getLoggerInfo() {
+    loggerinfo = {};
+    loggerinfo.version = Version;
+    if (process.env.LOGMODE) {
+        loggerinfo.logleveldefiner = 'Shell defined as ' +  process.env.LOGMODE;
+    }
+    else {
+        loggerinfo.logleveldefiner = 'Program defined, using default DEBUG level';
+    }
+    loggerinfo.loglevel = levelToString(parseInt(LOGMODE, 10));
+    if (process.env.LOGFILE) {
+        loggerinfo.logfiledefiner = 'Shell defined';
+    }
+    else {
+        loggerinfo.logfiledefiner = 'Program defined';
+    }
+    loggerinfo.logfile = OUTFILE;
+    if (tracetoconsoleflag) 
+        loggerinfo.tracetoconsole = 'Console log enabled'; 
+    else 
+        loggerinfo.tracetoconsole = 'Console log disabled';
+    if (tracetofileflag)
+        loggerinfo.tracetofile = 'File log enabled'; 
+    else
+        loggerinfo.tracetofile = 'File log disabled';
+
+    return loggerinfo;
+}
+
+//----------------------------------------------------------------------------
 // The logger 
 // syncmode set to TRUE if waiting for the I/O to complete
+//----------------------------------------------------------------------------
 function log(mess, level, syncmode = false) {
     if (level >= LOGMODE) {
         let d = new Date();
@@ -91,6 +128,9 @@ function log(mess, level, syncmode = false) {
     }
 }
 
+//----------------------------------------------------------------------------
+// Functions used to switch console mode
+//----------------------------------------------------------------------------
 module.exports.enableconsole = function enableconsole() {
     tracetoconsoleflag = true;
 }

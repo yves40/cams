@@ -23,7 +23,7 @@
 //    Mar 12 2019    Today, trying to understand middleware ;-)
 //    Mar 13 2019    Still trying to understand middleware ;-)
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 13 2019, 1.71 ";
+const Version = "server.js:Mar 13 2019, 1.74 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -43,9 +43,20 @@ const passport = require('passport');
 
 console.log('\n\n');
 
+//----------------------------------------------------------------------------
 // Some directives for my super logger
+//----------------------------------------------------------------------------
 logger.enableconsole();
-logger.tracetofile('/tmp/nodejs-server.log');
+logger.tracetofile();
+loggerdata = logger.getLoggerInfo();
+logger.info('LOGGER info :');
+logger.info("---------------------------------------------------------");
+logger.info('Logger console mode : ' + loggerdata.tracetoconsole);
+logger.info('Logger file mode    : ' + loggerdata.tracetofile);
+logger.info('LOGMODE definition  : ' + loggerdata.logleveldefiner);
+logger.info('LOGLEVEL            : ' + loggerdata.loglevel);
+logger.info('LOGFILE definition  : ' + loggerdata.logfiledefiner);
+logger.info('LOGFILE             : ' + loggerdata.logfile);
 
 //----------------------------------------------------------------------------
 // Initialize Express
@@ -56,14 +67,18 @@ const router = express.Router();
 //----------------------------------------------------------------------------
 // Connect to mongo 
 //----------------------------------------------------------------------------
+logger.info('MONGODB :');
+logger.info("---------------------------------------------------------");
 logger.info('Connect to : ' + mongo.getMongoDBURI());
 let _DB = mongo.getMongoDBConnection();
+
 //----------------------------------------------------------------------------
 // axiosutility test
 //----------------------------------------------------------------------------
 logger.info('AXIOS :');
 logger.info("---------------------------------------------------------");
 logger.info('Using axiosutility: ' + axiosutility.getVersion());
+
 //----------------------------------------------------------------------------
 // Application controllers
 // Find and load deployed controllers : js files in the controllers folder
@@ -77,6 +92,7 @@ fs.readdirSync('./src/controllers').forEach( function (file) {
 		modul.controller(app);
   }
 })
+
 //----------------------------------------------------------------------------
 // Cross-Origin Resource Sharing
 // https://github.com/expressjs/cors/blob/master/README.md
@@ -89,6 +105,7 @@ let sitelist = corsutility.getCORSwhitelist();
 for (; loop < sitelist.length; ++loop) {
   logger.info('Site : ' + sitelist[loop]);
 }
+
 //----------------------------------------------------------------------------
 // Check prefix used for services calls, depending on whether using DEV
 // or PROD environment
@@ -99,6 +116,7 @@ logger.info('' + myenv.getVersion());
 logger.info('Run in mode : ' + myenv.getMode());
 logger.info('URL prefix  : ' + myenv.getURLprefix());
 logger.info('Coming from : ' + myenv.getPrefixSource());
+
 //----------------------------------------------------------------------------
 // Middleware handlers
 // Beware, the order of app.use() calls is VERY important
@@ -118,6 +136,7 @@ app.use(function(error, req, res, next) {
   logger.error(error.message);
   res.sendStatus(403);
 });
+
 //----------------------------------------------------------------------------
 // Starts the server
 //----------------------------------------------------------------------------
