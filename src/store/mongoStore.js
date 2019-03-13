@@ -10,6 +10,7 @@
     Mar 07 2019     Cleanup some code
     Mar 10 2019     Reduce checking delay for mongo to 2 seconds
                     Suppress unnecessary log messages
+    Mar 13 2019     Reduce log messages
 ----------------------------------------------------------------------------*/
 import Vue from 'vue';  
 import Vuex from 'vuex';
@@ -23,6 +24,7 @@ const DOWN = 0;
 const UP = 1;
 const TIMEDELAYCHECK = 1000;
 const MONGODELAYCHECK = 2000;
+let pingnumber = 0;
 
 Vue.use(Vuex);
 
@@ -32,7 +34,7 @@ export default {
         VUEX states
     ----------------------------------------------------------------------------*/
     state: {
-        Version: 'mongoStore:1.62, Mar 10 2019 ',
+        Version: 'mongoStore:1.63, Mar 13 2019 ',
         clock: '',
         MAXLOG:16,
         mongostatus: DOWN,
@@ -66,6 +68,7 @@ export default {
             state.clock = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         },
         updateMongoStatus(state) {  // Check mongo status every 2 seconds
+            ++pingnumber;
             return axiosinstance({
                 url: '/mongo/status',
                 method: 'get',
@@ -76,7 +79,9 @@ export default {
               })
               .catch(() => {
                 state.mongostatus = DOWN;
-                logger.error(state.Version + ' Problem when enquiring mongodb status');
+                if (pingnumber % 10 === 0) {
+                    logger.error(state.Version + ' Error when calling mongodb status service ' + pingnumber);
+                }
               });
         },
     },
