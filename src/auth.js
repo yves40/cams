@@ -4,8 +4,9 @@
 //    Jan 30 2019    Initial
 //    Jan 31 2019    Get userController code 
 //    Mar 06 2019    console.log replaced by logger
+//    Mar 13 2019   BUG: Was disabling the logger console
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.09, Mar 06 2019 ';
+const Version = 'auth.js:1.10, Mar 13 2019 ';
 
 const jwtconfig = require('./utilities/jwtconfig');
 const logger = require('./utilities/logger');
@@ -21,10 +22,6 @@ const ExtractJwt = passportJWT.ExtractJwt;
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 jwtOptions.secretOrKey = jwtconfig.jwtSecret;
-
-
-logger.disableconsole();
-logger.tracetofile('/tmp/webapp.log')
 
 //-----------------------------------------------------------------------------------
 // Sign a token

@@ -13,8 +13,9 @@
 //    Feb 08 2019   Normalize version
 //                  Add a description
 //    Mar 06 2019   console.log replaced by logger
+//    Mar 13 2019   BUG: Was disabling the logger console
 //----------------------------------------------------------------------------
-const Version = 'userModel:1.30, Mar 06 2019 ';
+const Version = 'userModel:1.31, Mar 13 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -23,9 +24,6 @@ const STDUSER = 0;
 const ADMINUSER = 100;
 const CAMADMIN = 50;
 const logger = require('../utilities/logger');
-
-logger.disableconsole();
-logger.tracetofile('/tmp/webapp.log')
 
 const schema = mongoose.Schema;
 
