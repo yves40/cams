@@ -8,10 +8,13 @@
 //                  requested from a browser
 //    Mar 13 2019   Check LOGMODE and LOGFILE variables works
 //                  Modify file output logic
+//    Mar 14 2019   use helper for dates
 //----------------------------------------------------------------------------
-const Version = 'logger:1.28, Mar 13 2019';
+const Version = 'logger:1.29, Mar 14 2019';
 
 const fs = require('fs'); 
+const helpers = require('./helpers');
+
 
 const MAXLOGS = 10;
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
@@ -76,7 +79,7 @@ module.exports.getLoggerInfo = function getLoggerInfo() {
     else 
         loggerinfo.tracetoconsole = 'Console log disabled';
     if (tracetofileflag)
-        loggerinfo.tracetofile = 'File log enabled'; 
+        loggerinfo.tracetofile = 'File log enabled';
     else
         loggerinfo.tracetofile = 'File log disabled';
 
@@ -93,8 +96,7 @@ function log(mess, level, syncmode = false) {
         if (logs.length === MAXLOGS) {
             logs.shift();                   // Handle the log buffer
         }
-        let logstring = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
-                + d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") 
+        let logstring = helpers.getDateTime()
                 + ' [' + levelToString(level) + '] '
                 + ' ' + mess ;
         logs.push( logstring);
