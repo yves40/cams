@@ -43,7 +43,7 @@
 //                 Add the decoded user token to the whoami call 
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.54, Mar 15 2019 ';
+const Version = 'userController:2.55, Mar 15 2019 ';
 
 // Enable JWT
 const auth = require('../utilities/auth');

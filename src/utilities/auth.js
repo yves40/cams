@@ -9,7 +9,7 @@
 //                  Moved to utilities
 //    Mar 15 2019   test token expiration delay to invalidate it
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.13, Mar 15 2019 ';
+const Version = 'auth.js:1.18, Mar 15 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -96,8 +96,10 @@ passport.use('login',  new LocalStrategy({
 // Utility routines for passport
 //-----------------------------------------------------------------------------------
 passport.serializeUser((loggeduser, done) => {
-    logger.debug(Version + 'serializeUser with mail : ' + loggeduser.email);
-    done(null, loggeduser.id);
+    if ( loggeduser !== undefined ) {
+        logger.debug(Version + 'serializeUser with mail : ' + loggeduser.email);
+        done(null, loggeduser.id);
+    }
 });
 
 passport.deserializeUser((id, done) => { 

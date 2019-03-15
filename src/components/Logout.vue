@@ -57,7 +57,7 @@ export default {
         method: 'post',
       })
       .then((response) => {
-        window.localStorage.setItem('jwt', response.data.token);  // Toke has been invalidated by the call to /users/logout
+        window.localStorage.setItem('jwt', response.data.token);  // Token has been invalidated by the call to /users/logout
         bus.$emit('refreshUser');
         logger.debug(this.Version + ':' + response.data.message);
         this.$router.push({ name: 'Home' });
