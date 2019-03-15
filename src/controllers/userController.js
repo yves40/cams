@@ -38,12 +38,13 @@
 //    Mar 08 2019  use logger
 //    Mar 10 2019  undefined on logout
 //    Mar 12 2019  whoami
+//    Mar 14 2019  authjs moved in utilities
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.48,Mar 12 2019 ';
+const Version = 'userController: 2.49,Mar 14 2019 ';
 
 // Enable JWT
-const auth = require('../auth');
+const auth = require('../utilities/auth');
 // CORS
 const corsutility = require("../utilities/corsutility");
 // User definition

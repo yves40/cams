@@ -24,8 +24,9 @@
 //    Mar 13 2019    Still trying to understand middleware ;-)
 //                   Also trying to clarify importance of middleware and modules 
 //                   loading order
+//    Mar 14 2019    Play with middleware chaining
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 13 2019, 1.83 ";
+const Version = "server.js:Mar 14 2019, 1.86 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -114,6 +115,11 @@ logger.info('Coming from : ' + myenv.getPrefixSource());
 // Middleware handlers
 // Beware, the order of app.use() calls is VERY important
 //----------------------------------------------------------------------------
+app.use('/users/whoami', function(req, res, next) {  
+  logger.debug(Version + 'Got here');
+  next();
+});
+
 app.use('/users/login', function(req, res, next) {  
   console.log();
   logger.debug(Version + ' User login requested @ :' + helpers.getDateTime());
@@ -133,10 +139,6 @@ app.use(function(req, res, next) {  // For the favicon boring request error
   return next();
 });
 app.use(cors(corsutility.getCORS()));
-app.use(function(error, req, res, next) {
-  logger.error(error.message);
-  res.sendStatus(403);
-});
 
 //----------------------------------------------------------------------------
 // Application controllers

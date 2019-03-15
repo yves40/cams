@@ -27,6 +27,7 @@
   Feb 08 2019   axiosutility...
                 user description field
   Mar 10 2019   Fix error message $watch...
+  Mar 14 2019   Modify log message
 
 -->
 <template>
@@ -173,7 +174,7 @@ const axiosinstance = axiosutility.getAxios();
 
 export default {
   data: () => ({
-    Version: 'Register:2.62, Mar 10 2019',
+    Version: 'Register:2.63, Mar 14 2019',
     name: '',
     description: '',
     email: '',
@@ -190,7 +191,7 @@ export default {
     },
     // All rules satisfied otherwise button is disabled
     submit() {      
-      logger.debug(this.Version + ': Register request called using ' + axiosutility.getVersion());
+      logger.debug(this.Version + ': Register request called');
       return axiosinstance(
         {
             url: '/users/register',
