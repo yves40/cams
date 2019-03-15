@@ -115,19 +115,6 @@ logger.info('Coming from : ' + myenv.getPrefixSource());
 // Middleware handlers
 // Beware, the order of app.use() calls is VERY important
 //----------------------------------------------------------------------------
-app.use('/users/whoami', function(req, res, next) {  
-  logger.debug(Version + 'Got here');
-  next();
-});
-
-app.use('/users/login', function(req, res, next) {  
-  console.log();
-  logger.debug(Version + ' User login requested @ :' + helpers.getDateTime());
-  logger.debug(Version + ' User login requested @ :' + helpers.getTime());
-  logger.debug(Version + ' User login requested @ :' + helpers.getHoursMinutes());
-  next();
-});
-
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/dist"));
 app.use(passport.initialize()); 
