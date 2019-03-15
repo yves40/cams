@@ -17,6 +17,7 @@
   Feb 08 2019   axiosutility...
   Feb 10 2019   Remove log message
   Mar 12 2019   whoami
+  Mar 15 2019   More information about user stored in token
 
 -->
 <template>
@@ -67,16 +68,16 @@ import passportJWT from 'passport-jwt';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-import jwtconfig from '../utilities/jwtconfig';
 const logger = require('../utilities/logger');
 import myenv from '../utilities/myenv';
 const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.60, Mar 12 2019 ',
+    Version: 'Identity:1.65, Mar 15 2019 ',
     payload: '',
     theuser: null,
+    theusertoken: {},
     email: '',
   }),
   methods: {
@@ -89,8 +90,9 @@ export default {
       })
       .then((response) => {
         this.theuser = response.data.whoami;
+        this.theusertoken = response.data.userdecodedtoken;
         this.email = this.theuser.email;
-        logger.debug(this.Version + ': User fetched ' + this.theuser.email);
+        logger.debug(this.Version + ': User identified ' + this.theuser.email);
       })
       .catch(() => {
         this.theuser = null;

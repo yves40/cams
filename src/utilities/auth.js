@@ -47,6 +47,13 @@ module.exports.invalidateToken = function invalidateToken(payload) {
 };
 
 //-----------------------------------------------------------------------------------
+// Invalidate a token after logout
+//-----------------------------------------------------------------------------------
+module.exports.decodeToken = function decodeToken(thetoken) {
+    return jwt.decode(thetoken, jwtconfig.jwtSecret);
+};
+
+//-----------------------------------------------------------------------------------
 // passport initialization stuff
 // jwt strategy
 // This verifies that the token sent by the user is valid

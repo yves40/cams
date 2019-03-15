@@ -39,10 +39,11 @@
 //    Mar 10 2019  undefined on logout
 //    Mar 12 2019  whoami
 //    Mar 14 2019  authjs moved in utilities
-//    Mar 15 2019   test token expiration delay to invalidate it
+//    Mar 15 2019  test token expiration delay to invalidate it
+//                 Add the decoded user token to the whoami call 
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.50,Mar 14 2019 ';
+const Version = 'userController:2.54, Mar 15 2019 ';
 
 // Enable JWT
 const auth = require('../utilities/auth');
@@ -76,7 +77,15 @@ module.exports.controller = (app) => {
         if (req.user) {
             logger.debug(Version + '/users/whoami callback for ' + req.user.email);
             mongostatus = mongo.getMongoDBStatus();
-            res.json( {whoami: req.user, mongostatus: mongostatus} );
+            // Get the identification token
+            // Format is : 
+            // Authorization: JWT <token>
+            const authHeader = req.headers['authorization'];
+            const token = authHeader.split(' ')[1];
+            logger.debug(Version + 'User  token : ' + token);
+            const userdecodedtoken = auth.decodeToken(token);
+            logger.debug(Version + 'User decoded token : ' + userdecodedtoken);
+            res.json( {whoami: req.user, mongostatus: mongostatus, userdecodedtoken: userdecodedtoken } );
         }
     }); 
 
