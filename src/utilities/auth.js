@@ -5,10 +5,11 @@
 //    Jan 31 2019   Get userController code 
 //    Mar 06 2019   console.log replaced by logger
 //    Mar 13 2019   BUG: Was disabling the logger console
-//    Mar 14 2019   Shorten the token expiration time to 1 hour
+//    Mar 14 2019   Shorten the token expiration time
 //                  Moved to utilities
+//    Mar 15 2019   test token expiration delay to invalidate it
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.12, Mar 14 2019 ';
+const Version = 'auth.js:1.13, Mar 15 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -21,6 +22,8 @@ const passportJWT = require('passport-jwt');
 const JwtStrategy = passportJWT.Strategy;
 const ExtractJwt = passportJWT.ExtractJwt;
 
+const tokenexpirationdelay = 1800;
+
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 jwtOptions.secretOrKey = jwtconfig.jwtSecret;
@@ -29,8 +32,17 @@ jwtOptions.secretOrKey = jwtconfig.jwtSecret;
 // Sign a token
 //-----------------------------------------------------------------------------------
 module.exports.signToken = function signToken(payload) {
-    logger.debug(Version + 'signing the token with a 1h expiration time');
-    const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: "1h"}); // 3 hours
+    logger.debug(Version + 'signing the token with a ' + tokenexpirationdelay + ' seconds expiration time');
+    const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: tokenexpirationdelay}); // 30 mn
+    return token;
+};
+
+//-----------------------------------------------------------------------------------
+// Invalidate a token after logout
+//-----------------------------------------------------------------------------------
+module.exports.invalidateToken = function invalidateToken(payload) {
+    logger.debug(Version + 'Invalidating a token with a 1s expiration time');
+    const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 1}); // 1 second
     return token;
 };
 

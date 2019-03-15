@@ -39,9 +39,10 @@
 //    Mar 10 2019  undefined on logout
 //    Mar 12 2019  whoami
 //    Mar 14 2019  authjs moved in utilities
+//    Mar 15 2019   test token expiration delay to invalidate it
 //----------------------------------------------------------------------------
 
-const Version = 'userController: 2.49,Mar 14 2019 ';
+const Version = 'userController: 2.50,Mar 14 2019 ';
 
 // Enable JWT
 const auth = require('../utilities/auth');
@@ -88,7 +89,8 @@ module.exports.controller = (app) => {
             const useremail = req.user.email;
             req.logout();
             const message = useremail + ' logged out';
-            res.json( { message: message });
+            const token = auth.invalidateToken({message: message});
+            res.json( { message: message, token: token });
         }
         else {
             res.json( { message: 'Not logged '});

@@ -5,6 +5,9 @@
   Jan 31 2019   Initial
   Feb 06 2019   Simplify axios   
   Feb 08 2019   axiosutility...
+  Mar 15 2019   Test token invalidation after logout. 
+                No longer delete it from local storage
+                Instead, shorten its expiration time
  
 -->
 <template>
@@ -39,7 +42,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Logout:1.11, Mar 08 2019 ',
+    Version: 'Logout:1.12, Mar 15 2019 ',
   }),
   mounted() {
     this.logout();
@@ -54,7 +57,7 @@ export default {
         method: 'post',
       })
       .then((response) => {
-        window.localStorage.removeItem('jwt');
+        window.localStorage.setItem('jwt', response.data.token);  // Toke has been invalidated by the call to /users/logout
         bus.$emit('refreshUser');
         logger.debug(this.Version + ':' + response.data.message);
         this.$router.push({ name: 'Home' });
