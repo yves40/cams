@@ -41,9 +41,10 @@
 //    Mar 14 2019  authjs moved in utilities
 //    Mar 15 2019  test token expiration delay to invalidate it
 //                 Add the decoded user token to the whoami call 
+//    Mar 17 2019  Logout server error : serializeUser with mail : undefined
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.55, Mar 15 2019 ';
+const Version = 'userController:2.61, Mar 17 2019 ';
 
 // Enable JWT
 const auth = require('../utilities/auth');
@@ -94,11 +95,10 @@ module.exports.controller = (app) => {
     //-----------------------------------------------------------------------------------
     app.post('/users/logout', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
         if (req.user) {
-            logger.debug(Version + 'logging ' + req.user.email +  ' out');
-            const useremail = req.user.email;
-            req.logout();
-            const message = useremail + ' logged out';
-            const token = auth.invalidateToken({message: message});
+            const message = 'logging ' + req.user.email +  ' out';
+            logger.debug(Version + message);
+            const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
+            // req.logout();
             res.json( { message: message, token: token });
         }
         else {

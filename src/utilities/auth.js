@@ -8,8 +8,9 @@
 //    Mar 14 2019   Shorten the token expiration time
 //                  Moved to utilities
 //    Mar 15 2019   test token expiration delay to invalidate it
+//    Mar 17 2019  Logout server error
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.18, Mar 15 2019 ';
+const Version = 'auth.js:1.20, Mar 17 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -96,14 +97,12 @@ passport.use('login',  new LocalStrategy({
 // Utility routines for passport
 //-----------------------------------------------------------------------------------
 passport.serializeUser((loggeduser, done) => {
-    if ( loggeduser !== undefined ) {
-        logger.debug(Version + 'serializeUser with mail : ' + loggeduser.email);
-        done(null, loggeduser.id);
-    }
+    logger.debug(Version + JSON.stringify(loggeduser));
+    done(null, loggeduser.id);
 });
 
 passport.deserializeUser((id, done) => { 
-    logger.debug(Version + 'deserializeUser with ID : ' + id);
+    // logger.debug(Version + 'deserializeUser with ID : ' + id);
     User.findById(id, (err, loggeduser) => {
         done(err, loggeduser);
     });

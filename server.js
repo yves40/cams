@@ -25,8 +25,9 @@
 //                   Also trying to clarify importance of middleware and modules 
 //                   loading order
 //    Mar 14 2019    Play with middleware chaining
+//    Mar 17 2019  Logout server error : serializeUser with mail : undefined
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 14 2019, 1.86 ";
+const Version = "server.js:Mar 17 2019, 1.89 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -34,7 +35,7 @@ const Version = "server.js:Mar 14 2019, 1.86 ";
 const mongo = require("./src/utilities/mongo");
 const myenv = require("./src/utilities/myenv");
 const logger = require("./src/utilities/logger");
-const helpers = require("./src/utilities/helpers");
+const jwtconfig = require("./src/utilities/jwtconfig");
 const corsutility = require("./src/utilities/corsutility");
 const axiosutility = require("./src/utilities/axiosutility");
 
@@ -117,8 +118,7 @@ logger.info('Coming from : ' + myenv.getPrefixSource());
 //----------------------------------------------------------------------------
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/dist"));
-app.use(passport.initialize()); 
-app.use(passport.session());
+
 app.use(function(req, res, next) {  // For the favicon boring request error
   if (req.originalUrl && req.originalUrl.split("/").pop() === "favicon.ico") {
     return res.sendStatus(204);
@@ -126,6 +126,8 @@ app.use(function(req, res, next) {  // For the favicon boring request error
   return next();
 });
 app.use(cors(corsutility.getCORS()));
+app.use(passport.initialize()); 
+app.use(passport.session());
 
 //----------------------------------------------------------------------------
 // Application controllers

@@ -28,6 +28,7 @@
                 user description field
   Mar 10 2019   Fix error message $watch...
   Mar 14 2019   Modify log message
+  Mar 17 2019   Help message wrong on description field
 
 -->
 <template>
@@ -64,7 +65,7 @@
           <div class="row">
             <div class="col-4"></div>
             <div class="form-group col-4">
-              <ValidationProvider name="name" rules="required|min:4|max:40">
+              <ValidationProvider name="description" rules="required|min:4|max:40">
                 <v-text-field
                   slot-scope="{ errors, valid }"
                   v-model="description"

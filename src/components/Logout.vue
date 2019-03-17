@@ -55,6 +55,7 @@ export default {
         url: '/users/logout',
         headers: { 'Authorization': 'jwt ' + window.localStorage.getItem('jwt') },
         method: 'post',
+        session: false,
       })
       .then((response) => {
         window.localStorage.setItem('jwt', response.data.token);  // Token has been invalidated by the call to /users/logout
