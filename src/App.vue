@@ -25,6 +25,7 @@
   Mar 10 2019   This Vue sets the mongo status check timer now (instead of welcome)
                 Some changes on variables names
   Mar 12 2019   whoami
+  Mar 17 2019   Reset user @ logout
 
 -->
 <template>
@@ -104,7 +105,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.91, Mar 15 2019 ',
+    Version: 'App.vue: 1.92, Mar 17 2019 ',
     drawer: null,
     theuser: null,
     email: '',
@@ -128,6 +129,9 @@ export default {
     listenToEvents() {
       bus.$on('refreshUser', () => {
         this.fetchUser();
+      });
+      bus.$on('resetUser', () => {
+        this.theuser = null;
       });
     },
     // --------------------------------- Is user logged ? ------------------------------

@@ -42,7 +42,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Logout:1.12, Mar 15 2019 ',
+    Version: 'Logout:1.14, Mar 17 2019 ',
   }),
   mounted() {
     this.logout();
@@ -59,7 +59,7 @@ export default {
       })
       .then((response) => {
         window.localStorage.setItem('jwt', response.data.token);  // Token has been invalidated by the call to /users/logout
-        bus.$emit('refreshUser');
+        bus.$emit('resetUser');
         logger.debug(this.Version + ':' + response.data.message);
         this.$router.push({ name: 'Home' });
       })

@@ -42,12 +42,14 @@
 //    Mar 15 2019  test token expiration delay to invalidate it
 //                 Add the decoded user token to the whoami call 
 //    Mar 17 2019  Logout server error : serializeUser with mail : undefined
+//                 Problem was with the token payload
+//                 Compute the remaining valid time of token (whoami)
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.61, Mar 17 2019 ';
+const Version = 'userController:2.74, Mar 17 2019 ';
 
-// Enable JWT
 const auth = require('../utilities/auth');
+const helpers = require('../utilities/helpers');
 // CORS
 const corsutility = require("../utilities/corsutility");
 // User definition
@@ -68,7 +70,27 @@ module.exports.controller = (app) => {
         const payload = { id: req.user.id, email: req.user.email };
         const token = auth.signToken(payload);
         logger.debug(Version + 'User ' + req.user.email + ' logged');
-        res.json( { message: req.user.email + ' logged', token });
+        const userdecodedtoken = auth.decodeToken(token);
+        //logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
+        res.json( { message: req.user.email + ' logged', token: token, userdecodedtoken: userdecodedtoken });
+    });
+
+    //-----------------------------------------------------------------------------------
+    // logout a user
+    //-----------------------------------------------------------------------------------
+    app.post('/users/logout', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
+        if (req.user) {
+            const message = 'logging ' + req.user.email +  ' out';
+            logger.debug(Version + message);
+            const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
+            req.logout();
+            const userdecodedtoken = auth.decodeToken(token);
+            // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));    
+            res.json( { message: message, token: token, userdecodedtoken: userdecodedtoken });
+        }
+        else {
+            res.json( { message: 'Not logged '});
+        }
     });
 
     //-----------------------------------------------------------------------------------
@@ -83,28 +105,27 @@ module.exports.controller = (app) => {
             // Authorization: JWT <token>
             const authHeader = req.headers['authorization'];
             const token = authHeader.split(' ')[1];
-            logger.debug(Version + 'User  token : ' + token);
             const userdecodedtoken = auth.decodeToken(token);
-            logger.debug(Version + 'User decoded token : ' + userdecodedtoken);
-            res.json( {whoami: req.user, mongostatus: mongostatus, userdecodedtoken: userdecodedtoken } );
+            let remainingtime = Math.floor(userdecodedtoken.exp - Date.now()/1000); // Remaining time in seconds
+            let tokenstatus = true;
+            let tokenstatusString = '';
+            if (remainingtime < 0) {
+                tokenstatusString = 'expired since ' + helpers.convertDateTime(userdecodedtoken.exp*1000);
+                remainingtime = 0;
+                tokenstatus = false; 
+            }
+            else{
+                tokenstatusString = 'Will expire @ ' + helpers.convertDateTime(userdecodedtoken.exp*1000);
+            }
+            // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
+            res.json( {whoami: req.user, 
+                mongostatus: mongostatus, 
+                userdecodedtoken: userdecodedtoken, 
+                remainingtime: remainingtime,
+                tokenstatus: tokenstatus, 
+                tokenstatusString: tokenstatusString, } );
         }
     }); 
-
-    //-----------------------------------------------------------------------------------
-    // logout a user
-    //-----------------------------------------------------------------------------------
-    app.post('/users/logout', cors(corsutility.getCORS()), passport.authenticate('jwt'), (req, res) => {
-        if (req.user) {
-            const message = 'logging ' + req.user.email +  ' out';
-            logger.debug(Version + message);
-            const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
-            // req.logout();
-            res.json( { message: message, token: token });
-        }
-        else {
-            res.json( { message: 'Not logged '});
-        }
-    });
 
     //-----------------------------------------------------------------------------------
     // List all users

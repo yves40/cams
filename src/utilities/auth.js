@@ -97,7 +97,7 @@ passport.use('login',  new LocalStrategy({
 // Utility routines for passport
 //-----------------------------------------------------------------------------------
 passport.serializeUser((loggeduser, done) => {
-    logger.debug(Version + JSON.stringify(loggeduser));
+    // logger.debug(Version + JSON.stringify(loggeduser));
     done(null, loggeduser.id);
 });
 
