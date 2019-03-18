@@ -11,7 +11,7 @@
 //    Mar 17 2019  Logout server error
 //    Mar 18 2019  Function to retrieve an object with token time characteristics
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.24, Mar 18 2019 ';
+const Version = 'auth.js:1.26, Mar 18 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -72,9 +72,9 @@ module.exports.getTokenTimeMetrics = function getTokenTimeMetrics(thetoken) {
     else{
         tokenmetrics.tokenstatusString = 'Will expire @ ' + helpers.convertDateTime(thetoken.exp*1000);
     }
+    tokenmetrics.logintime = helpers.convertDateTime(thetoken.iat*1000);
     tokenmetrics.remainingtime = helpers.convertSecondsToHMS(remainingtime);
-    tokenmetrics.fulltimestamp = helpers.getDateTime(Date.now());
-    tokenmetrics.timestamp = helpers.getHoursMinutesSeconds(Date.now());
+    tokenmetrics.time = helpers.getDateTime(Date.now());
     return tokenmetrics;
 };
 

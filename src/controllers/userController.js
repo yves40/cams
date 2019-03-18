@@ -47,7 +47,7 @@
 //    Mar 18 2019  remaining valid time of token display formated
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.79, Mar 18 2019 ';
+const Version = 'userController:2.83, Mar 18 2019 ';
 
 const auth = require('../utilities/auth');
 const helpers = require('../utilities/helpers');
@@ -77,10 +77,10 @@ module.exports.controller = (app) => {
         res.json( { message: req.user.email + ' logged', 
             token: token, 
             userdecodedtoken: userdecodedtoken,
+            logintime: tokendata.logintime,
             remainingtime: tokendata.remainingtime,
             tokenstatus: tokendata.tokenstatus, 
-            fulltimestamp: tokendata.fulltimestamp,
-            timestamp: tokendata.timestamp,
+            time: tokendata.time,
             tokenstatusString: tokendata.tokenstatusString, } );
     });
 
@@ -96,12 +96,13 @@ module.exports.controller = (app) => {
             const userdecodedtoken = auth.decodeToken(token);
             const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
             // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));    
-            res.json( { message: message, token: token, 
+            res.json( { message: message, 
+                token: token, 
                 userdecodedtoken: userdecodedtoken, 
+                logintime: tokendata.logintime,
                 remainingtime: tokendata.remainingtime,
                 tokenstatus: tokendata.tokenstatus, 
-                fulltimestamp: tokendata.fulltimestamp,
-                timestamp: tokendata.timestamp,
+                time: tokendata.time,
                 tokenstatusString: tokendata.tokenstatusString, } );
         }
         else {
@@ -125,12 +126,13 @@ module.exports.controller = (app) => {
             const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
             // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
             res.json( {whoami: req.user, 
+                token: token,
                 mongostatus: mongostatus, 
-                userdecodedtoken: userdecodedtoken, 
+                userdecodedtoken: userdecodedtoken,
+                logintime: tokendata.logintime,
                 remainingtime: tokendata.remainingtime,
                 tokenstatus: tokendata.tokenstatus, 
-                fulltimestamp: tokendata.fulltimestamp,
-                timestamp: tokendata.timestamp,
+                time: tokendata.time,
                 tokenstatusString: tokendata.tokenstatusString, } );
         }
     }); 
