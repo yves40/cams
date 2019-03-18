@@ -2,6 +2,7 @@
     cams.css
 
     Jan 24 2019   Initial
+    Mar 18 2019   Some work on classes
 
 */
 
@@ -16,10 +17,32 @@
   grid-template-areas: 
   "header header header"
   ". content3cols ."
-  ". content2cols ."
-  ". content1col ."
+  ". content3cols ."
+  ". content3cols ."
   "footer footer footer";
   grid-gap: 4px;
+  padding: 5px 10px 5px 10px;
+}
+
+.grid2x5x11 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+  "header header"
+  "content2cols content2cols"
+  "footer footer";
+  grid-gap: 2px;
+  padding: 5px 10px 5px 10px;
+}
+
+.grid2x5x14 {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-areas: 
+  "header header"
+  "content2cols content2cols"
+  "footer footer";
+  grid-gap: 2px;
   padding: 5px 10px 5px 10px;
 }
 
@@ -36,7 +59,8 @@
 .content2cols {
   display: grid;
   grid-area: content2cols;
-  grid-template-columns: 1fr 1fr;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .content1col {
@@ -50,6 +74,15 @@
 }
 
 .grid3x5 div {
+  background-color: #3f51b5!important;
+  border: solid 1px black;
+  border-radius: 4px;
+  color: white;
+  grid-gap: 10px;
+  padding: .2em .5em .2em .5em;
+}
+
+.grid2x5x14 div {
   background-color: #3f51b5!important;
   border: solid 1px black;
   border-radius: 4px;

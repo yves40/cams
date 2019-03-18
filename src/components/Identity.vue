@@ -20,13 +20,22 @@
   Mar 18 2019   More information about user stored in token
 
 -->
+<!-- 
+          <p>{{email}}</p><p>{{tokenstatus}}</p>
+          <p>{{tokenvalidtime}}</p><p>Your login time : {{logintime}}</p>
+          <p>Token: {{tokencleartext}}</p><p>Raw token : {{token}}</p>
+
+-->
+
 <template>
-    <div class="grid3x5">
+    <div class="grid2x5x14">
         <div class="header">{{Version}}</div>
-        <div class="content3cols">
-          <p>{{email}}</p>
-          <p>{{tokenstatus}}</p>
-          <p>{{tokenvalidtime}}</p>
+        <div class="content2cols">
+          <p>User :</p><p>{{email}}</p>
+          <p>Logged at :</p><p>{{logintime}}</p>
+          <p>Token expires at : </p><p>{{tokenvalidtime}}</p>
+          <p>Token :</p><p>{{tokencleartext}}</p>
+          <p>Raw token : </p><p>{{token}}</p>
         </div>
         <div class="footer">This is the footer</div>
     </div>
@@ -62,13 +71,15 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.68, Mar 18 2019 ',
+    Version: 'Identity:1.75, Mar 18 2019 ',
     payload: '',
-    theuser: null,
-    theusertoken: {},
     email: '',
+    theuser: null,
+    tokencleartext: {},
+    token: null,
     tokenstatus: null,
     tokenvalidtime: null,
+    logintime: null,
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
@@ -80,10 +91,12 @@ export default {
       })
       .then((response) => {
         this.theuser = response.data.whoami;
-        this.theusertoken = response.data.userdecodedtoken;
+        this.tokencleartext = response.data.userdecodedtoken;
+        this.token = response.data.token;
         this.email = this.theuser.email;
         this.tokenstatus = response.data.tokenstatusString;
         this.tokenvalidtime = response.data.remainingtime;
+        this.logintime = response.data.logintime;
         logger.debug(this.Version + ': User identified ' + this.theuser.email);
       })
       .catch(() => {
