@@ -44,9 +44,10 @@
 //    Mar 17 2019  Logout server error : serializeUser with mail : undefined
 //                 Problem was with the token payload
 //                 Compute the remaining valid time of token (whoami)
+//    Mar 18 2019  remaining valid time of token display formated
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.74, Mar 17 2019 ';
+const Version = 'userController:2.79, Mar 18 2019 ';
 
 const auth = require('../utilities/auth');
 const helpers = require('../utilities/helpers');
@@ -71,8 +72,16 @@ module.exports.controller = (app) => {
         const token = auth.signToken(payload);
         logger.debug(Version + 'User ' + req.user.email + ' logged');
         const userdecodedtoken = auth.decodeToken(token);
+        const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
         //logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
-        res.json( { message: req.user.email + ' logged', token: token, userdecodedtoken: userdecodedtoken });
+        res.json( { message: req.user.email + ' logged', 
+            token: token, 
+            userdecodedtoken: userdecodedtoken,
+            remainingtime: tokendata.remainingtime,
+            tokenstatus: tokendata.tokenstatus, 
+            fulltimestamp: tokendata.fulltimestamp,
+            timestamp: tokendata.timestamp,
+            tokenstatusString: tokendata.tokenstatusString, } );
     });
 
     //-----------------------------------------------------------------------------------
@@ -85,8 +94,15 @@ module.exports.controller = (app) => {
             const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
             req.logout();
             const userdecodedtoken = auth.decodeToken(token);
+            const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
             // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));    
-            res.json( { message: message, token: token, userdecodedtoken: userdecodedtoken });
+            res.json( { message: message, token: token, 
+                userdecodedtoken: userdecodedtoken, 
+                remainingtime: tokendata.remainingtime,
+                tokenstatus: tokendata.tokenstatus, 
+                fulltimestamp: tokendata.fulltimestamp,
+                timestamp: tokendata.timestamp,
+                tokenstatusString: tokendata.tokenstatusString, } );
         }
         else {
             res.json( { message: 'Not logged '});
@@ -106,24 +122,16 @@ module.exports.controller = (app) => {
             const authHeader = req.headers['authorization'];
             const token = authHeader.split(' ')[1];
             const userdecodedtoken = auth.decodeToken(token);
-            let remainingtime = Math.floor(userdecodedtoken.exp - Date.now()/1000); // Remaining time in seconds
-            let tokenstatus = true;
-            let tokenstatusString = '';
-            if (remainingtime < 0) {
-                tokenstatusString = 'expired since ' + helpers.convertDateTime(userdecodedtoken.exp*1000);
-                remainingtime = 0;
-                tokenstatus = false; 
-            }
-            else{
-                tokenstatusString = 'Will expire @ ' + helpers.convertDateTime(userdecodedtoken.exp*1000);
-            }
+            const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
             // logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
             res.json( {whoami: req.user, 
                 mongostatus: mongostatus, 
                 userdecodedtoken: userdecodedtoken, 
-                remainingtime: remainingtime,
-                tokenstatus: tokenstatus, 
-                tokenstatusString: tokenstatusString, } );
+                remainingtime: tokendata.remainingtime,
+                tokenstatus: tokendata.tokenstatus, 
+                fulltimestamp: tokendata.fulltimestamp,
+                timestamp: tokendata.timestamp,
+                tokenstatusString: tokendata.tokenstatusString, } );
         }
     }); 
 

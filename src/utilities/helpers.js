@@ -3,9 +3,10 @@
 //
 //    Mar 13 2019   Initial
 //    Mar 14 2019   Function name
-//    Mar 17 2019   Add some functions
+//    Mar 17 2019   Add some functions.
+//    Mar 18 2019   Add some functions..
 //----------------------------------------------------------------------------
-const Version = "helpers:1.09, Mar 17 2019 ";
+const Version = "helpers:1.13, Mar 18 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -16,7 +17,7 @@ module.exports.getDateTime = function getDateTime() {
     return datetime;
 };
 
-module.exports.convertDateTime = function getDateTime(thedate) {
+module.exports.convertDateTime = function convertDateTime(thedate) {
     computedate = new Date(thedate);
     datetime = months[computedate.getMonth()] + '-' + computedate.getDate() + '-' 
     + computedate.getFullYear() + ' ' 
@@ -24,6 +25,12 @@ module.exports.convertDateTime = function getDateTime(thedate) {
     return datetime;
 };
 
+module.exports.convertSecondsToHMS = function convertSecondsToHMS(seconds) {
+    let computedate = new Date(1970,0,1);
+    computedate.setSeconds(seconds);
+    return computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");    
+    return;
+};
 
 module.exports.getTime = function getTime() {
     let d = new Date();
@@ -35,4 +42,9 @@ module.exports.getHoursMinutes = function getHoursMinutes() {
     let d = new Date();
     time = d.getHours() + ':' + d.getMinutes();
     return time;
+};
+
+module.exports.getHoursMinutesSeconds = function getHoursMinutesSeconds() {
+    let d = new Date();
+    return d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 };

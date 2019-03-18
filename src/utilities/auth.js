@@ -9,11 +9,13 @@
 //                  Moved to utilities
 //    Mar 15 2019   test token expiration delay to invalidate it
 //    Mar 17 2019  Logout server error
+//    Mar 18 2019  Function to retrieve an object with token time characteristics
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.20, Mar 17 2019 ';
+const Version = 'auth.js:1.24, Mar 18 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
+const helpers = require('./helpers');
 const User = require('../models/userModel');
 
 const jwt = require('jsonwebtoken');
@@ -48,10 +50,32 @@ module.exports.invalidateToken = function invalidateToken(payload) {
 };
 
 //-----------------------------------------------------------------------------------
-// Invalidate a token after logout
+// Decode a token
 //-----------------------------------------------------------------------------------
 module.exports.decodeToken = function decodeToken(thetoken) {
     return jwt.decode(thetoken, jwtconfig.jwtSecret);
+};
+
+//-----------------------------------------------------------------------------------
+// get token time characteristics
+//-----------------------------------------------------------------------------------
+module.exports.getTokenTimeMetrics = function getTokenTimeMetrics(thetoken) {
+    let tokenmetrics = {};
+    let remainingtime = Math.floor(thetoken.exp - Date.now()/1000); // Remaining time in seconds
+    tokenmetrics.tokenstatus = true;
+    tokenmetrics.tokenstatusString = '';
+    if (remainingtime <= 0) {
+        tokenmetrics.tokenstatusString = 'expired since ' + helpers.convertDateTime(thetoken.exp*1000);
+        remainingtime = 0;
+        tokenmetrics.tokenstatus = false; 
+    }
+    else{
+        tokenmetrics.tokenstatusString = 'Will expire @ ' + helpers.convertDateTime(thetoken.exp*1000);
+    }
+    tokenmetrics.remainingtime = helpers.convertSecondsToHMS(remainingtime);
+    tokenmetrics.fulltimestamp = helpers.getDateTime(Date.now());
+    tokenmetrics.timestamp = helpers.getHoursMinutesSeconds(Date.now());
+    return tokenmetrics;
 };
 
 //-----------------------------------------------------------------------------------

@@ -17,7 +17,7 @@
   Feb 08 2019   axiosutility...
   Feb 10 2019   Remove log message
   Mar 12 2019   whoami
-  Mar 15 2019   More information about user stored in token
+  Mar 18 2019   More information about user stored in token
 
 -->
 <template>
