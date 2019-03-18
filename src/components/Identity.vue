@@ -25,20 +25,8 @@
         <div class="header">{{Version}}</div>
         <div class="content3cols">
           <p>{{email}}</p>
-        </div>
-        <div class="content2cols">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-        </div>
-        <div class="content1col">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit tempora, dignissimos modi perspiciatis ab ex excepturi ullam rem cum laudantium!</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, exercitationem?</p>
+          <p>{{tokenstatus}}</p>
+          <p>{{tokenvalidtime}}</p>
         </div>
         <div class="footer">This is the footer</div>
     </div>
@@ -74,11 +62,13 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.65, Mar 15 2019 ',
+    Version: 'Identity:1.68, Mar 18 2019 ',
     payload: '',
     theuser: null,
     theusertoken: {},
     email: '',
+    tokenstatus: null,
+    tokenvalidtime: null,
   }),
   methods: {
     // --------------------------------- Is user logged ? ------------------------------
@@ -92,6 +82,8 @@ export default {
         this.theuser = response.data.whoami;
         this.theusertoken = response.data.userdecodedtoken;
         this.email = this.theuser.email;
+        this.tokenstatus = response.data.tokenstatusString;
+        this.tokenvalidtime = response.data.remainingtime;
         logger.debug(this.Version + ': User identified ' + this.theuser.email);
       })
       .catch(() => {
