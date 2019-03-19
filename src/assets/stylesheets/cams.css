@@ -39,11 +39,8 @@
 .grid2x5x14 {
   display: grid;
   grid-template-columns: 1fr 2fr 4fr 1fr;
-  grid-template-rows: repeat(5, 1fr);
   grid-template-areas: 
   "header header header header"
-  ". content2cols content2cols ."
-  ". content2cols content2cols ."
   ". content2cols content2cols ."
   "footer footer footer footer";
   grid-gap: 1px;

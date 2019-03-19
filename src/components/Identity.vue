@@ -31,7 +31,6 @@
 <template>
     <div class="grid2x5x14">
         <div class="header">
-          <span>****</span>
           <span>{{Version}}</span>
         </div>
         <div class="content2cols">
