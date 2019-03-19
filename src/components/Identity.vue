@@ -18,6 +18,7 @@
   Feb 10 2019   Remove log message
   Mar 12 2019   whoami
   Mar 18 2019   More information about user stored in token
+  Mar 19 2019   WIP on css grid
 
 -->
 <!-- 
@@ -29,13 +30,17 @@
 
 <template>
     <div class="grid2x5x14">
-        <div class="header">{{Version}}</div>
+        <div class="header">
+          <span>****</span>
+          <span>{{Version}}</span>
+        </div>
         <div class="content2cols">
-          <p>User :</p><p>{{email}}</p>
-          <p>Logged at :</p><p>{{logintime}}</p>
-          <p>Token expires at : </p><p>{{tokenvalidtime}}</p>
-          <p>Token :</p><p>{{tokencleartext}}</p>
-          <p>Raw token : </p><p>{{token}}</p>
+          <span>User :</span><span>{{email}}</span>
+          <span>Logged at :</span><span>{{logintime}}</span>
+          <span>Token expires in : </span><span>{{tokenvalidtime}}</span>
+          <span></span><span>{{tokenstatus}}</span>
+          <span>Token :</span><span>{{tokencleartext}}</span>
+          <span>Raw token : </span><span>{{token}}</span>
         </div>
         <div class="footer">This is the footer</div>
     </div>
@@ -71,7 +76,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.75, Mar 18 2019 ',
+    Version: 'Identity:1.78, Mar 19 2019 ',
     payload: '',
     email: '',
     theuser: null,
