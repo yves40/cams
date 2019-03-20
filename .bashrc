@@ -3,6 +3,7 @@
 #
 #	Jan 29 2019		Alias for nodeadmin.sh
 #	Feb 01 2019		Change alias for nodeadmin.sh
+#	Mar 20 2019		Set working directory after login
 #----------------------------------------------------------------------------------------
 
 # Source global definitions
@@ -59,4 +60,4 @@ alias renv='. ~/.bashrc'
 alias forever='$CAMS/node_modules/forever/bin/forever --no-colors'
 alias nod='$CAMS/shell/nodeadmin.sh'
 
-
+cd $CAMS
