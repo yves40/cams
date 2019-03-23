@@ -36,8 +36,8 @@
           <span>Logged User identity parameters</span>
         </div>
         <div class="grid2x14 content2cols">
-          <span class="bottomline">User :</span>
-          <span class="bottomline">{{email}}</span>
+          <span class="topline bottomline">User :</span>
+          <span class="topline bottomline">{{email}}</span>
           <span class="bottomline">Logged at :</span>
           <span class="bottomline">{{logintime}}</span>
           <span class="bottomline"> Token expires in : </span>

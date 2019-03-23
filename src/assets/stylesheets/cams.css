@@ -36,6 +36,9 @@
   word-break: break-word;
 }
 
+.topline {
+  border-top: solid 1px white;
+}
 .bottomline {
   border-bottom: solid 1px white;
 }
