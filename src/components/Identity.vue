@@ -35,7 +35,7 @@
         <div class="header">
           <span>Logged User identity parameters</span>
         </div>
-        <div class="grid2x14 content2cols">
+        <div class="grid2x14 contentcols">
           <span class="topline bottomline">User :</span>
           <span class="topline bottomline">{{email}}</span>
           <span class="bottomline">Logged at :</span>
