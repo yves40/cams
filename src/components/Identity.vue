@@ -19,6 +19,8 @@
   Mar 12 2019   whoami
   Mar 18 2019   More information about user stored in token
   Mar 19 2019   WIP on css grid
+  Mar 20 2019   WIP on css grid
+  Mar 23 2019   Some details on grid content css
 
 -->
 <!-- 
@@ -29,19 +31,25 @@
 -->
 
 <template>
-    <div class="grid2x5x14">
+    <div class="grid2x14">
         <div class="header">
-          <span>{{Version}}</span>
+          <span>Logged User identity parameters</span>
         </div>
-        <div class="content2cols">
-          <span>User :</span><span>{{email}}</span>
-          <span>Logged at :</span><span>{{logintime}}</span>
-          <span>Token expires in : </span><span>{{tokenvalidtime}}</span>
-          <span></span><span>{{tokenstatus}}</span>
-          <span>Token :</span><span>{{tokencleartext}}</span>
-          <span>Raw token : </span><span>{{token}}</span>
+        <div class="grid2x14 content2cols">
+          <span class="bottomline">User :</span>
+          <span class="bottomline">{{email}}</span>
+          <span class="bottomline">Logged at :</span>
+          <span class="bottomline">{{logintime}}</span>
+          <span class="bottomline"> Token expires in : </span>
+          <span class="bottomline">{{tokenvalidtime}}</span>
+          <span class="bottomline"></span>
+          <span class="bottomline">{{tokenstatus}}</span>
+          <span class="bottomline">Token :</span>
+          <span class="bottomline">{{tokencleartext}}</span>
+          <span class="bottomline">Raw token : </span>
+          <span class="bottomline">{{token}}</span>
         </div>
-        <div class="footer">This is the footer</div>
+        <div class="footer">&copy; {{Version}}</div>
     </div>
 </template>
 
@@ -75,7 +83,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.78, Mar 19 2019 ',
+    Version: 'Identity:1.91, Mar 23 2019 ',
     payload: '',
     email: '',
     theuser: null,

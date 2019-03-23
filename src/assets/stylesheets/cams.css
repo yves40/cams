@@ -4,6 +4,8 @@
     Jan 24 2019   Initial
     Mar 18 2019   Some work on classes
     Mar 19 2019   css grid still have many hidden features for me ;-(
+    Mar 20 2019   css grid...
+    Mar 23 2019   Some details on grid content css
 
 */
 
@@ -12,85 +14,41 @@
   padding: 0;
 }
 
-.grid3x5 {
-  display: grid;
-  grid-template-columns: 10% 1fr 10%;
-  grid-template-areas: 
-  "header header header"
-  ". content3cols ."
-  ". content3cols ."
-  ". content3cols ."
-  "footer footer footer";
-  grid-gap: 1px;
-  padding: 5px 10px 5px 10px;
-}
+.grid2x14 {
 
-.grid2x5x11 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 4fr ;
   grid-template-areas: 
   "header header"
   "content2cols content2cols"
   "footer footer";
-  grid-gap: 1px;
-  padding: 5px 10px 5px 10px;
-}
-
-.grid2x5x14 {
-  display: grid;
-  grid-template-columns: 1fr 2fr 4fr 1fr;
-  grid-template-areas: 
-  "header header header header"
-  ". content2cols content2cols ."
-  "footer footer footer footer";
-  grid-gap: 1px;
-  padding: 5px 10px 5px 10px;
-}
-
-.header {
-  grid-area: header;
+  grid-gap: 4px;
+  color: white;
+  background-color: #3f51b5;
+  padding: .2em .5em .2em .5em;
 }
 
 .content2cols {
   display: grid;
-  grid-template-columns: 1fr 5fr;
   grid-area: content2cols;
   text-align: left;
   vertical-align: middle;
   word-break: break-word;
 }
 
-.content3cols {
-  display: grid;
-  grid-area: content3cols;
-  grid-template-columns: 1fr 1fr 1fr;
+.bottomline {
+  border-bottom: solid 1px white;
 }
-
-
-.content1col {
-  display: grid;
-  grid-area: content1col;
-  grid-template-columns: 1fr;
+.header {
+  grid-area: header;
+  text-align: center;
+  padding-bottom: 2em;
 }
 
 .footer {
   grid-area: footer;
+  text-align: center;
+  padding-top: 2em;
 }
 
-.grid3x5 div {
-  background-color: #3f51b5!important;
-  border: solid 1px black;
-  border-radius: 4px;
-  color: white;
-  grid-gap: 1px;
-  padding: .2em .5em .2em .5em;
-}
 
-.grid2x5x14 div {
-  background-color: #3f51b5!important;
-  border: solid 1px black;
-  border-radius: 4px;
-  color: white;
-  grid-gap: 1px;
-  padding: .2em .5em .2em .5em;
-}
