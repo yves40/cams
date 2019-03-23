@@ -10,8 +10,9 @@
 //    Mar 15 2019   test token expiration delay to invalidate it
 //    Mar 17 2019  Logout server error
 //    Mar 18 2019  Function to retrieve an object with token time characteristics
+//    Mar 23 2019  Change token status string
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.26, Mar 18 2019 ';
+const Version = 'auth.js:1.27, Mar 23 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -65,12 +66,12 @@ module.exports.getTokenTimeMetrics = function getTokenTimeMetrics(thetoken) {
     tokenmetrics.tokenstatus = true;
     tokenmetrics.tokenstatusString = '';
     if (remainingtime <= 0) {
-        tokenmetrics.tokenstatusString = 'expired since ' + helpers.convertDateTime(thetoken.exp*1000);
+        tokenmetrics.tokenstatusString = helpers.convertDateTime(thetoken.exp*1000);
         remainingtime = 0;
         tokenmetrics.tokenstatus = false; 
     }
     else{
-        tokenmetrics.tokenstatusString = 'Will expire @ ' + helpers.convertDateTime(thetoken.exp*1000);
+        tokenmetrics.tokenstatusString = helpers.convertDateTime(thetoken.exp*1000);
     }
     tokenmetrics.logintime = helpers.convertDateTime(thetoken.iat*1000);
     tokenmetrics.remainingtime = helpers.convertSecondsToHMS(remainingtime);
