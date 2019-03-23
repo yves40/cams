@@ -83,7 +83,7 @@ const axiosinstance = require('../utilities/axiosutility').getAxios();
 
 export default {
   data: () => ({
-    Version: 'Identity:1.91, Mar 23 2019 ',
+    Version: 'Identity:1.93, Mar 23 2019 ',
     payload: '',
     email: '',
     theuser: null,
