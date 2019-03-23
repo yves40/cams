@@ -22,13 +22,14 @@
   Jan 31 2019   Remove loginJWT button
   Feb 06 2019   Simplify axios   
   Feb 08 2019   axiosutility...
+  Mar 23 2019   Small color change
 
 -->
 <template>
 
   <ValidationObserver>
     <form slot-scope="{ invalid, validated }">
-      <v-toolbar dark color="primary">
+      <v-toolbar dark color="#3f51b5">
         <v-toolbar-title>Login User</v-toolbar-title>
       </v-toolbar>
       <v-card-title>{{Version}}</v-card-title>

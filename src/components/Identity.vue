@@ -40,9 +40,9 @@
           <span class="topline bottomline">{{email}}</span>
           <span class="bottomline">Logged at :</span>
           <span class="bottomline">{{logintime}}</span>
-          <span class="bottomline"> Token expires in : </span>
-          <span class="bottomline">{{tokenvalidtime}}</span>
-          <span class="bottomline"></span>
+          <span class="bottomline">Token expires in : </span>
+          <span class="bottomline">{{tokenvalidtime}} </span>
+          <span class="bottomline">Will expire at   : </span>
           <span class="bottomline">{{tokenstatus}}</span>
           <span class="bottomline">Token :</span>
           <span class="bottomline">{{tokencleartext}}</span>

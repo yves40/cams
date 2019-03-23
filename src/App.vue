@@ -26,6 +26,7 @@
                 Some changes on variables names
   Mar 12 2019   whoami
   Mar 17 2019   Reset user @ logout
+  Mar 23 2019   identity link in the side bar
 
 -->
 <template>
@@ -39,6 +40,14 @@
               <v-icon>home</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>Home</v-list-tile-content>
+          </v-list-tile>
+        </router-link>
+        <router-link v-bind:to="{ name: 'Identity' }" class="side_bar_link" v-if="theuser">
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-icon>home</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Identity</v-list-tile-content>
           </v-list-tile>
         </router-link>
       </v-list>
@@ -105,7 +114,7 @@ const axiosinstance = axiosutility.getAxios();
 export default {
   name: "App",
   data: () => ({
-    Version: 'App.vue: 1.92, Mar 17 2019 ',
+    Version: 'App.vue: 1.93, Mar 23 2019 ',
     drawer: null,
     theuser: null,
     email: '',
