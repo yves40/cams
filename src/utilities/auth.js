@@ -12,7 +12,7 @@
 //    Mar 18 2019  Function to retrieve an object with token time characteristics
 //    Mar 23 2019  Change token status string
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.27, Mar 23 2019 ';
+const Version = 'auth.js:1.32, Mar 23 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -42,9 +42,21 @@ module.exports.signToken = function signToken(payload) {
 };
 
 //-----------------------------------------------------------------------------------
-// Invalidate a token after logout
+// Invalidate a token during logout
 //-----------------------------------------------------------------------------------
 module.exports.invalidateToken = function invalidateToken(payload) {
+    logger.debug(Version + 'Update logout time for ID ' + payload.id)
+    User.findById(payload.id, (err, loggeduser) => {
+        if (err) {
+            logger.error(Version + ' Cannot get user data for ID : ' + payload.id);
+        }
+        loggeduser.lastlogout = Date.now();
+        loggeduser.save((error, user) => {
+            if (error) {
+                logger.error(Version + 'Cannot save last logout date')
+            }
+        });
+    });
     logger.debug(Version + 'Invalidating a token with a 1s expiration time');
     const token = jwt.sign(payload, jwtOptions.secretOrKey, {expiresIn: 1}); // 1 second
     return token;
@@ -110,6 +122,13 @@ passport.use('login',  new LocalStrategy({
             User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
                     logger.debug(Version + email + ' identified');
+                    loggeduser.lastlogin = Date.now();
+                    loggeduser.lastlogout = null;
+                    loggeduser.save((error, user) => {
+                        if (error) {
+                            logger.error(Version + 'Cannot save last login date')
+                        }
+                    });
                     return done(null, loggeduser)   // Success login !!!
                 }
                 return done( null, false, {message: 'Wrong password'} ); // Error

@@ -14,8 +14,9 @@
 //                  Add a description
 //    Mar 06 2019   console.log replaced by logger
 //    Mar 13 2019   BUG: Was disabling the logger console
+//    Mar 23 2019   Login / logout properties
 //----------------------------------------------------------------------------
-const Version = 'userModel:1.31, Mar 13 2019 ';
+const Version = 'userModel:1.33, Mar 23 2019 ';
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -34,6 +35,8 @@ const userschema = new schema(
         password: String,
         profilecode: STDUSER,
         description: String,
+        lastlogin: Date,
+        lastlogout: Date,
     }
 );
 const User = mongoose.model("camsusers", userschema);
@@ -51,6 +54,8 @@ module.exports.createUser = (newuser, callback) => {
             newuseresource.profilecode = newuser.profilecode;
             newuseresource.description = newuser.description;
             newuseresource.password = hash;
+            newuseresource.lastlogin = null;
+            newuseresource.lastlogout = null;
             newuseresource.save(callback);
         });
     });
