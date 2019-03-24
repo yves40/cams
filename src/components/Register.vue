@@ -38,7 +38,7 @@
   -->
   <ValidationObserver>
     <div slot-scope="{ invalid, validated }">
-      <v-toolbar dark color="primary">
+      <v-toolbar dark color="#3f51b5">
         <v-toolbar-title>Register User</v-toolbar-title>
       </v-toolbar>
       <v-card-title>{{Version}}</v-card-title>

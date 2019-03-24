@@ -99,6 +99,10 @@ module.exports.getTokenTimeMetrics = function getTokenTimeMetrics(thetoken) {
 passport.use('jwt', new JwtStrategy(jwtOptions,
     (token, done) => {
         try {
+            checkUsrToken = decodeToken(token);
+            User.findById(checkUsrToken.id, (err, loggeduser) => {
+                done(err, loggeduser);
+            });
             return done(null, token);
         }
         catch(error) {
