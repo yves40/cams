@@ -11,8 +11,9 @@
 //    Mar 17 2019  Logout server error
 //    Mar 18 2019  Function to retrieve an object with token time characteristics
 //    Mar 23 2019  Change token status string
+//    Mar 24 2019  Add a logout check with lastlogout
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.32, Mar 23 2019 ';
+const Version = 'auth.js:1.34, Mar 24 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -99,11 +100,14 @@ module.exports.getTokenTimeMetrics = function getTokenTimeMetrics(thetoken) {
 passport.use('jwt', new JwtStrategy(jwtOptions,
     (token, done) => {
         try {
-            checkUsrToken = decodeToken(token);
-            User.findById(checkUsrToken.id, (err, loggeduser) => {
-                done(err, loggeduser);
+            User.findById(token.id, (err, loggeduser) => {
+                if(loggeduser.lastlogout === null) {
+                    return done(null, token);
+                }
+                else {
+                    done();
+                }
             });
-            return done(null, token);
         }
         catch(error) {
             done(error);
