@@ -5,6 +5,7 @@
 //    Dec 21 2018   WIP on test URLs
 //    Dec 22 2018   Cams tests
 //    Mar 06 2019   console.log replaced by logger
+//    Mar 25 2019   Disable file trace
 //----------------------------------------------------------------------------
 
 const Version = "urltest.js:1.34, Mar 06 2018 ";
@@ -12,7 +13,7 @@ const Version = "urltest.js:1.34, Mar 06 2018 ";
 const fetch = require("node-fetch");
 const logger = require('./src/utilities/logger');
 
-logger.tracetofile('/tmp/urltest.log');
+// logger.tracetofile('/tmp/urltest.log');
 
 logger.info();
 logger.info(Version + '----------------- urltest -------------------------------');
