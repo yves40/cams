@@ -10,7 +10,7 @@
 const Version = "urltest.js:1.34, Mar 06 2018 ";
 
 const fetch = require("node-fetch");
-const logger = require('./src/utilities/loggerlogger');
+const logger = require('./src/utilities/logger');
 
 logger.tracetofile('/tmp/urltest.log');
 
