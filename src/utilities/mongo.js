@@ -5,8 +5,9 @@
 //    Mar 05 2019   Monitor mongo connection status with DB.on()
 //                  Add mongodown test routine
 //    Mar 06 2019   Code Cleanup
+//    Mar 25 2019   Disconnect function
 //----------------------------------------------------------------------------
-const Version = "mongo:1.15, Mar 05 2019 ";
+const Version = "mongo:1.18, Mar 25 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
@@ -44,9 +45,10 @@ let DB = null;
 module.exports.getMongoDBConnection = function getMongoDBConnection() {
   logger.debug(Version + 'Connect to : ' + mongodb);
   try {
-    mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false});
+    mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false });
     // Get Mongoose to use the global promise library
     mongoose.Promise = global.Promise;
+    // mongoose.set('bufferCommands', false);
     DB = mongoose.connection;
     // Set up handlers
     DB.on('error',function (err) {  
@@ -66,6 +68,12 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
   }
 };
 //----------------------------------------------------------------------------
+// Open mongo connection
+//----------------------------------------------------------------------------
+module.exports.closeMongoDBConnection = function closeMongoDBConnection() {
+  mongoose.disconnect();
+};
+//----------------------------------------------------------------------------
 // Get mongo raw status
 //----------------------------------------------------------------------------
 module.exports.getMongoDBStatus = function getMongoDBStatus() {
@@ -77,13 +85,13 @@ module.exports.getMongoDBStatus = function getMongoDBStatus() {
 module.exports.getMongoDBStatusText = function getMongoDBStatusText() {
   switch ( DB.readyState ) {
     case DISCONNECTED:
-      return(Version + 'Disconnected');
+      return('Disconnected');
     case CONNECTED:
-      return(Version + 'Connected');
+      return( 'Connected');
     case CONNECTING:
-      return(Version + 'Connecting');
+      return( 'Connecting');
     case DISCONNECTING:
-      return(Version + 'Disconnecting');
+      return( 'Disconnecting');
     default: return('Unknown')
   }
 };
