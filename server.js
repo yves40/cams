@@ -26,8 +26,9 @@
 //                   loading order
 //    Mar 14 2019    Play with middleware chaining
 //    Mar 17 2019  Logout server error : serializeUser with mail : undefined
+//    Mar 24 2019  Test mongologger
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 17 2019, 1.89 ";
+const Version = "server.js:Mar 24 2019, 1.90 ";
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -35,6 +36,7 @@ const Version = "server.js:Mar 17 2019, 1.89 ";
 const mongo = require("./src/utilities/mongo");
 const myenv = require("./src/utilities/myenv");
 const logger = require("./src/utilities/logger");
+const mongologger = require("./src/utilities/mongologger");
 const jwtconfig = require("./src/utilities/jwtconfig");
 const corsutility = require("./src/utilities/corsutility");
 const axiosutility = require("./src/utilities/axiosutility");
@@ -154,6 +156,8 @@ logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
+const mylogger = new mongologger('server.js');
+mylogger.log('server.js started and listening on port ' + port);
 app.listen(port, function() {
   logger.info(Version + ': started on ' + port + '\n\n');
 });
