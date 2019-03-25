@@ -8,19 +8,21 @@
 
 const Mongolog = require ('../models/mongoLogModel');
 const mongo = require ('../utilities/mongo');
+const logger = require ('../utilities/logger');
+const DELAY = 500; // msec
 
 //----------------------------------------------------------------------------
 // The class 
 //----------------------------------------------------------------------------
 module.exports = class mongologger {
   constructor (modulename, syncmode = false) {
-      this.Version = 'mongologger:1.09, Mar 25 2019 ';
+      this.Version = 'mongologger:1.12, Mar 25 2019 ';
       this.modulename = modulename;   // Used to track the calling component
       this._DB = mongo.getMongoDBConnection();
+      if (syncmode) waitmongoconnection();
   };
 
   log(message) {
-    console.log(this.Version + 'Mongo status : ' + mongo.getMongoDBStatusText());
     let themessage = new Mongolog( { message: message, 
                                     timestamp: Date.now(),
                                     type: this.modulename, });
@@ -33,26 +35,18 @@ module.exports = class mongologger {
   getVersion() {
     return this.Version;
   };
-
-  closeDB() {
-    mongo.closeMongoDBConnection();
-  };
 }
 
 //----------------------------------------------------------------------------
 // Private 
 //----------------------------------------------------------------------------
-/*
 function sleep(ms) {
-  console.log('Wait for ' + ms / 1000 + ' sec');
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function  waitmongoconnection() {
   while (mongo.getMongoDBStatus() !== mongo.CONNECTED) {
-    console.log(Version + ' ' + mongo.getMongoDBStatusText() + 
-              ' [' + mongo.getMongoDBStatus() + ']');
+    logger.debug(mongo.getMongoDBStatusText() + ' [' + mongo.getMongoDBStatus() + ']');
     await sleep(DELAY);    // 1/2 sec tempo
   }
 }
-*/

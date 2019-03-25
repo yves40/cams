@@ -5,9 +5,9 @@
 //    Mar 05 2019   Monitor mongo connection status with DB.on()
 //                  Add mongodown test routine
 //    Mar 06 2019   Code Cleanup
-//    Mar 25 2019   Disconnect function
+//    Mar 25 2019   Test new connection method
 //----------------------------------------------------------------------------
-const Version = "mongo:1.18, Mar 25 2019 ";
+const Version = "mongo:1.20, Mar 25 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
@@ -46,25 +46,21 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
   logger.debug(Version + 'Connect to : ' + mongodb);
   try {
     mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false });
-    // Get Mongoose to use the global promise library
-    mongoose.Promise = global.Promise;
-    // mongoose.set('bufferCommands', false);
-    DB = mongoose.connection;
-    // Set up handlers
-    DB.on('error',function (err) {  
-      logger.error(Version + 'Mongoose error: ' + err);
-    }); 
-    DB.on('disconnected',function () {  
-      logger.debug(Version + 'Mongoose disconnected');
-    }); 
-    DB.on('connected',function () {  
-      logger.debug(Version + 'Mongoose connected');
-    }); 
-    
-    return DB;
+      DB = mongoose.connection;
+      // Set up handlers
+      DB.on('error',function (err) {  
+        logger.error(Version + 'Mongoose error: ' + err);
+      }); 
+      DB.on('disconnected',function () {  
+        logger.debug(Version + 'Mongoose disconnected');
+      }); 
+      DB.on('connected',function () {  
+        logger.debug(Version + 'Mongoose connected');
+      }); 
+      return DB;
   }
-  catch(err) {
-    logger.error(Version + err);
+  catch(error) {
+    throw error;
   }
 };
 //----------------------------------------------------------------------------
