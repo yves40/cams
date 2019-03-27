@@ -156,8 +156,8 @@ logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
-const mylogger = new mongologger('server.js');
-mylogger.log('server.js started and listening on port ' + port);
+const mylogger = new mongologger(Version);
+mylogger.informational('Started and listening on port ' + port);
 app.listen(port, function() {
   logger.info(Version + ': started on ' + port + '\n\n');
 });
