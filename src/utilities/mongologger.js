@@ -40,13 +40,11 @@ module.exports = class mongologger {
     }); 
   };
   //----------------------------------------------------------------------------
-  /*
   debug(message) {this.log(message, this.DEBUG);};
   informational(message) {this.log(message, this.INFORMATIONAL);};
   warning(message) {this.log(message, this.WARNING);};
   fatal(message) {this.log(message, this.FATAL);};
   error(message) {this.log(message, this.ERROR);};
-  */
   //----------------------------------------------------------------------------
   levelToString(level) {
     switch (level) {
