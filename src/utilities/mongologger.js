@@ -16,7 +16,7 @@ const logger = require ('../utilities/logger');
 //----------------------------------------------------------------------------
 module.exports = class mongologger {
   constructor (modulename) {
-      this.Version = 'mongologger:1.20, Mar 27 2019 ';
+      this.Version = 'mongologger:1.22, Mar 27 2019 ';
       this.DEBUG = 0;
       this.INFORMATIONAL = 1;
       this.WARNING = 2;
@@ -39,6 +39,14 @@ module.exports = class mongologger {
       logger.error(themessage.message + ' : -----------------  Not Saved !!!!!!!!!!!!!');
     }); 
   };
+  //----------------------------------------------------------------------------
+  /*
+  debug(message) {this.log(message, this.DEBUG);};
+  informational(message) {this.log(message, this.INFORMATIONAL);};
+  warning(message) {this.log(message, this.WARNING);};
+  fatal(message) {this.log(message, this.FATAL);};
+  error(message) {this.log(message, this.ERROR);};
+  */
   //----------------------------------------------------------------------------
   levelToString(level) {
     switch (level) {
