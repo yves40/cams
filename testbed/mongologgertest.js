@@ -6,7 +6,7 @@
 //    Mar 27 2019    Playing with async & Promise...
 //----------------------------------------------------------------------------
 
-const Version = "mongologgertest.js:1.17 Mar 27 2019 ";
+const Version = "mongologgertest.js:1.18 Mar 27 2019 ";
 
 const mongoose = require('mongoose');
 
@@ -18,14 +18,6 @@ const logger = require("../src/utilities/logger");
 
 console.log('\n\n');
 logger.infos(Version + '----------------- mongologgertest -------------------------------');
-
-//----------------------------------------------------------------------------
-// Super sleep function ;-)
-//----------------------------------------------------------------------------
-function sleep(ms) {
-  logger.debug('Wait for ' + ms / 1000 + ' sec');
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function mongoosecycle() {
   return new Promise((resolve, reject) => {
@@ -57,7 +49,7 @@ async function main () {
   await mongoosecycle().then( value => {
     logger.debug(value);
   });
-  await sleep(1000);  // Just give time to flush mongo cache before exiting
+  await helpers.sleep(1000);  // Just give time to flush mongo cache before exiting
   process.exit(0);
 }
 //----------------------------------------------------------------------------
