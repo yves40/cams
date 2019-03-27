@@ -3,9 +3,10 @@
 //
 //    Mar 24 2019    Initial
 //    Mar 25 2019    Synchronous call of logger...
+//    Mar 27 2019    Playing with async & Promise...
 //----------------------------------------------------------------------------
 
-const Version = "mongologgertest.js:1.14 Mar 25 2019 ";
+const Version = "mongologgertest.js:1.16 Mar 27 2019 ";
 
 const mongoose = require('mongoose');
 
@@ -22,36 +23,63 @@ logger.infos(Version + '----------------- mongologgertest ----------------------
 // Super sleep function ;-)
 //----------------------------------------------------------------------------
 function sleep(ms) {
-  console.log('Wait for ' + ms / 1000 + ' sec');
+  logger.debug('Wait for ' + ms / 1000 + ' sec');
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function mongoosecycle() {
-  mongoose.connect('mongodb://vboxweb:4100/cams',{useNewUrlParser: true, keepAlive: false } )
-  .then(function(MongooseObject) {
-    logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
-    
-    //const mylogger = new mongologger('MONGOLOGTST', false);
-    //mylogger.log('Starts now using : ' + mylogger.getVersion());
-    //mylogger.log('Exit now');
-    //mylogger.log('I\'m not sure the log is written');
-    
-    logger.infos('Bye bye mongo');
-    mongoose.disconnect().then(function () {
-      logger.debug('That is finished !!!!!!!!!!!!!!!!!');
+  return new Promise((resolve, reject) => {
+    mongoose.connect('mongodb://vboxweb:4100/cams',{useNewUrlParser: true, keepAlive: false } )
+    .then(function(MongooseObject) {
+      logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
+      
+      const mylogger = new mongologger('MONGOLOGTSTASYNC', false);
+      mylogger.log('Starts now using : ' + mylogger.getVersion());
+      mylogger.log('Exit now');
+      
+      logger.infos('Bye bye mongo');
+      mongoose.disconnect().then(function () {
+        logger.debug('Mongoose is disconnected');
+      });
+      resolve('Done');
+    })
+    .catch(function(reason) {
+      logger.info(reason.message);
+      reject('Got a problem');
     });
-  })
-  .catch(function(reason) {
-    logger.info(reason.message);
   });
 }
 
 //----------------------------------------------------------------------------
 // Go
 //----------------------------------------------------------------------------
-logger.infos('Start work');
-mongoosecycle();
-//const mylogger = new mongologger('MONGOLOGTST', false);
-//process.exit(0);
+async function main () {
+  await mongoosecycle().then( value => {
+    logger.debug(value);
+  });
+  await sleep(1000);  // Just give time to flush mongo cache before exiting
+  process.exit(0);
+}
+//----------------------------------------------------------------------------
+logger.infos('Start ASYNC work');
+main();
+logger.infos('Start SYNC work');
+mongoose.connect('mongodb://vboxweb:4100/cams',{useNewUrlParser: true, keepAlive: false } )
+.then(function(MongooseObject) {
+  logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
+  
+  const mylogger = new mongologger('MONGOLOGTSTSYNC', false);
+  mylogger.log('Starts now using : ' + mylogger.getVersion());
+  mylogger.log('Exit now');
+  
+  logger.infos('Bye bye mongo again');
+  mongoose.disconnect().then(function () {
+    logger.debug('Mongoose is disconnected');
+  });
+})
+.catch(function(reason) {
+  logger.info(reason.message);
+  reject('Got a problem');
+});
 
 

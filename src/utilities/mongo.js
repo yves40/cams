@@ -54,8 +54,6 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
       logger.info(reason.message);
     });
   
-
-
     DB = mongoose.connection;
       // Set up handlers
       DB.on('error',function (err) {  

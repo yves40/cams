@@ -3,6 +3,7 @@
 //
 //    Mar 24 2019   Initial
 //    Mar 25 2019   WIP on methods
+//    Mar 27 2019    Playing with async & Promise...
 //----------------------------------------------------------------------------
 "use strict"
 
@@ -16,20 +17,22 @@ const DELAY = 500; // msec
 //----------------------------------------------------------------------------
 module.exports = class mongologger {
   constructor (modulename, syncmode = false) {
-      this.Version = 'mongologger:1.12, Mar 25 2019 ';
+      this.Version = 'mongologger:1.14, Mar 27 2019 ';
       this.modulename = modulename;   // Used to track the calling component
       this._DB = mongo.getMongoDBConnection();
       if (syncmode) waitmongoconnection();
   };
 
-  log(message) {
+  async log(message) {
     let themessage = new Mongolog( { message: message, 
                                     timestamp: Date.now(),
                                     type: this.modulename, });
-    themessage.save(function (err, themessage) {
-      if (err) return console.error(err);
-      console.log(themessage.message + '****************');
-    });  
+    await themessage.save().then( value => {
+        logger.debug(this.Version + themessage.message + ' : ----------------- Saved');
+    })
+    .catch( value => {
+      logger.error(themessage.message + ' : -----------------  Not Saved !!!!!!!!!!!!!');
+    }) 
   };
 
   getVersion() {
