@@ -5,8 +5,9 @@
 //    Mar 14 2019   Function name
 //    Mar 17 2019   Add some functions.
 //    Mar 18 2019   Add some functions..
+//    Mar 27 2019   Sleep
 //----------------------------------------------------------------------------
-const Version = "helpers:1.13, Mar 18 2019 ";
+const Version = "helpers:1.14, Mar 27 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -48,3 +49,11 @@ module.exports.getHoursMinutesSeconds = function getHoursMinutesSeconds() {
     let d = new Date();
     return d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 };
+//----------------------------------------------------------------------------
+// Super sleep function ;-)
+// Must be called from an ASYNC function
+//----------------------------------------------------------------------------
+module.exports.sleep = function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
