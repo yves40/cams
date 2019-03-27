@@ -6,7 +6,7 @@
 //    Mar 27 2019    Playing with async & Promise...
 //----------------------------------------------------------------------------
 
-const Version = "mongologgertest.js:1.16 Mar 27 2019 ";
+const Version = "mongologgertest.js:1.17 Mar 27 2019 ";
 
 const mongoose = require('mongoose');
 
@@ -33,9 +33,9 @@ function mongoosecycle() {
     .then(function(MongooseObject) {
       logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
       
-      const mylogger = new mongologger('MONGOLOGTSTASYNC', false);
-      mylogger.log('Starts now using : ' + mylogger.getVersion());
-      mylogger.log('Exit now');
+      const mylogger = new mongologger('MONGOLOGTSTASYNC');
+      mylogger.log('Starts now using : ' + mongologger.getVersion(), mylogger.DEBUG);
+      mylogger.log('Exit now', mylogger.DEBUG);
       
       logger.infos('Bye bye mongo');
       mongoose.disconnect().then(function () {
@@ -68,9 +68,9 @@ mongoose.connect('mongodb://vboxweb:4100/cams',{useNewUrlParser: true, keepAlive
 .then(function(MongooseObject) {
   logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
   
-  const mylogger = new mongologger('MONGOLOGTSTSYNC', false);
-  mylogger.log('Starts now using : ' + mylogger.getVersion());
-  mylogger.log('Exit now');
+  const mylogger = new mongologger('MONGOLOGTSTSYNC');
+  mylogger.log('Starts now using : ' + mongologger.getVersion(), mylogger.DEBUG);
+  mylogger.log('Exit now', mylogger.DEBUG);
   
   logger.infos('Bye bye mongo again');
   mongoose.disconnect().then(function () {

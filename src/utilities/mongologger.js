@@ -10,46 +10,54 @@
 const Mongolog = require ('../models/mongoLogModel');
 const mongo = require ('../utilities/mongo');
 const logger = require ('../utilities/logger');
-const DELAY = 500; // msec
 
 //----------------------------------------------------------------------------
 // The class 
 //----------------------------------------------------------------------------
 module.exports = class mongologger {
-  constructor (modulename, syncmode = false) {
-      this.Version = 'mongologger:1.14, Mar 27 2019 ';
+  constructor (modulename) {
+      this.Version = 'mongologger:1.19, Mar 27 2019 ';
+      this.DEBUG = 0;
+      this.INFORMATIONAL = 1;
+      this.WARNING = 2;
+      this.ERROR = 3;
+      this.FATAL = 4;
       this.modulename = modulename;   // Used to track the calling component
       this._DB = mongo.getMongoDBConnection();
-      if (syncmode) waitmongoconnection();
   };
-
-  async log(message) {
-    let themessage = new Mongolog( { message: message, 
+  //----------------------------------------------------------------------------
+  async log(message, severity = this.DEBUG) {
+    message = '[' + this.levelToString(severity) + ']' + message;
+    let themessage = new Mongolog( { module: this.modulename,
+                                    message: message, 
                                     timestamp: Date.now(),
-                                    type: this.modulename, });
+                                    severity: severity, });
     await themessage.save().then( value => {
         logger.debug(this.Version + themessage.message + ' : ----------------- Saved');
     })
     .catch( value => {
       logger.error(themessage.message + ' : -----------------  Not Saved !!!!!!!!!!!!!');
-    }) 
+    }); 
   };
-
-  getVersion() {
+  //----------------------------------------------------------------------------
+  levelToString(level) {
+    switch (level) {
+        case this.DEBUG: return 'DBG';
+        case this.INFORMATIONAL: return 'INF';
+        case this.WARNING: return 'WRN';
+        case this.ERROR: return 'ERR';
+        case this.FATAL: return 'FTL';
+        default: return 'FTL';
+    }
+  };  
+  //----------------------------------------------------------------------------
+  static getVersion() {
     return this.Version;
   };
-}
-
+};
 //----------------------------------------------------------------------------
 // Private 
 //----------------------------------------------------------------------------
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function  waitmongoconnection() {
-  while (mongo.getMongoDBStatus() !== mongo.CONNECTED) {
-    logger.debug(mongo.getMongoDBStatusText() + ' [' + mongo.getMongoDBStatus() + ']');
-    await sleep(DELAY);    // 1/2 sec tempo
-  }
-}
+};
