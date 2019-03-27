@@ -5,9 +5,9 @@
 //    Mar 14 2019   Function name
 //    Mar 17 2019   Add some functions.
 //    Mar 18 2019   Add some functions..
-//    Mar 27 2019   Sleep
+//    Mar 27 2019   Sleep, and add a getDate()
 //----------------------------------------------------------------------------
-const Version = "helpers:1.14, Mar 27 2019 ";
+const Version = "helpers:1.15, Mar 27 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -18,19 +18,10 @@ module.exports.getDateTime = function getDateTime() {
     return datetime;
 };
 
-module.exports.convertDateTime = function convertDateTime(thedate) {
-    computedate = new Date(thedate);
-    datetime = months[computedate.getMonth()] + '-' + computedate.getDate() + '-' 
-    + computedate.getFullYear() + ' ' 
-    + computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
+module.exports.getDate = function getDate() {
+    let d = new Date();
+    datetime = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ';
     return datetime;
-};
-
-module.exports.convertSecondsToHMS = function convertSecondsToHMS(seconds) {
-    let computedate = new Date(1970,0,1);
-    computedate.setSeconds(seconds);
-    return computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");    
-    return;
 };
 
 module.exports.getTime = function getTime() {
@@ -49,6 +40,21 @@ module.exports.getHoursMinutesSeconds = function getHoursMinutesSeconds() {
     let d = new Date();
     return d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 };
+module.exports.convertDateTime = function convertDateTime(thedate) {
+    computedate = new Date(thedate);
+    datetime = months[computedate.getMonth()] + '-' + computedate.getDate() + '-' 
+    + computedate.getFullYear() + ' ' 
+    + computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
+    return datetime;
+};
+
+module.exports.convertSecondsToHMS = function convertSecondsToHMS(seconds) {
+    let computedate = new Date(1970,0,1);
+    computedate.setSeconds(seconds);
+    return computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");    
+    return;
+};
+
 //----------------------------------------------------------------------------
 // Super sleep function ;-)
 // Must be called from an ASYNC function
