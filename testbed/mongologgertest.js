@@ -34,7 +34,7 @@ function mongoosecycle() {
       logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
       
       const mylogger = new mongologger('MONGOLOGTSTASYNC');
-      mylogger.log('Starts now using : ' + mongologger.getVersion(), mylogger.DEBUG);
+      mylogger.log('Starts now using : ' + mylogger.getVersion(), mylogger.DEBUG);
       mylogger.log('Exit now', mylogger.DEBUG);
       
       logger.infos('Bye bye mongo');
@@ -69,7 +69,7 @@ mongoose.connect('mongodb://vboxweb:4100/cams',{useNewUrlParser: true, keepAlive
   logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
   
   const mylogger = new mongologger('MONGOLOGTSTSYNC');
-  mylogger.log('Starts now using : ' + mongologger.getVersion(), mylogger.DEBUG);
+  mylogger.log('Starts now using : ' + mylogger.getVersion(), mylogger.DEBUG);
   mylogger.log('Exit now', mylogger.DEBUG);
   
   logger.infos('Bye bye mongo again');
