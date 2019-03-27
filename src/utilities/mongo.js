@@ -45,8 +45,18 @@ let DB = null;
 module.exports.getMongoDBConnection = function getMongoDBConnection() {
   logger.debug(Version + 'Connect to : ' + mongodb);
   try {
-    mongoose.connect(mongodb, {useNewUrlParser: true, keepAlive: false });
-      DB = mongoose.connection;
+    mongoose.connect(mongodb,{useNewUrlParser: true, keepAlive: false } )
+    .then(function(MongooseObject) {
+      logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
+      return MongooseObject.connection;
+    })
+    .catch(function(reason) {
+      logger.info(reason.message);
+    });
+  
+
+
+    DB = mongoose.connection;
       // Set up handlers
       DB.on('error',function (err) {  
         logger.error(Version + 'Mongoose error: ' + err);

@@ -28,7 +28,7 @@ module.exports = class mongologger {
                                     type: this.modulename, });
     themessage.save(function (err, themessage) {
       if (err) return console.error(err);
-      console.log(themessage.message + " saved to mongologs collection.");
+      console.log(themessage.message + '****************');
     });  
   };
 
