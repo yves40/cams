@@ -2,16 +2,17 @@
 //    mongologreader.js
 //
 //    Mar 27 2019    Initial, from mongologgertest
+//    Mar 28 2019    Query problems
 //----------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.03 Mar 27 2019 ";
+const Version = "mongologreader.js:1.09 Mar 28 2019 ";
 
-const mongoose = require('mongoose');
-
-const mongologger = require('../src/utilities/mongologger');
+const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
 const logger = require("../src/utilities/logger");
+const Mongolog = require ('../src/models/mongoLogModel');
 
+const ObjectId = require('mongodb').ObjectId;
 
 let loglimit = null;
 let timelimit = null;
@@ -70,20 +71,35 @@ function usage() {
 //----------------------------------------------------------------------------
 // Go
 //----------------------------------------------------------------------------
-const mylogger = new mongologger('MONGOLOGREADER');
-mylogger.log('Starts ', mylogger.DEBUG);
 try {
   parseCommandLine();
 }
 catch(Error) {
     console.log('********** Error : ' + Error);
     usage();
+}
+// Now proceed to query
+mongo.getMongoDBConnection();
+let query = Mongolog.find({ });
+query.select('module message timestamp severity');
+if (loglimit) {
+  query.limit(loglimit);
+}
+query.exec(function(err, thelist) {
+  if (err) console.log(err);
+  else {
+    thelist.forEach((value, index) => {
+      // index = index.toString();
+      ;
+      console.log('[ %s ] %s Time: %s Message: %s', ('000'+index).slice(-3), 
+                  value.module, 
+                  helpers.convertDateTime(value.timestamp), 
+                  value.message );
+    });
   }
-
+});
 // Exit
-mylogger.log('Enter a 3 sec wait for mongo to flush', mylogger.DEBUG);
 (async() => {
-  await helpers.sleep(3000);    // Wait for mongo to flush cache
+  await helpers.sleep(2000);    // Wait for mongo to flush cache
   process.exit(0);
 })();
-
