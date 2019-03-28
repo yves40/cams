@@ -78,10 +78,20 @@ catch(Error) {
     console.log('********** Error : ' + Error);
     usage();
 }
-// Now proceed to query
+// Get a connection
 mongo.getMongoDBConnection();
+// Builds the query
 let query = Mongolog.find({ });
-query.select('module message timestamp severity');
+query.select('module message timestamp severity').sort({timestamp: -1});  // Sorted by most recent dates
+// Any specific module wanted ? 
+if (modulename !== null) {
+  query.select().where('module').equals(modulename); 
+}
+// Any oldest time ? 
+if(timelimit) {
+  query.select().where('timestamp').gt(timelimit);
+}
+// Any limit to number of lines ?
 if (loglimit) {
   query.limit(loglimit);
 }
