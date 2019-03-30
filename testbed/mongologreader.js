@@ -3,9 +3,10 @@
 //
 //    Mar 27 2019    Initial, from mongologgertest
 //    Mar 28 2019    Query problems
+//    Mar 30 2019    Fix time rabge bug
 //----------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.12 Mar 28 2019 ";
+const Version = "mongologreader.js:1.13 Mar 30 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -95,6 +96,7 @@ catch(Error) {
 }
 // Get a connection
 mongo.getMongoDBConnection();
+console.log('\n\n');
 // Builds the query
 let query = Mongolog.find({ });
 query.select('module message timestamp severity').sort({timestamp: -1});  // Sorted by most recent dates
@@ -102,13 +104,19 @@ query.select('module message timestamp severity').sort({timestamp: -1});  // Sor
 if (modulename !== null) {
   query.select().where('module').equals(modulename); 
 }
-// Any recent time ? 
-if(uppertimelimit) {  
-  query.select().where('timestamp').gt(uppertimelimit);
+// Any time range  ? 
+if(uppertimelimit && lowertimelimit) {  
+  query.select().where('timestamp').lt(uppertimelimit).where('timestamp').gt(lowertimelimit);
 }
-// Any oldest time ? 
-if(lowertimelimit) {  
-  query.select().where('timestamp').lt(lowertimelimit);
+else {
+  // Any recent time ? 
+  if(uppertimelimit) {  
+    query.select().where('timestamp').gt(uppertimelimit);
+  }
+  // Any oldest time ? 
+  if(lowertimelimit) {  
+    query.select().where('timestamp').lt(lowertimelimit);
+  }
 }
 // Any limit to number of lines ?
 if (loglimit) {
