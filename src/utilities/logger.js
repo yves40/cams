@@ -17,7 +17,6 @@ const helpers = require('./helpers');
 
 
 const MAXLOGS = 10;
-const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 let logs = [];
 
 const DEBUG = 0;
