@@ -3,10 +3,10 @@
 //
 //    Mar 27 2019    Initial, from mongologgertest
 //    Mar 28 2019    Query problems
-//    Mar 30 2019    Fix time rabge bug
+//    Mar 30 2019    Fix time range bug
 //----------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.13 Mar 30 2019 ";
+const Version = "mongologreader.js:1.14 Mar 30 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -30,7 +30,7 @@ function parseCommandLine() {
       let keyword=param.split('=')[0];
       if(keyword !== undefined) {
         let value = param.split('=')[1];
-        if (value !== undefined)
+        if (value !== undefined) {
           switch(keyword) {
             case '-ut': if (value.length < 6) {
                           // Expect user specified just hh:mm, so add current day month year
@@ -40,28 +40,29 @@ function parseCommandLine() {
                         logger.info(Version + 'Upper time limit set to : ' + helpers.convertDateTime(uppertimelimit));
                         validparam = true;
                         break;
-          case '-lt': if (value.length < 6) {
+            case '-lt': if (value.length < 6) {
                         // Expect user specified just hh:mm, so add current day month year
                         value = helpers.getDate() + ' ' + value;                       
-                      }
-                      lowertimelimit = new Date(value);
-                      logger.info(Version + 'Lower time limit set to : ' + helpers.convertDateTime(lowertimelimit));
-                      validparam = true;
-                      break;
-          case '-l':  loglimit = parseInt(value);
-                      logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
-                      validparam = true;
-                      break;
+                        }
+                        lowertimelimit = new Date(value);
+                        logger.info(Version + 'Lower time limit set to : ' + helpers.convertDateTime(lowertimelimit));
+                        validparam = true;
+                        break;
+            case '-l':  loglimit = parseInt(value);
+                        logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
+                        validparam = true;
+                        break;
             case '-m':  modulename = value;
                         logger.info(Version + 'Searching for module : ' + modulename)
                         validparam = true;
-            break;
+                        break;
           }
           if (!validparam) {
             throw new Error('Invalid parameter : ' + keyword);
           }
         }
       }
+    };
   });
   if((lowertimelimit && uppertimelimit)&&(lowertimelimit > uppertimelimit)) {
       throw new Error('Cannot set a time range with most recent time ' + helpers.convertDateTime(uppertimelimit) +
