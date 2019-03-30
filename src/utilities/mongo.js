@@ -6,8 +6,9 @@
 //                  Add mongodown test routine
 //    Mar 06 2019   Code Cleanup
 //    Mar 25 2019   Test new connection method
+//    Mar 30 2019   Remove some log message
 //----------------------------------------------------------------------------
-const Version = "mongo:1.20, Mar 25 2019 ";
+const Version = "mongo:1.21, Mar 30 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
@@ -42,12 +43,12 @@ let DB = null;
 //----------------------------------------------------------------------------
 // Open mongo connection
 //----------------------------------------------------------------------------
-module.exports.getMongoDBConnection = function getMongoDBConnection() {
-  logger.debug(Version + 'Connect to : ' + mongodb);
+module.exports.getMongoDBConnection = function getMongoDBConnection(traceflag = false) {
+  if(traceflag) logger.debug(Version + 'Connect to : ' + mongodb);
   try {
     mongoose.connect(mongodb,{useNewUrlParser: true, keepAlive: false } )
     .then(function(MongooseObject) {
-      logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
+      if(traceflag) logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
       return MongooseObject.connection;
     })
     .catch(function(reason) {
@@ -57,13 +58,13 @@ module.exports.getMongoDBConnection = function getMongoDBConnection() {
     DB = mongoose.connection;
       // Set up handlers
       DB.on('error',function (err) {  
-        logger.error(Version + 'Mongoose error: ' + err);
+        if(traceflag) logger.error(Version + 'Mongoose error: ' + err);
       }); 
       DB.on('disconnected',function () {  
-        logger.debug(Version + 'Mongoose disconnected');
+        if(traceflag) logger.debug(Version + 'Mongoose disconnected');
       }); 
       DB.on('connected',function () {  
-        logger.debug(Version + 'Mongoose connected');
+        if(traceflag) logger.debug(Version + 'Mongoose connected');
       }); 
       return DB;
   }
