@@ -25,11 +25,13 @@
 //                   Also trying to clarify importance of middleware and modules 
 //                   loading order
 //    Mar 14 2019    Play with middleware chaining
-//    Mar 17 2019  Logout server error : serializeUser with mail : undefined
-//    Mar 24 2019  Test mongologger
+//    Mar 17 2019   Logout server error : serializeUser with mail : undefined
+//    Mar 24 2019   Test mongologger
+//    Mar 30 2019   ModuleID & ModuleVersion, to ease searching in mogologger
 //----------------------------------------------------------------------------
-const Version = "server.js:Mar 24 2019, 1.90 ";
-const LogModule = 'SERVER.JS'
+const ModuleID = 'SERVER.JS'
+const ModuleVersion = 'Mar 30 2019, 1.91';
+const Version = ModuleID + ':' + ModuleVersion + ' ';
 
 //----------------------------------------------------------------------------
 // Get modules
@@ -157,8 +159,8 @@ logger.info("Server status :");
 logger.info("---------------------------------------------------------");
 const port = myenv.getPort();
 app.use("/", router);
-const mylogger = new mongologger(LogModule);
-mylogger.informational('Started and listening on port ' + port);
+const mylogger = new mongologger(ModuleID);
+mylogger.informational(Version + 'Started and listening on port ' + port);
 app.listen(port, function() {
   logger.info(Version + ': started on ' + port + '\n\n');
 });
