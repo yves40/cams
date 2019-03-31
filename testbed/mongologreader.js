@@ -8,7 +8,7 @@
 //                    Add -s for silent
 //----------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.15 Mar 31 2019 ";
+const Version = "mongologreader.js:1.19 Mar 31 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -56,39 +56,58 @@ function parseCommandLine() {
                         validparam = true;
                         break;
           }
-          if (!validparam) {
-            throw new Error('Invalid parameter : ' + keyword);
+        }
+        else { // Value less parameters
+          switch(keyword) {
+            case '-s':  verbose = false;   // Silent mode ?
+                        validparam = true;
+                        break;
           }
         }
-        else {
-            if(keyword === '-s') verbose = false;   // Silent mode ?
+        if (!validparam) {
+          throw new Error('Invalid parameter : ' + keyword);
         }
-    }
+      }
     };
   });
-  if((aftertime && beforetime)&&(beforetime > aftertime)) {
-      throw new Error('Cannot set a time range with before time ' + helpers.convertDateTime(beforetime) +
-             ' more recent than after time' + helpers.convertDateTime(aftertime));
+  if((aftertime && beforetime)&&(aftertime > beforetime)) {
+      throw new Error('Cannot set a time range between ' + helpers.convertDateTime(beforetime) +
+             ' and ' + helpers.convertDateTime(aftertime));
   }
-  if(verbose&&beforetime) logger.info(Version + 'Before time set to : ' + helpers.convertDateTime(beforetime));
-  if(verbose&&aftertime) logger.info(Version + 'After time  set to : ' + helpers.convertDateTime(aftertime));
+  if(verbose&&aftertime&&beforetime) {
+    logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime) + ' and before ' + helpers.convertDateTime(beforetime));
+  }
+  else {
+    if(verbose&&beforetime) logger.info(Version + 'Searching for logs before ' + helpers.convertDateTime(beforetime));
+    if(verbose&&aftertime) logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime));
+  }
   if(verbose&&loglimit) logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
-  if(verbose&&modulename) logger.info(Version + 'Searching for module : ' + modulename)
+  if(verbose&&modulename) logger.info(Version + 'Searching for module ' + modulename)
 }
 //----------------------------------------------------------------------------
 // ussage
 //----------------------------------------------------------------------------
 function usage() {
+
   console.log('\n\n');
-  console.log('Usage : node mongologreader [-l=maxlog] [-m=modulename] [-before=<valid-date>] [-after=<valid-date>] [-s]');
+  console.log('Usage : node mongologreader [-l=maxlog] [-m=modulename] [-before=<valid-date>] [-after=<valid-date>] [-s] \n');
   console.log('[] maxlog is the xaximum number of log events reported.');
-  console.log('[] modulename is the name of a module which logged in mongo repository.');
+  console.log('[] modulename is the name of a module which logged in mongo repository. The search is case insensitive');
   console.log('[] -before specifies a search for logs before a date');
   console.log('[] -after specifies a search for logs after a date');
   console.log('[]     valid-date defines the latest date to consider. All events posted before this date will not be read.');
   console.log('[]            Format must be either \"mon-dd-yyyy hh:mm\". or hh:mm');
   console.log('[]            Notice the surrounding \"\" when a full date is specified');
+  console.log('[]     after and before can be used together to specify a time range. ');
   console.log('[] -s silent mode');
+  console.log('[]');
+  console.log('[] Samples');
+  console.log('[]');
+  console.log('[] node mongologreader.js -after="Mar-28-2019 10:14" -before="Mar-28-2019 09:28" -s');
+  console.log('[] node mongologreader.js -m=SERVER.JS');
+  console.log('[] node mongologreader.js -before="Mar-28-2019 10:14" -after="Mar-28-2019 09:28" -s');
+  console.log('[] node mongologreader.js -after=mar-31-2019');
+
   console.log('\n\n');
 }
 //----------------------------------------------------------------------------
@@ -111,41 +130,40 @@ let query = Mongolog.find({ });
 query.select('module message timestamp severity').sort({timestamp: -1});  // Sorted by most recent dates
 // Any specific module wanted ? 
 if (modulename !== null) {
-  query.select().where('module').equals(modulename); 
+  query.select().where({ 'module' : { '$regex' : modulename, '$options' : 'i' } });
 }
-// Any time range  ? 
+// Any time range  ? Must be : before MAR 31 ------ after MAR 26 
 if(beforetime && aftertime) {  
-  query.select().where('timestamp').lt(aftertime).where('timestamp').gt(beforetime);
+  query.select().where('timestamp').gt(aftertime).where('timestamp').lt(beforetime);
 }
 else {
-  // Any recent time ? 
-  if(beforetime) {  
-    query.select().where('timestamp').gt(beforetime);
-  }
-  // Any oldest time ? 
+  // Any recent time ? Must be : after MAR 31 
   if(aftertime) {  
-    query.select().where('timestamp').lt(aftertime);
+    query.select().where('timestamp').gt(aftertime);
+  }
+  // Any oldest time ? Must be : before MAR 31
+  if(beforetime) {  
+    query.select().where('timestamp').lt(beforetime);
   }
 }
 // Any limit to number of lines ?
 if (loglimit) {
   query.limit(loglimit);
 }
-query.exec(function(err, thelist) {
-  if (err) console.log(err);
-  else {
-    thelist.forEach((value, index) => {
-      // index = index.toString();
-      ;
-      console.log('[ %s ] %s %s ------ %s', ('000'+index).slice(-3), 
-        helpers.convertDateTime(value.timestamp), 
-        value.module, 
-        value.message );
-    });
-  }
-});
-// Exit
+// Finally run the buit query
 (async() => {
-  await helpers.sleep(2000);    // Wait for mongo to flush cache
-  process.exit(0);
+  await query.exec(function(err, thelist) {
+    if (err) console.log(err);
+    else {
+      thelist.forEach((value, index) => {
+        // index = index.toString();
+        ;
+        console.log('[ %s ] %s %s ------ %s', ('000'+index).slice(-3), 
+          helpers.convertDateTime(value.timestamp), 
+          value.module, 
+          value.message );
+      });
+    }
+    process.exit(0);
+  });
 })();
