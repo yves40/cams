@@ -6,33 +6,34 @@
 //    Mar 17 2019   Add some functions.
 //    Mar 18 2019   Add some functions..
 //    Mar 27 2019   Sleep, and add a getDate()
+//    Mar 30 2019   Cannot read property of undefined
 //----------------------------------------------------------------------------
-const Version = "helpers:1.15, Mar 27 2019 ";
+const Version = "helpers:1.16, Mar 30 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
 module.exports.getDateTime = function getDateTime() {
     let d = new Date();
-    datetime = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
+    let datetime = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
     + d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
     return datetime;
 };
 
 module.exports.getDate = function getDate() {
     let d = new Date();
-    datetime = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ';
+    let datetime = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ';
     return datetime;
 };
 
 module.exports.getTime = function getTime() {
     let d = new Date();
-    time = d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
+    let time = d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
     return time;
 };
 
 module.exports.getHoursMinutes = function getHoursMinutes() {
     let d = new Date();
-    time = d.getHours() + ':' + d.getMinutes();
+    let time = d.getHours() + ':' + d.getMinutes();
     return time;
 };
 
@@ -52,7 +53,6 @@ module.exports.convertSecondsToHMS = function convertSecondsToHMS(seconds) {
     let computedate = new Date(1970,0,1);
     computedate.setSeconds(seconds);
     return computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");    
-    return;
 };
 
 //----------------------------------------------------------------------------
