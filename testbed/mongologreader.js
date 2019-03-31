@@ -1,12 +1,14 @@
 //----------------------------------------------------------------------------
 //    mongologreader.js
 //
-//    Mar 27 2019    Initial, from mongologgertest
-//    Mar 28 2019    Query problems
-//    Mar 30 2019    Fix time range bug
+//    Mar 27 2019     Initial, from mongologgertest
+//    Mar 28 2019     Query problems
+//    Mar 30 2019     Fix time range bug
+//    Mar 31 2019     Change qualifiers
+//                    Add -s for silent
 //----------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.14 Mar 30 2019 ";
+const Version = "mongologreader.js:1.15 Mar 31 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -16,9 +18,10 @@ const Mongolog = require ('../src/models/mongoLogModel');
 const ObjectId = require('mongodb').ObjectId;
 
 let loglimit = null;
-let uppertimelimit = null;
-let lowertimelimit = null;
+let beforetime = null;
+let aftertime = null;
 let modulename = null;
+let verbose = true;
 //----------------------------------------------------------------------------
 // Parse command line args
 //----------------------------------------------------------------------------
@@ -32,28 +35,24 @@ function parseCommandLine() {
         let value = param.split('=')[1];
         if (value !== undefined) {
           switch(keyword) {
-            case '-ut': if (value.length < 6) {
+            case '-before': if (value.length < 6) {
                           // Expect user specified just hh:mm, so add current day month year
                           value = helpers.getDate() + ' ' + value;                       
                         }
-                        uppertimelimit = new Date(value);
-                        logger.info(Version + 'Upper time limit set to : ' + helpers.convertDateTime(uppertimelimit));
+                        beforetime = new Date(value);
                         validparam = true;
                         break;
-            case '-lt': if (value.length < 6) {
+            case '-after': if (value.length < 6) {
                         // Expect user specified just hh:mm, so add current day month year
                         value = helpers.getDate() + ' ' + value;                       
                         }
-                        lowertimelimit = new Date(value);
-                        logger.info(Version + 'Lower time limit set to : ' + helpers.convertDateTime(lowertimelimit));
+                        aftertime = new Date(value);
                         validparam = true;
                         break;
             case '-l':  loglimit = parseInt(value);
-                        logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
                         validparam = true;
                         break;
             case '-m':  modulename = value;
-                        logger.info(Version + 'Searching for module : ' + modulename)
                         validparam = true;
                         break;
           }
@@ -61,27 +60,35 @@ function parseCommandLine() {
             throw new Error('Invalid parameter : ' + keyword);
           }
         }
-      }
+        else {
+            if(keyword === '-s') verbose = false;   // Silent mode ?
+        }
+    }
     };
   });
-  if((lowertimelimit && uppertimelimit)&&(lowertimelimit > uppertimelimit)) {
-      throw new Error('Cannot set a time range with most recent time ' + helpers.convertDateTime(uppertimelimit) +
-             ' less than oldest time' + helpers.convertDateTime(lowertimelimit));
+  if((aftertime && beforetime)&&(beforetime > aftertime)) {
+      throw new Error('Cannot set a time range with before time ' + helpers.convertDateTime(beforetime) +
+             ' more recent than after time' + helpers.convertDateTime(aftertime));
   }
+  if(verbose&&beforetime) logger.info(Version + 'Before time set to : ' + helpers.convertDateTime(beforetime));
+  if(verbose&&aftertime) logger.info(Version + 'After time  set to : ' + helpers.convertDateTime(aftertime));
+  if(verbose&&loglimit) logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
+  if(verbose&&modulename) logger.info(Version + 'Searching for module : ' + modulename)
 }
 //----------------------------------------------------------------------------
 // ussage
 //----------------------------------------------------------------------------
 function usage() {
   console.log('\n\n');
-  console.log('Usage : node mongologreader [-l=maxlog] [-m=modulename] [-ut=<valid-date>] [-ut=<valid-date>]');
+  console.log('Usage : node mongologreader [-l=maxlog] [-m=modulename] [-before=<valid-date>] [-after=<valid-date>] [-s]');
   console.log('[] maxlog is the xaximum number of log events reported.');
   console.log('[] modulename is the name of a module which logged in mongo repository.');
-  console.log('[] -ut specifies the most recent time to be considered');
-  console.log('[] -lt specifies the oldest time to be considered');
+  console.log('[] -before specifies a search for logs before a date');
+  console.log('[] -after specifies a search for logs after a date');
   console.log('[]     valid-date defines the latest date to consider. All events posted before this date will not be read.');
   console.log('[]            Format must be either \"mon-dd-yyyy hh:mm\". or hh:mm');
   console.log('[]            Notice the surrounding \"\" when a full date is specified');
+  console.log('[] -s silent mode');
   console.log('\n\n');
 }
 //----------------------------------------------------------------------------
@@ -107,17 +114,17 @@ if (modulename !== null) {
   query.select().where('module').equals(modulename); 
 }
 // Any time range  ? 
-if(uppertimelimit && lowertimelimit) {  
-  query.select().where('timestamp').lt(uppertimelimit).where('timestamp').gt(lowertimelimit);
+if(beforetime && aftertime) {  
+  query.select().where('timestamp').lt(aftertime).where('timestamp').gt(beforetime);
 }
 else {
   // Any recent time ? 
-  if(uppertimelimit) {  
-    query.select().where('timestamp').gt(uppertimelimit);
+  if(beforetime) {  
+    query.select().where('timestamp').gt(beforetime);
   }
   // Any oldest time ? 
-  if(lowertimelimit) {  
-    query.select().where('timestamp').lt(lowertimelimit);
+  if(aftertime) {  
+    query.select().where('timestamp').lt(aftertime);
   }
 }
 // Any limit to number of lines ?
@@ -130,10 +137,10 @@ query.exec(function(err, thelist) {
     thelist.forEach((value, index) => {
       // index = index.toString();
       ;
-      console.log('[ %s ] %s Time: %s Message: %s', ('000'+index).slice(-3), 
-                  value.module, 
-                  helpers.convertDateTime(value.timestamp), 
-                  value.message );
+      console.log('[ %s ] %s %s ------ %s', ('000'+index).slice(-3), 
+        helpers.convertDateTime(value.timestamp), 
+        value.module, 
+        value.message );
     });
   }
 });
