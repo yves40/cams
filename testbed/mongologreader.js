@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 //    mongologreader.js
 //
 //    Mar 27 2019     Initial, from mongologgertest
@@ -6,9 +6,10 @@
 //    Mar 30 2019     Fix time range bug
 //    Mar 31 2019     Change qualifiers
 //                    Add -s for silent
-//----------------------------------------------------------------------------
+//    Apr 02 2019     Change command line interpreter to use blanks instead of '='
+//-------------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.19 Mar 31 2019 ";
+const Version = "mongologreader.js:1.21 Apr 02 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -26,53 +27,71 @@ let verbose = true;
 // Parse command line args
 //----------------------------------------------------------------------------
 function parseCommandLine() {
-  process.argv.forEach((val, index) => {
-    if (index >= 2) {     // Skip first two args which are node and program name
-      let validparam = false;
-      let param=val;
-      let keyword=param.split('=')[0];
-      if(keyword !== undefined) {
-        let value = param.split('=')[1];
-        if (value !== undefined) {
-          switch(keyword) {
-            case '-before': if (value.length < 6) {
-                          // Expect user specified just hh:mm, so add current day month year
-                          value = helpers.getDate() + ' ' + value;                       
-                        }
-                        beforetime = new Date(value);
-                        validparam = true;
-                        break;
-            case '-after': if (value.length < 6) {
-                        // Expect user specified just hh:mm, so add current day month year
-                        value = helpers.getDate() + ' ' + value;                       
-                        }
-                        aftertime = new Date(value);
-                        validparam = true;
-                        break;
-            case '-l':  loglimit = parseInt(value);
-                        validparam = true;
-                        break;
-            case '-m':  modulename = value;
-                        validparam = true;
-                        break;
-          }
-        }
-        else { // Value less parameters
-          switch(keyword) {
-            case '-s':  verbose = false;   // Silent mode ?
-                        validparam = true;
-                        break;
-          }
-        }
-        if (!validparam) {
-          throw new Error('Invalid parameter : ' + keyword);
-        }
-      }
-    };
-  });
+  let index = 0;
+  let value = undefined;
+  let nbrargs = process.argv.length - 2;
+  for (index = 2; index < process.argv.length; ) {
+    let keyword = process.argv[index];
+    switch(keyword) {
+      case '-before':
+                  value = process.argv[++index];
+                  if (value === undefined) {
+                    throw new Error('You specified ' + keyword + ' without any value');
+                  }
+                  if (value.length < 6) {
+                    // Expect user specified just hh:mm, so add current day month year
+                    value = helpers.getDate() + ' ' + value;                       
+                  }
+                  beforetime = new Date(value);
+                  validparam = true;
+                  break;
+      case '-after': 
+                  value = process.argv[++index];
+                  if (value === undefined) {
+                    throw new Error('You specified ' + keyword + ' without any value');
+                  }
+                  if (value.length < 6) {
+                  // Expect user specified just hh:mm, so add current day month year
+                  value = helpers.getDate() + ' ' + value;                       
+                  }
+                  aftertime = new Date(value);
+                  validparam = true;
+                  break;
+      case '-l':  
+                  value = process.argv[++index];
+                  if (value === undefined) {
+                    throw new Error('You specified ' + keyword + ' without any value');
+                  }
+                  loglimit = parseInt(value);
+                  validparam = true;
+                  break;
+      case '-m':  
+                  value = process.argv[++index];
+                  if (value === undefined) {
+                    throw new Error('You specified ' + keyword + ' without any value');
+                  }
+                  modulename = value;
+                  validparam = true;
+                  break;
+      case '-s':  verbose = false;   // Silent mode ?
+                  validparam = true;
+                  break;
+    }
+    if (!validparam) {
+      throw new Error('Invalid parameter : ' + keyword);
+    }
+    ++index;
+    value = keyword = undefined; // Next loop
+  }
+  if(aftertime) {   // Valid date ? 
+    if (isNaN(Date.parse(aftertime))) throw new Error('-after date invalid format');
+  }
+  if(beforetime) {   // Valid date ? 
+    if (isNaN(Date.parse(beforetime))) throw new Error('-before date invalid format');
+  }
   if((aftertime && beforetime)&&(aftertime > beforetime)) {
-      throw new Error('Cannot set a time range between ' + helpers.convertDateTime(beforetime) +
-             ' and ' + helpers.convertDateTime(aftertime));
+    throw new Error('Cannot set a time range between ' + helpers.convertDateTime(beforetime) +
+            ' and ' + helpers.convertDateTime(aftertime));
   }
   if(verbose&&aftertime&&beforetime) {
     logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime) + ' and before ' + helpers.convertDateTime(beforetime));
@@ -82,8 +101,9 @@ function parseCommandLine() {
     if(verbose&&aftertime) logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime));
   }
   if(verbose&&loglimit) logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
-  if(verbose&&modulename) logger.info(Version + 'Searching for module ' + modulename)
-}
+  if(verbose&&modulename) logger.info(Version + 'Searching for module ' + modulename);
+};
+
 //----------------------------------------------------------------------------
 // ussage
 //----------------------------------------------------------------------------
