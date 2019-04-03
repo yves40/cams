@@ -7,9 +7,10 @@
 //    Mar 31 2019     Change qualifiers
 //                    Add -s for silent
 //    Apr 02 2019     Change command line interpreter to use blanks instead of '='
+//    Apr 03 2019     Forgot to change the usage samples
 //-------------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.21 Apr 02 2019 ";
+const Version = "mongologreader.js:1.22 Apr 03 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -23,6 +24,7 @@ let beforetime = null;
 let aftertime = null;
 let modulename = null;
 let verbose = true;
+let validparam = false;
 //----------------------------------------------------------------------------
 // Parse command line args
 //----------------------------------------------------------------------------
@@ -123,10 +125,10 @@ function usage() {
   console.log('[]');
   console.log('[] Samples');
   console.log('[]');
-  console.log('[] node mongologreader.js -after="Mar-28-2019 10:14" -before="Mar-28-2019 09:28" -s');
-  console.log('[] node mongologreader.js -m=SERVER.JS');
-  console.log('[] node mongologreader.js -before="Mar-28-2019 10:14" -after="Mar-28-2019 09:28" -s');
-  console.log('[] node mongologreader.js -after=mar-31-2019');
+  console.log('[] node mongologreader.js -after "Mar-28-2019 10:14" -before "Mar-28-2019 09:28" -s');
+  console.log('[] node mongologreader.js -m SERVER.JS');
+  console.log('[] node mongologreader.js -before "Mar-28-2019 10:14" -after "Mar-28-2019 09:28" -s');
+  console.log('[] node mongologreader.js -after mar-31-2019');
 
   console.log('\n\n');
 }
