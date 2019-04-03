@@ -48,7 +48,7 @@
 //    Apr 03 2019  Use the new userLogger class
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.86, Apr 03 2019 ';
+const Version = 'userController:2.87, Apr 03 2019 ';
 
 const auth = require('../utilities/auth');
 const helpers = require('../utilities/helpers');

@@ -12,11 +12,13 @@
 //    Mar 18 2019  Function to retrieve an object with token time characteristics
 //    Mar 23 2019  Change token status string
 //    Mar 24 2019  Add a logout check with lastlogout
+//    Apr 03 2019  trace login failure in the userlogs collection
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.34, Mar 24 2019 ';
+const Version = 'auth.js:1.35, Apr 04 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
+const userlogger = require("../utilities/userlogger");
 const helpers = require('./helpers');
 const User = require('../models/userModel');
 
@@ -126,7 +128,11 @@ passport.use('login',  new LocalStrategy({
     (email, password, done) => {
         User.getUserByEmail(email, (err, loggeduser) => {
             if(err) { return done(err); }
-            if ( !loggeduser ) { return done(null, false, {message: 'Unknown User'}) }  // Error
+            userlog = new userlogger(email);
+            if ( !loggeduser ) { 
+                userlog.log('Unknown user : ' + email);
+                return done(null, false, {message: 'Unknown User'}) 
+            }  // Error
             User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
                 if (isMatch) {
                     logger.debug(Version + email + ' identified');
@@ -139,6 +145,7 @@ passport.use('login',  new LocalStrategy({
                     });
                     return done(null, loggeduser)   // Success login !!!
                 }
+                userlog.log('Invalid password for ' + email);
                 return done( null, false, {message: 'Wrong password'} ); // Error
             });
         });

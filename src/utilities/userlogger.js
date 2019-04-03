@@ -17,8 +17,8 @@ const logger = require ('../utilities/logger');
 // The class 
 //----------------------------------------------------------------------------
 module.exports = class userlogger {
-  constructor (email, ID) {
-      this.Version = 'userlogger:1.03, Apr 03 2019 ';
+  constructor (email, ID = 0) {
+      this.Version = 'userlogger:1.04, Apr 03 2019 ';
       this.email = email;
       this.userid = objectid(ID);
       this._DB = mongo.getMongoDBConnection();

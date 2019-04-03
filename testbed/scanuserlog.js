@@ -4,20 +4,21 @@
 //    Apr 03 2019    Initial, from simplemongologgertest
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.01 Apr 03 2019 ";
+const Version = "scanuserlog.js:1.06 Apr 03 2019 ";
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
-const userLog = require('../src/models/userLogModel');;
+const User = require('../src/models/userModel');
+const userLog = require('../src/models/userLogModel');
 const logger = require("../src/utilities/logger");
 const helpers = require("../src/utilities/helpers");
 const mongo = require("../src/utilities/mongo");
-const User = require('../src/models/userModel');
 
 console.log('\n\n');
 logger.infos(Version + 'Start search ');
 
 let useremail = undefined;
+let userid = undefined;
 let validparam = false;
 //----------------------------------------------------------------------------
 // Parse command line args
@@ -61,31 +62,50 @@ function usage() {
 //----------------------------------------------------------------------------
 try {
     parseCommandLine();
+    logger.infos('Searching log history for user : ' + useremail);
+    // Get a connection
+    mongo.getMongoDBConnection();
+    // Run
+    (async() => {
+        // Builds the query to find the user
+        let query = User.find({});
+        query.select('email').where('email').equals(useremail);
+        await query.exec(function(err, thelist) {
+            if (err) console.log(err);
+            if(thelist.length === 0) {
+                logger.error('No matching user for ' + useremail);
+            }
+            else {
+                thelist.forEach((value, index) => {
+                    userid = value._id;
+                    console.log('\n[ %s ] %s %s', ('000'+index).slice(-3), 
+                        value.email,
+                        (value._id.toString(16).substr(-32)).toUpperCase()
+                        );
+                    });
+            }
+            logger.infos('Browse the userlogs collection with user ID : ' + userid);
+            (async() => {
+                let querylog = userLog.find({});
+                querylog.select('email action timestamp').sort({timestamp: -1});
+                querylog.select().where('userid').equals(userid);
+                await querylog.exec( function (err, loglist) {
+                    if (err) console.log(err);
+                    logger.infos('Found ' + loglist.length + ' entries\n\n');
+                    loglist.forEach((value, index) => {
+                        console.log('%s %s %s', helpers.convertDateTime(value.timestamp), 
+                                    value.action,
+                                    value.email);
+                    });
+                    process.exit(0);    
+                });
+            })();
+        });
+    })();
 }
 catch(Error) {
     console.log('\n\n********** Error : ' + Error);
     usage();
     process.exit(1);
 }
-logger.infos('Searching log history for user : ' + useremail);
-// Get a connection
-mongo.getMongoDBConnection();
-// Builds the query
-let query = User.find({});
-query.select('email').where('email').equals(useremail);
-// Run
-(async() => {
-    await query.exec(function(err, thelist) {
-        if (err) console.log(err);
-        else {
-          thelist.forEach((value, index) => {
-            console.log('[ %s ] %s %s', ('000'+index).slice(-3), 
-                value.email,
-                (value._id.toString(16).substr(-32)).toUpperCase()
-              );
-          });
-        }
-        process.exit(0);
-    });
-})();
 
