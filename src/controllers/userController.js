@@ -45,9 +45,10 @@
 //                 Problem was with the token payload
 //                 Compute the remaining valid time of token (whoami)
 //    Mar 18 2019  remaining valid time of token display formated
+//    Apr 03 2019  Use the new userLogger class
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.83, Mar 18 2019 ';
+const Version = 'userController:2.86, Apr 03 2019 ';
 
 const auth = require('../utilities/auth');
 const helpers = require('../utilities/helpers');
@@ -58,6 +59,7 @@ const User = require('../models/userModel')
 // To access mongodb status
 const mongo = require("../utilities/mongo");
 const logger = require("../utilities/logger");
+const userlogger = require("../utilities/userlogger");
 
 const passport = require('passport');
 const cors = require('cors');
@@ -74,6 +76,8 @@ module.exports.controller = (app) => {
         const userdecodedtoken = auth.decodeToken(token);
         const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
         //logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
+        userlog = new userlogger(req.user.email, req.user.id);
+        userlog.log('LOGIN');
         res.json( { message: req.user.email + ' logged', 
             token: token, 
             userdecodedtoken: userdecodedtoken,
@@ -92,6 +96,8 @@ module.exports.controller = (app) => {
             const message = 'logging ' + req.user.email +  ' out';
             logger.debug(Version + message);
             const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
+            userlog = new userlogger(req.user.email, req.user.id);
+            userlog.log('LOGOUT');
             req.logout();
             const userdecodedtoken = auth.decodeToken(token);
             const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
