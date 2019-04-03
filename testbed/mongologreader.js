@@ -10,7 +10,7 @@
 //    Apr 03 2019     Forgot to change the usage samples
 //-------------------------------------------------------------------------------
 
-const Version = "mongologreader.js:1.22 Apr 03 2019 ";
+const Version = "mongologreader.js:1.23 Apr 03 2019 ";
 
 const mongo = require('../src/utilities/mongo');
 const helpers = require('../src/utilities/helpers');
@@ -178,8 +178,6 @@ if (loglimit) {
     if (err) console.log(err);
     else {
       thelist.forEach((value, index) => {
-        // index = index.toString();
-        ;
         console.log('[ %s ] %s %s ------ %s', ('000'+index).slice(-3), 
           helpers.convertDateTime(value.timestamp), 
           value.module, 
