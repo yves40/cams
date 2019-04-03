@@ -9,6 +9,7 @@
 //    Mar 13 2019   Check LOGMODE and LOGFILE variables works
 //                  Modify file output logic
 //    Mar 14 2019   use helper for dates
+//    Apr 03 2019   Test for error : Cannot read property of undefined
 //----------------------------------------------------------------------------
 const Version = 'logger:1.29, Mar 14 2019';
 
@@ -98,7 +99,7 @@ function log(mess, level, syncmode = false) {
         let logstring = helpers.getDateTime()
                 + ' [' + levelToString(level) + '] '
                 + ' ' + mess ;
-        logs.push( logstring);
+       logs.push( logstring);
         let display = null;
         // Is the module called from a browser or from a standalone script ? 
         if (typeof window === 'undefined') {
