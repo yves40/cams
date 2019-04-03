@@ -128,9 +128,9 @@ passport.use('login',  new LocalStrategy({
     (email, password, done) => {
         User.getUserByEmail(email, (err, loggeduser) => {
             if(err) { return done(err); }
-            userlog = new userlogger(email);
+            let userlog = new userlogger(email);
             if ( !loggeduser ) { 
-                userlog.log('Unknown user : ' + email);
+                userlog.error('Unknown user : ' + email);
                 return done(null, false, {message: 'Unknown User'}) 
             }  // Error
             User.comparePassword(password, loggeduser.password, (error, isMatch ) => {
@@ -145,7 +145,8 @@ passport.use('login',  new LocalStrategy({
                     });
                     return done(null, loggeduser)   // Success login !!!
                 }
-                userlog.log('Invalid password for ' + email);
+                userlog = new userlogger(email, loggeduser.id);
+                userlog.error('Invalid password for ' + email);
                 return done( null, false, {message: 'Wrong password'} ); // Error
             });
         });
