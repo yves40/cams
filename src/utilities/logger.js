@@ -11,13 +11,12 @@
 //    Mar 14 2019   use helper for dates
 //    Apr 03 2019   Test for error : Cannot read property of undefined
 //----------------------------------------------------------------------------
-const Version = 'logger:1.29, Mar 14 2019';
+const Version = 'logger:1.31, Apr 03 2019';
 
 const fs = require('fs'); 
-const helpers = require('./helpers');
-
 
 const MAXLOGS = 10;
+const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 let logs = [];
 
 const DEBUG = 0;
@@ -96,7 +95,8 @@ function log(mess, level, syncmode = false) {
         if (logs.length === MAXLOGS) {
             logs.shift();                   // Handle the log buffer
         }
-        let logstring = helpers.getDateTime()
+        let logstring = months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
+                + d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") 
                 + ' [' + levelToString(level) + '] '
                 + ' ' + mess ;
        logs.push( logstring);
