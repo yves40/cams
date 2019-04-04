@@ -47,9 +47,10 @@
 //    Mar 18 2019  remaining valid time of token display formated
 //    Apr 03 2019  Use the new userLogger class
 //    Apr 04 2019  Track client IP in user connection log
+//                 Test pass req to callback for login
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.90, Apr 04 2019 ';
+const Version = 'userController:2.92, Apr 04 2019 ';
 
 // CORS
 const corsutility = require("../utilities/corsutility");

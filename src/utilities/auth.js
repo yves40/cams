@@ -15,7 +15,7 @@
 //    Apr 03 2019  trace login failure in the userlogs collection
 //    Apr 04 2019  Track client IP in user connection log
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.36, Apr 04 2019 ';
+const Version = 'auth.js:1.38, Apr 04 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -125,8 +125,9 @@ passport.use('jwt', new JwtStrategy(jwtOptions,
 passport.use('login',  new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
+    passReqToCallback: true,        // Used to access the client IP in case of bad password
     }, 
-    (email, password, done) => {
+    (req, email, password, done) => {
         User.getUserByEmail(email, (err, loggeduser) => {
             if(err) { return done(err); }
             let userlog = new userlogger(email);
@@ -146,7 +147,7 @@ passport.use('login',  new LocalStrategy({
                     });
                     return done(null, loggeduser)   // Success login !!!
                 }
-                userlog = new userlogger(email, loggeduser.id);
+                userlog = new userlogger(email, loggeduser.id, helpers.getIP(req));
                 userlog.error('Invalid password for ' + email);
                 return done( null, false, {message: 'Wrong password'} ); // Error
             });
