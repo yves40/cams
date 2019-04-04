@@ -8,8 +8,9 @@
 //    Mar 27 2019   Sleep, and add a getDate()
 //    Mar 30 2019   Cannot read property of undefined
 //    Apr 03 2019   Test for error : Cannot read property of undefined
+//    Apr 04 2019   Get IP from a request
 //----------------------------------------------------------------------------
-const Version = "helpers:1.18, Apr 03 2019 ";
+const Version = "helpers:1.20, Apr 04 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -63,4 +64,15 @@ module.exports.convertSecondsToHMS = function convertSecondsToHMS(seconds) {
 //----------------------------------------------------------------------------
 module.exports.sleep = function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//----------------------------------------------------------------------------
+// Get IP from a request
+//----------------------------------------------------------------------------
+module.exports.getIP = function getIP(req) {
+    var ip = req.headers['x-forwarded-for'] || 
+    req.connection.remoteAddress || 
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
+    return ip.replace(/f/gi, '').replace(/:/gi, '');
 }

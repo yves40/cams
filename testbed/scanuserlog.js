@@ -61,6 +61,7 @@ function usage() {
 // Go
 //----------------------------------------------------------------------------
 try {
+
     parseCommandLine();
     logger.infos('Searching log history for user : ' + useremail);
     // Get a connection
@@ -87,14 +88,20 @@ try {
             logger.infos('Browse the userlogs collection with user ID : ' + userid);
             (async() => {
                 let querylog = userLog.find({});
-                querylog.select('email action timestamp').sort({timestamp: -1});
+                querylog.select('email action timestamp ip severity').sort({timestamp: -1});
                 querylog.select().where('userid').equals(userid);
                 await querylog.exec( function (err, loglist) {
                     if (err) console.log(err);
                     logger.infos('Found ' + loglist.length + ' entries\n\n');
                     loglist.forEach((value, index) => {
-                        console.log('%s %s %s', helpers.convertDateTime(value.timestamp), 
-                                    value.action,
+                        // Some formatting
+                        let IP = 'Not collected'.padStart(24, ' ');
+                        if(value.ip) {
+                            IP = value.ip.padStart(24, ' ');
+                        }
+                        console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
+                                    IP,
+                                    value.action.padStart(35, ' '),
                                     value.email);
                     });
                     process.exit(0);    

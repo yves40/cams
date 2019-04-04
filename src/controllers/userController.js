@@ -46,12 +46,11 @@
 //                 Compute the remaining valid time of token (whoami)
 //    Mar 18 2019  remaining valid time of token display formated
 //    Apr 03 2019  Use the new userLogger class
+//    Apr 04 2019  Track client IP in user connection log
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.88, Apr 03 2019 ';
+const Version = 'userController:2.90, Apr 04 2019 ';
 
-const auth = require('../utilities/auth');
-const helpers = require('../utilities/helpers');
 // CORS
 const corsutility = require("../utilities/corsutility");
 // User definition
@@ -60,6 +59,8 @@ const User = require('../models/userModel')
 const mongo = require("../utilities/mongo");
 const logger = require("../utilities/logger");
 const userlogger = require("../utilities/userlogger");
+const auth = require('../utilities/auth');
+const helpers = require('../utilities/helpers');
 
 const passport = require('passport');
 const cors = require('cors');
@@ -76,7 +77,8 @@ module.exports.controller = (app) => {
         const userdecodedtoken = auth.decodeToken(token);
         const tokendata = auth.getTokenTimeMetrics(userdecodedtoken);
         //logger.debug(Version + 'User decoded token : ' + JSON.stringify(userdecodedtoken));
-        userlog = new userlogger(req.user.email, req.user.id);
+        // let userlog = new userlogger(req.user.email, req.user.id, req.connection.remoteAddress);
+        let userlog = new userlogger(req.user.email, req.user.id, helpers.getIP(req));
         userlog.informational('LOGIN');
         res.json( { message: req.user.email + ' logged', 
             token: token, 
@@ -96,7 +98,7 @@ module.exports.controller = (app) => {
             const message = 'logging ' + req.user.email +  ' out';
             logger.debug(Version + message);
             const token = auth.invalidateToken({id: req.user.id, email: req.user.email});
-            userlog = new userlogger(req.user.email, req.user.id);
+            let userlog = new userlogger(req.user.email, req.user.id, helpers.getIP(req));
             userlog.informational('LOGOUT');
             req.logout();
             const userdecodedtoken = auth.decodeToken(token);

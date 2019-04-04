@@ -13,8 +13,9 @@
 //    Mar 23 2019  Change token status string
 //    Mar 24 2019  Add a logout check with lastlogout
 //    Apr 03 2019  trace login failure in the userlogs collection
+//    Apr 04 2019  Track client IP in user connection log
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.35, Apr 04 2019 ';
+const Version = 'auth.js:1.36, Apr 04 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
