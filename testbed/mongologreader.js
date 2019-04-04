@@ -112,8 +112,8 @@ function parseCommandLine() {
 function usage() {
 
   console.log('\n\n');
-  console.log('Usage : node mongologreader [-l=maxlog] [-m=modulename] [-before=<valid-date>] [-after=<valid-date>] [-s] \n');
-  console.log('[] maxlog is the xaximum number of log events reported.');
+  console.log('Usage : node mongologreader [-l maxlog] [-m modulename] [-before <valid-date>] [-after <valid-date>] [-s] \n');
+  console.log('[] maxlog is the maximum number of log events reported.');
   console.log('[] modulename is the name of a module which logged in mongo repository. The search is case insensitive');
   console.log('[] -before specifies a search for logs before a date');
   console.log('[] -after specifies a search for logs after a date');
