@@ -1,9 +1,9 @@
 //----------------------------------------------------------------------------
-//    template.js
+//    templateModel.js
 //
 //    Apr 03 2019   Initial
 //----------------------------------------------------------------------------
-const Version = 'template:1.00, Apr 03 2019 ';
+const Version = 'templateModel:1.00, Apr 03 2019 ';
 
 const mongoose = require('mongoose');
 const logger = require('../utilities/logger');
