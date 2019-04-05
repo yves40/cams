@@ -3,9 +3,10 @@
 //
 //    Apr 03 2019    Initial, from simplemongologgertest
 //    Apr 04 2019    Add info, qualifiers and format listing
+//    Apr 05 2019    WIP on Promise for async ops
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.12 Apr 04 2019 ";
+const Version = "scanuserlog.js:1.17 Apr 05 2019 ";
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -87,10 +88,19 @@ try {
     if(useremail) query.select().where('email').equals(useremail);
     // Search users
     (async() => {
-        let userids = await getUserIds(query);
-        console.log('userids contains ' + userids.length + ' entries');
-        await getUserLogs(userids);
-        // process.exit(0);
+        await getUserIds(query).then( function (userids) {
+            console.log('userids contains ' + userids.length + ' entries');
+            (async () => {
+                await getUserLogs(userids).then( function (status) {
+                    logger.infos(status);
+                    process.exit(0);    
+                });
+            })();
+        })
+        .catch( function (message) {
+            logger.error('No matching user for ' + useremail);
+            process.exit(0);    
+        });
     })();
 }
 catch(Error) {
@@ -101,36 +111,56 @@ catch(Error) {
 //----------------------------------------------------------------------------
 // Get user ID list
 //----------------------------------------------------------------------------
-async function getUserIds(query) {
-    await query.exec(function(err, thelist) {
-        if (err) console.log(err);
-        if(thelist.length === 0) {
-            logger.error('No matching user for ' + useremail);
-        }
-        else {
-            thelist.forEach((value, index) => {
-                userids.push(value._id);
-                console.log('\n[ %s ] %s %s', ('000'+index).slice(-3), 
-                    value.email,
-                    (value._id.toString(16).substr(-32)).toUpperCase()
-                    );
-            });
-            return new Promise(resolve => { resolve(userids)});
-        }
+function getUserIds(query) {
+    return new Promise((resolve, reject) => {
+        query.exec(function(err, thelist) {
+            if (err) console.log(err);
+            if(thelist.length === 0) {
+                reject('No matching user for ' + useremail);
+            }
+            else {
+                thelist.forEach((value, index) => {
+                    userids.push(value._id);
+                    console.log('[ %s ] %s %s', ('000'+index).slice(-3), 
+                        value.email,
+                        (value._id.toString(16).substr(-32)).toUpperCase()
+                        );
+                });
+                resolve(userids);
+            }
+        });    
     });
 }
 //----------------------------------------------------------------------------
 // Get logs for one user
 //----------------------------------------------------------------------------
-async function getUserLogs(userids) {
-
-    userids.forEach( (userid) => {
-        if (verbose) logger.infos('Browse the userlogs collection with user ID : ' + userid);
-        (async() => {
+function getUserLogs(userids) {
+    return new Promise((resolve, reject) => {
+        userids.forEach( (userid) => {
+            if (verbose) logger.infos('Browse the userlogs collection with user ID : ' + userid);
             let querylog = userLog.find({});
             querylog.select('email action timestamp ip severity').sort({timestamp: -1});
             querylog.select().where('userid').equals(userid);
-            await querylog.exec( function (err, loglist) {
+            querylog.exec().then( function (loglist) {
+                loglist.forEach((value, index) => {
+                    // Some formatting
+                    let IP = 'Not collected'.padEnd(24, ' ');
+                    if(value.ip) {
+                        IP = value.ip.padEnd(24, ' ');
+                    }
+                    console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
+                                IP,
+                                value.action.padEnd(35, ' '),
+                                value.email);
+                });
+            });
+            //resolve('done');
+        });
+    });
+}
+
+/*
+            querylog.exec( function (err, loglist) {
                 if (err) console.log(err);
                 if (verbose) logger.infos('Found ' + loglist.length + ' entries\n\n');
                 loglist.forEach((value, index) => {
@@ -144,8 +174,7 @@ async function getUserLogs(userids) {
                                 value.action.padEnd(35, ' '),
                                 value.email);
                 });
+                //resolve('done');
             });
-        })();    
-    });
-}
 
+*/
