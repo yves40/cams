@@ -4,9 +4,10 @@
 //    Apr 03 2019    Initial, from simplemongologgertest
 //    Apr 04 2019    Add info, qualifiers and format listing
 //    Apr 05 2019    WIP on Promise for async ops
+//    Apr 06 2019    painfully working on mongoose ASYNC 
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.19 Apr 05 2019 ";
+const Version = "scanuserlog.js:1.23 Apr 06 2019 ";
 
 const objectid = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
@@ -77,33 +78,6 @@ function usage() {
 // Go
 //----------------------------------------------------------------------------
 
-
-
-mongo.getMongoDBConnection();
-let querylog = userLog.find({});
-console.log('azertyuiop ===========================================');
-querylog.select('email action timestamp ip severity').sort({timestamp: -1});
-(async () => {
-    await querylog.exec(function(err, loglist) {
-        if (err) console.log(err);
-        else {
-            loglist.forEach((value, index) => {
-                // Some formatting
-                let IP = 'Not collected'.padEnd(24, ' ');
-                if(value.ip) {
-                    IP = value.ip.padEnd(24, ' ');
-                }
-                console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
-                            IP,
-                            value.action.padEnd(35, ' '),
-                            value.email);
-            });
-        }
-        // process.exit(0);
-    });
-})();
-
-
 try {
 
     parseCommandLine();
@@ -115,15 +89,18 @@ try {
     query.select('email'); 
     if(useremail) query.select().where('email').equals(useremail);
 
+    let _userids = [];
     // Search users
     getUserIds(query).then( function (userids) {
         console.log('userids contains ' + userids.length + ' entries');
-        userids.forEach( (userid) => {
-            getUserLogs(userid).then( function (status) {
-                logger.infos(status);
+        _userids = userids;
+        // Get logs for each user found
+        _userids.forEach( (userid) => {
+            getUserLogs(userid).then( (status) => {
+                console.log('*********************' + status);
             });
-        })
-        process.exit(0);    
+        });
+        process.exit(0);
     })
     .catch( function (message) {
         logger.error('No matching user for ' + useremail);
@@ -159,7 +136,7 @@ function getUserLogs(userid) {
                                     value.action.padEnd(35, ' '),
                                     value.email);
                     });
-                    resolve('done');
+                    resolve('done for ' + userid);
                 }
             });
         })();
