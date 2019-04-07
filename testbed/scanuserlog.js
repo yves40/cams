@@ -5,12 +5,11 @@
 //    Apr 04 2019    Add info, qualifiers and format listing
 //    Apr 05 2019    WIP on Promise for async ops
 //    Apr 06 2019    painfully working on mongoose ASYNC 
+//    Apr 07 2019    mongoose ASYNC, I lost 4h on that because I'm stupid
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.23 Apr 06 2019 ";
+const Version = "scanuserlog.js:1.26 Apr 07 2019 ";
 
-const objectid = require('mongodb').ObjectId;
-const mongoose = require('mongoose');
 const User = require('../src/models/userModel');
 const userLog = require('../src/models/userLogModel');
 const logger = require("../src/utilities/logger");
@@ -23,7 +22,7 @@ logger.infos(Version + 'Start search \n');
 let useremail = undefined;
 let loglimit = undefined;
 let verbose = true;
-let userids = [];       // All users to get log from 
+let userids = [{}];       // All users to get log from 
 let validparam = false;
 //----------------------------------------------------------------------------
 // Parse command line args
@@ -84,26 +83,24 @@ try {
     if (verbose&&useremail) logger.infos('Searching log history for user : ' + useremail);
     // Get a connection
     mongo.getMongoDBConnection();
-    // Builds the query to find the user
-    let query = User.find({});
-    query.select('email'); 
-    if(useremail) query.select().where('email').equals(useremail);
-
-    let _userids = [];
     // Search users
-    getUserIds(query).then( function (userids) {
+    getUserIds(useremail).then( function (userids) {
         console.log('userids contains ' + userids.length + ' entries');
-        _userids = userids;
         // Get logs for each user found
-        _userids.forEach( (userid) => {
-            getUserLogs(userid).then( (status) => {
-                console.log('*********************' + status);
-            });
+        userids.forEach( (userobj, index) => {
+            (async () => {
+                await getUserLogs(userobj.id).then( (status) => {
+                    if(index === userids.length - 1) {process.exit(0);}
+                })
+                .catch( (status) => {
+                    console.log('No entry found for ' + userobj.mail);
+                    if(index === userids.length - 1) {process.exit(0);}
+                });
+            })();
         });
-        process.exit(0);
     })
     .catch( function (message) {
-        logger.error('No matching user for ' + useremail);
+        logger.error(message);
         process.exit(0);    
     });
 }
@@ -117,13 +114,15 @@ catch(Error) {
 //----------------------------------------------------------------------------
 function getUserLogs(userid) {
     return new Promise((resolve, reject) => {
-        if (verbose) logger.infos('Browse the userlogs collection with user ID : ' + userid);
-        let querylog = userLog.find({});
-        querylog.select('email action timestamp ip severity').sort({timestamp: -1});
-        querylog.select().where('userid').equals(userid);
-        (async () => {
+    let querylog = userLog.find({});
+    querylog.select('email action timestamp ip severity').sort({timestamp: -1});
+    querylog.select().where('userid').equals(userid);
+    (async () => {
             await querylog.exec(function(err, loglist) {
                 if (err) console.log(err);
+                if(loglist.length === 0) {
+                    reject('No entry for ');
+                }
                 else {
                     loglist.forEach((value, index) => {
                         // Some formatting
@@ -136,8 +135,8 @@ function getUserLogs(userid) {
                                     value.action.padEnd(35, ' '),
                                     value.email);
                     });
-                    resolve('done for ' + userid);
                 }
+                resolve('done');
             });
         })();
     });
@@ -145,16 +144,21 @@ function getUserLogs(userid) {
 //----------------------------------------------------------------------------
 // Get user ID list
 //----------------------------------------------------------------------------
-function getUserIds(query) {
+function getUserIds(mail) {
     return new Promise((resolve, reject) => {
+        // Builds the query to find the user
+        let query = User.find({});
+        query.select('email'); 
+        if(mail) query.select().where('email').equals(mail);
+
         query.exec(function(err, thelist) {
             if (err) console.log(err);
             if(thelist.length === 0) {
-                reject('No matching user for ' + useremail);
+                reject('No matching user for ' + mail);
             }
             else {
                 thelist.forEach((value, index) => {
-                    userids.push(value._id);
+                    userids.push( { id: value._id, mail: value.email });
                     console.log('[ %s ] %s %s', ('000'+index).slice(-3), 
                         value.email,
                         (value._id.toString(16).substr(-32)).toUpperCase()
