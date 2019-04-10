@@ -11,7 +11,7 @@
 //                   WIP on time range and lines limit
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.33 Apr 10 2019 ";
+const Version = "scanuserlog.js:1.35 Apr 10 2019 ";
 
 const User = require('../src/models/userModel');
 const userLog = require('../src/models/userLogModel');
@@ -83,6 +83,9 @@ function parseCommandLine() {
             case '-nok':  searchunknwon = false;   // Silent mode ?
                     validparam = true;
                     break;
+            default: 
+                    validparam = false;
+                    break;
       }
       if (!validparam) {throw new Error('Invalid parameter : ' + keyword);}
       ++index;
@@ -116,6 +119,7 @@ function usage() {
 
     console.log('\n\n');
     console.log('Usage : node scanuserlog [-mail <usermail>] [-l maxlog] [-before <valid-date>] [-after <valid-date>] [-s] [nok]\n');
+    console.log('[] usermail is a string matching all or partial mail spec. i.e : lueo@free.fr or eo@fr');
     console.log('[] maxlog is the maximum number of log events reported.');
     console.log('[] -before specifies a search for logs before a date');
     console.log('[] -after specifies a search for logs after a date');
@@ -132,9 +136,10 @@ function usage() {
     console.log('[] node scanuserlog.js -m SERVER.JS');
     console.log('[] node scanuserlog.js -before "Mar-28-2019 10:14" -after "Mar-28-2019 09:28" -s');
     console.log('[] node scanuserlog.js -after mar-31-2019');
+    console.log('[] node scanuserlog.js -mail yv  -nok');
       console.log('\n\n');
 }
-  
+
 //----------------------------------------------------------------------------
 // Go
 //----------------------------------------------------------------------------
@@ -168,7 +173,9 @@ try {
                                 })
                             })();
                         }
-                        process.exit(0);
+                        else {
+                            process.exit(0);
+                        }
                     }
                 })
                 .catch( (status) => {
