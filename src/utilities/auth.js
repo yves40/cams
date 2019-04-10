@@ -14,8 +14,9 @@
 //    Mar 24 2019  Add a logout check with lastlogout
 //    Apr 03 2019  trace login failure in the userlogs collection
 //    Apr 04 2019  Track client IP in user connection log
+//    Apr 10 2019  Unknown user error log improved
 //----------------------------------------------------------------------------
-const Version = 'auth.js:1.38, Apr 04 2019 ';
+const Version = 'auth.js:1.41, Apr 10 2019 ';
 
 const jwtconfig = require('./jwtconfig');
 const logger = require('./logger');
@@ -130,8 +131,8 @@ passport.use('login',  new LocalStrategy({
     (req, email, password, done) => {
         User.getUserByEmail(email, (err, loggeduser) => {
             if(err) { return done(err); }
-            let userlog = new userlogger(email);
             if ( !loggeduser ) { 
+                let userlog = new userlogger(email, undefined, helpers.getIP(req));
                 userlog.error('Unknown user : ' + email);
                 return done(null, false, {message: 'Unknown User'}) 
             }  // Error
@@ -147,7 +148,7 @@ passport.use('login',  new LocalStrategy({
                     });
                     return done(null, loggeduser)   // Success login !!!
                 }
-                userlog = new userlogger(email, loggeduser.id, helpers.getIP(req));
+                let userlog = new userlogger(email, loggeduser.id, helpers.getIP(req));
                 userlog.error('Invalid password for ' + email);
                 return done( null, false, {message: 'Wrong password'} ); // Error
             });
