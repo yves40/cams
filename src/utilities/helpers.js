@@ -9,8 +9,9 @@
 //    Mar 30 2019   Cannot read property of undefined
 //    Apr 03 2019   Test for error : Cannot read property of undefined
 //    Apr 04 2019   Get IP from a request
+//    Apr 10 2019   Format day of week on a 2 digits field
 //----------------------------------------------------------------------------
-const Version = "helpers:1.20, Apr 04 2019 ";
+const Version = "helpers:1.21, Apr 10 2019 ";
 
 const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -45,8 +46,13 @@ module.exports.getHoursMinutesSeconds = function getHoursMinutesSeconds() {
 }
 
 module.exports.convertDateTime = function convertDateTime(thedate) {
-    computedate = new Date(thedate);
-    datetime = months[computedate.getMonth()] + '-' + computedate.getDate() + '-' 
+    let computedate = new Date(thedate);
+    let day = computedate.getDate();
+    let days = '';
+    if (day < 10) days = day.toString().replace(/.*(^\d{1}).*/, "0$1");
+        else days = day.toString();
+    datetime = months[computedate.getMonth()] + '-' + 
+    days + '-' 
     + computedate.getFullYear() + ' ' 
     + computedate.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
     return datetime;
