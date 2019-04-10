@@ -6,9 +6,12 @@
 //    Apr 05 2019    WIP on Promise for async ops
 //    Apr 06 2019    painfully working on mongoose ASYNC 
 //    Apr 07 2019    mongoose ASYNC, I lost 4h on that because I'm stupid
+//    Apr 10 2019    Bug on listing ( mail restriction and order )
+//                   Search for partial mail : i.e free.fr
+//                   WIP on time range and lines limit
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.26 Apr 07 2019 ";
+const Version = "scanuserlog.js:1.33 Apr 10 2019 ";
 
 const User = require('../src/models/userModel');
 const userLog = require('../src/models/userLogModel');
@@ -16,13 +19,13 @@ const logger = require("../src/utilities/logger");
 const helpers = require("../src/utilities/helpers");
 const mongo = require("../src/utilities/mongo");
 
-console.log('\n\n');
-logger.infos(Version + 'Start search \n');
-
 let useremail = undefined;
 let loglimit = undefined;
+let beforetime = null;
+let aftertime = null;
 let verbose = true;
-let userids = [{}];       // All users to get log from 
+let searchunknwon = true;
+let userids = [];       // All users to get log from 
 let validparam = false;
 //----------------------------------------------------------------------------
 // Parse command line args
@@ -42,7 +45,31 @@ function parseCommandLine() {
                     useremail = value;
                     validparam = true;
                     break;
-        case '-l':  
+        case '-before':
+                    value = process.argv[++index];
+                    if (value === undefined) {
+                      throw new Error('You specified ' + keyword + ' without any value');
+                    }
+                    if (value.length < 6) {
+                      // Expect user specified just hh:mm, so add current day month year
+                      value = helpers.getDate() + ' ' + value;                       
+                    }
+                    beforetime = new Date(value);
+                    validparam = true;
+                    break;
+        case '-after': 
+                    value = process.argv[++index];
+                    if (value === undefined) {
+                      throw new Error('You specified ' + keyword + ' without any value');
+                    }
+                    if (value.length < 6) {
+                    // Expect user specified just hh:mm, so add current day month year
+                    value = helpers.getDate() + ' ' + value;                       
+                    }
+                    aftertime = new Date(value);
+                    validparam = true;
+                    break;
+          case '-l':  
                     value = process.argv[++index];
                     if (value === undefined) {
                       throw new Error('You specified ' + keyword + ' without any value');
@@ -50,7 +77,10 @@ function parseCommandLine() {
                     loglimit = parseInt(value);
                     validparam = true;
                     break;
-        case '-s':  verbose = false;   // Silent mode ?
+            case '-s':  verbose = false;   // Silent mode ?
+                    validparam = true;
+                    break;
+            case '-nok':  searchunknwon = false;   // Silent mode ?
                     validparam = true;
                     break;
       }
@@ -58,6 +88,24 @@ function parseCommandLine() {
       ++index;
       value = keyword = undefined; // Next loop
     }
+    if(aftertime) {   // Valid date ? 
+        if (isNaN(Date.parse(aftertime))) throw new Error('-after date invalid format');
+      }
+      if(beforetime) {   // Valid date ? 
+        if (isNaN(Date.parse(beforetime))) throw new Error('-before date invalid format');
+      }
+      if((aftertime && beforetime)&&(aftertime > beforetime)) {
+        throw new Error('Cannot set a time range between ' + helpers.convertDateTime(beforetime) +
+                ' and ' + helpers.convertDateTime(aftertime));
+      }
+      if(verbose&&aftertime&&beforetime) {
+        logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime) + ' and before ' + helpers.convertDateTime(beforetime));
+      }
+      else {
+        if(verbose&&beforetime) logger.info(Version + 'Searching for logs before ' + helpers.convertDateTime(beforetime));
+        if(verbose&&aftertime) logger.info(Version + 'Searching for logs after ' + helpers.convertDateTime(aftertime));
+      }
+      if(verbose&&loglimit) logger.info(Version + 'Will report no more than ' + loglimit + ' lines');
 };
 
 
@@ -67,10 +115,24 @@ function parseCommandLine() {
 function usage() {
 
     console.log('\n\n');
-    console.log('Usage : node scanuserlog [-mail <usermail>] [-l maxlog] [-s] \n');
+    console.log('Usage : node scanuserlog [-mail <usermail>] [-l maxlog] [-before <valid-date>] [-after <valid-date>] [-s] [nok]\n');
     console.log('[] maxlog is the maximum number of log events reported.');
+    console.log('[] -before specifies a search for logs before a date');
+    console.log('[] -after specifies a search for logs after a date');
+    console.log('[]     valid-date defines the latest date to consider. All events posted before this date will not be read.');
+    console.log('[]            Format must be either \"mon-dd-yyyy hh:mm\". or hh:mm');
+    console.log('[]            Notice the surrounding \"\" when a full date is specified');
+    console.log('[]     after and before can be used together to specify a time range. ');
     console.log('[] -s silent mode');
-    console.log('\n\n');
+    console.log('[] -nok do not search for unknows users login failure');
+    console.log('[]');
+    console.log('[] Samples');
+    console.log('[]');
+    console.log('[] node scanuserlog.js -after "Mar-28-2019 10:14" -before "Mar-28-2019 09:28" -s');
+    console.log('[] node scanuserlog.js -m SERVER.JS');
+    console.log('[] node scanuserlog.js -before "Mar-28-2019 10:14" -after "Mar-28-2019 09:28" -s');
+    console.log('[] node scanuserlog.js -after mar-31-2019');
+      console.log('\n\n');
 }
   
 //----------------------------------------------------------------------------
@@ -79,18 +141,35 @@ function usage() {
 
 try {
 
+    console.log('\n\n');
+    logger.infos(Version + 'Start search ');
+    
     parseCommandLine();
     if (verbose&&useremail) logger.infos('Searching log history for user : ' + useremail);
     // Get a connection
     mongo.getMongoDBConnection();
-    // Search users
+
+    // Search known users login activity
     getUserIds(useremail).then( function (userids) {
-        console.log('userids contains ' + userids.length + ' entries');
-        // Get logs for each user found
+        console.log('\nFound ' + userids.length + ' user(s) matching mail criteria\n\n');
+        // Get logs for each logged user found
         userids.forEach( (userobj, index) => {
             (async () => {
                 await getUserLogs(userobj.id).then( (status) => {
-                    if(index === userids.length - 1) {process.exit(0);}
+                    if(index === userids.length - 1) {
+                        // Search for login attempts with unknown users
+                        if (searchunknwon) {
+                            console.log('\n\nList of unknown user attempts\n\n');
+                            // Get logs for Unknown users 
+                            (async () => {
+                                await getUserUnknownLogs().then( (status) => {
+                                    console.log('\n' + status);
+                                    process.exit(0);
+                                })
+                            })();
+                        }
+                        process.exit(0);
+                    }
                 })
                 .catch( (status) => {
                     console.log('No entry found for ' + userobj.mail);
@@ -142,6 +221,40 @@ function getUserLogs(userid) {
     });
 }
 //----------------------------------------------------------------------------
+// Get logs for unknwon user authentication errors
+//----------------------------------------------------------------------------
+function getUserUnknownLogs() {
+    return new Promise((resolve, reject) => {
+    let uknentries = 0;
+    let querylog = userLog.find({});
+    querylog.select('email action timestamp ip severity').sort({timestamp: -1});
+    querylog.select().where({ 'action' : { '$regex' : 'unknown', '$options' : 'i' } });
+    (async () => {
+            await querylog.exec(function(err, loglist) {
+                if (err) console.log(err);
+                if(loglist.length === 0) {
+                    reject('No entry for ');
+                }
+                else {
+                    uknentries = loglist.length;
+                    loglist.forEach((value, index) => {
+                        // Some formatting
+                        let IP = 'Not collected'.padEnd(24, ' ');
+                        if(value.ip) {
+                            IP = value.ip.padEnd(24, ' ');
+                        }
+                        console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
+                                    IP,
+                                    value.action.padEnd(35, ' '),
+                                    value.email);
+                    });
+                }
+                resolve('Found ' + uknentries + ' attempts to log in with unknown users');
+            });
+        })();
+    });
+}
+//----------------------------------------------------------------------------
 // Get user ID list
 //----------------------------------------------------------------------------
 function getUserIds(mail) {
@@ -149,7 +262,8 @@ function getUserIds(mail) {
         // Builds the query to find the user
         let query = User.find({});
         query.select('email'); 
-        if(mail) query.select().where('email').equals(mail);
+        // if(mail) query.select().where('email').equals(mail);
+        if(mail) query.select().where({ 'email' : { '$regex' : mail, '$options' : 'i' } });
 
         query.exec(function(err, thelist) {
             if (err) console.log(err);
@@ -159,10 +273,11 @@ function getUserIds(mail) {
             else {
                 thelist.forEach((value, index) => {
                     userids.push( { id: value._id, mail: value.email });
-                    console.log('[ %s ] %s %s', ('000'+index).slice(-3), 
+                    /*
+                    console.log('\n[ %s ] %s %s', ('000'+index).slice(-3), 
                         value.email,
                         (value._id.toString(16).substr(-32)).toUpperCase()
-                        );
+                        );*/
                 });
                 resolve(userids);
             }
