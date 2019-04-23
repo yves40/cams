@@ -9,9 +9,10 @@
 //    Apr 10 2019    Bug on listing ( mail restriction and order )
 //                   Search for partial mail : i.e free.fr
 //                   WIP on time range and lines limit
+//    Apr 23 2019    Time range and some bugs 
 //----------------------------------------------------------------------------
 
-const Version = "scanuserlog.js:1.35 Apr 10 2019 ";
+const Version = "scanuserlog.js:1.37 Apr 23 2019 ";
 
 const User = require('../src/models/userModel');
 const userLog = require('../src/models/userLogModel');
@@ -80,7 +81,7 @@ function parseCommandLine() {
             case '-s':  verbose = false;   // Silent mode ?
                     validparam = true;
                     break;
-            case '-nok':  searchunknwon = false;   // Silent mode ?
+            case '-nok':  searchunknwon = false; 
                     validparam = true;
                     break;
             default: 
@@ -150,13 +151,12 @@ try {
     logger.infos(Version + 'Start search ');
     
     parseCommandLine();
-    if (verbose&&useremail) logger.infos('Searching log history for user : ' + useremail);
     // Get a connection
     mongo.getMongoDBConnection();
 
     // Search known users login activity
     getUserIds(useremail).then( function (userids) {
-        console.log('\nFound ' + userids.length + ' user(s) matching mail criteria\n\n');
+        if (verbose&&useremail)console.log('\nFound ' + userids.length + ' user(s) matching mail criteria : [ ' + useremail + ' ]' + '\n\n');
         // Get logs for each logged user found
         userids.forEach( (userobj, index) => {
             (async () => {
@@ -179,7 +179,7 @@ try {
                     }
                 })
                 .catch( (status) => {
-                    console.log('No entry found for ' + userobj.mail);
+                    console.log('\nNo entry found for ' + userobj.mail + '\n');
                     if(index === userids.length - 1) {process.exit(0);}
                 });
             })();
@@ -200,31 +200,52 @@ catch(Error) {
 //----------------------------------------------------------------------------
 function getUserLogs(userid) {
     return new Promise((resolve, reject) => {
-    let querylog = userLog.find({});
-    querylog.select('email action timestamp ip severity').sort({timestamp: -1});
-    querylog.select().where('userid').equals(userid);
-    (async () => {
-            await querylog.exec(function(err, loglist) {
-                if (err) console.log(err);
-                if(loglist.length === 0) {
-                    reject('No entry for ');
-                }
-                else {
-                    loglist.forEach((value, index) => {
-                        // Some formatting
-                        let IP = 'Not collected'.padEnd(24, ' ');
-                        if(value.ip) {
-                            IP = value.ip.padEnd(24, ' ');
-                        }
-                        console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
-                                    IP,
-                                    value.action.padEnd(35, ' '),
-                                    value.email);
-                    });
-                }
-                resolve('done');
-            });
-        })();
+        let querylog = userLog.find({});
+        querylog.select('email action timestamp ip severity').sort({timestamp: -1});
+        querylog.select().where('userid').equals(userid);
+        // Any time range  ? Must be : before MAR 31 ------ after MAR 26 
+        if(beforetime && aftertime) {  
+            querylog.select().where('timestamp').gt(aftertime).where('timestamp').lt(beforetime);
+        }
+        else {
+            // Any recent time ?
+            if(aftertime) {  
+            querylog.select().where('timestamp').gt(aftertime);
+            }
+            // Any oldest time ?
+            if(beforetime) {  
+            querylog.select().where('timestamp').lt(beforetime);
+            }
+        }
+        // Any limit to number of lines ?
+        if (loglimit) {
+            querylog.limit(loglimit);
+        }
+    
+
+        (async () => {
+                await querylog.exec(function(err, loglist) {
+                    if (err) console.log(err);
+                    if(loglist.length === 0) {
+                        reject('No entry');
+                    }
+                    else {
+                        loglist.forEach((value, index) => {
+                            if (index === 0) console.log('\nLogs for ' + value.email + '\n----------------------------------------');
+                            // Some formatting
+                            let IP = 'Not collected'.padEnd(24, ' ');
+                            if(value.ip) {
+                                IP = value.ip.padEnd(24, ' ');
+                            }
+                            console.log('%s %s %s %s', helpers.convertDateTime(value.timestamp), 
+                                        IP,
+                                        value.action.padEnd(35, ' '),
+                                        value.email);
+                        });
+                    }
+                    resolve('done');
+                });
+            })();
     });
 }
 //----------------------------------------------------------------------------
