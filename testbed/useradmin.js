@@ -5,7 +5,7 @@
 //    Apr 26 2019    Input from a json file
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.06 Apr 26 2019 ";
+const Version = "useradmin.js:1.11 Apr 26 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -73,7 +73,6 @@ function usage() {
 //----------------------------------------------------------------------------
 // Go
 //----------------------------------------------------------------------------
-
 try {
 
     console.log('\n\n');
@@ -81,21 +80,68 @@ try {
     
     parseCommandLine();
     // Get a connection
-    mongo.getMongoDBConnection(true);
+    mongo.getMongoDBConnection();
     // Get the json file
     let jsondata = fs.readFileSync(thefile);
     var jsonContent = JSON.parse(jsondata);
-    let i = 0;
-    for (i in jsonContent) {
-      console.log('____________________________________________');
-      console.log('Processing user : ' + jsonContent[i].email);
-      let newuser = new user(jsonContent[i].email);  
-      newuser.updateUser(jsonContent[i]);
+    switch(command) {
+      case 'ADD': console.log('Adding user(s)');
+        createUsers(jsonContent);
+        break;
+      case 'UPD': console.log('Updating user(s)');
+        updateUsers(jsonContent);
+        break;
+      case 'DEL': console.log('Deleting user(s)');
+        removeUsers(jsonContent);
+        break;
     }
-    process.exit(0);
-}
+
+    (async() => {
+      await helpers.sleep(3000);    // Wait for mongo to flush cache
+      process.exit(0);
+    })();
+    }
 catch(Error) {
     console.log('\n\n********** Error : ' + Error);
     usage();
     process.exit(1);
 }
+//----------------------------------------------------------------------------
+// Create users
+//----------------------------------------------------------------------------
+function createUsers(jsonContent) {
+  let i = 0;
+  for (i in jsonContent) {
+    console.log('____________________________________________');
+    console.log('Processing user : ' + jsonContent[i].email);
+    let newuser = new user();  
+    newuser.createUser(jsonContent[i]);
+    console.log('    Save : ' + newuser.usermodel.email);
+  }
+}
+//----------------------------------------------------------------------------
+// Update users
+//----------------------------------------------------------------------------
+function updateUsers(jsonContent) {
+  let i = 0;
+  for (i in jsonContent) {
+    console.log('____________________________________________');
+    console.log('Processing user : ' + jsonContent[i].email);
+    let newuser = new user();  
+    newuser.updateUser(jsonContent[i]);
+    console.log('    Updated : ' + newuser.User.email);
+  }
+}
+//----------------------------------------------------------------------------
+// Update users
+//----------------------------------------------------------------------------
+function removeUsers(jsonContent) {
+  let i = 0;
+  for (i in jsonContent) {
+    console.log('____________________________________________');
+    console.log('Processing user : ' + jsonContent[i].email);
+    let newuser = new user(jsonContent[i].email);
+    newuser.removeUser();
+  }
+}
+

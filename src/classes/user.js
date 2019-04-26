@@ -5,44 +5,87 @@
 //    Apr 26 2019   Some work on methods
 //----------------------------------------------------------------------------
 
-const usermodel = require('../models/userModel');
+const User = require('../models/userModel');
 const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
-    constructor (usermail) {
-        this.Version = 'user:1.11, Apr 26 2019 ';
-        this.usermodel = new(usermodel);
-        this.usermodel.email = usermail;
+    constructor (usermail = "dummy@free.fr") {
+        this.Version = 'user:1.18, Apr 26 2019 ';
+        this.User = new(User);
+        this.User.email = usermail;
     };
 
-    getemail() {return this.usermodel.email;}
-    setname(name) { this.usermodel.name = name; }
-    getname() { return this.usermodel.name; }
-    setemail(email) { this.usermodel.email = email; }
-    getemail() { return this.usermodel.email; }
-    setpassword(password) { 
-        hashPassword(password);
-        this.usermodel.password =  hash;
+    // Setters & getters
+    getVersion() { return this.Version; }
+    getemail() {return this.User.email;}
+    setname(name) { this.User.name = name; }
+    getname() { return this.User.name; }
+    setemail(email) { this.User.email = email; }
+    getemail() { return this.User.email; }
+    setpassword(password) { this.User.password =  hashPassword(password);;}
+    getpassword() { return this.User.password; }
+    setprofilecode(profilecode) { this.User.profilecode = profilecode;  }
+    getprofilecode() { return this.User.profilecode; }
+    setdescription(description) { this.User.description = description;  }
+    getdescription() { return this.User.description; }   
+    // Get a user object and save it
+    createUser(user) {
+        this.User.email = user.email;
+        this.User.name = user.name;
+        this.User.password = hashPassword(user.password);
+        this.User.profilecode = user.profilecode;
+        this.User.description = user.description;
+        save(this);
     }
-    getpassword() { return this.usermodel.password; }
-    setprofilecode(profilecode) { this.usermodel.profilecode = profilecode;  }
-    getprofilecode() { return this.usermodel.profilecode; }
-    setdescription(description) { this.usermodel.description = description;  }
-    getdescription() { return this.usermodel.description; }   
-    // Get a user object and update
+    // Get a user object and update it
     updateUser(user) {
-        this.usermodel.email = user.email;
-        this.usermodel.name = user.name;
-        this.usermodel.password = hashPassword(user.password);
-        this.usermodel.profilecode = user.profilecode;
-        this.usermodel.description = user.description;
-    } 
+        this.User.email = user.email;
+        this.User.name = user.name;
+        this.User.password = hashPassword(user.password);
+        this.User.profilecode = user.profilecode;
+        this.User.description = user.description;
+        update(this);
+    }
+    // Get a user object and delete it
+    removeUser() {
+        remove(this.User.email);
+    }
 }
 //----------------------------------------------------------------------------
 // Private 
+// Beware, these functions don't  have access to 'this'
 //----------------------------------------------------------------------------
 function hashPassword(password) {
     let salt = bcryptjs.genSaltSync(10);
     let hash = bcryptjs.hashSync(password, salt);
     return hash;
+}
+function save(theobject) {
+    theobject.User.save();
+}
+function update(theobject) {
+    User.findOneAndUpdate( {email: theobject.User.email}, 
+            {
+                email: theobject.User.email,
+                name: theobject.User.name,
+                password: theobject.User.password,
+                profilecode: theobject.User.profilecode,
+                description: theobject.User.description,
+            },
+        (err, userupdated) => {
+            if (err) console.log(err);
+        });
+}
+function remove(usermail) {
+    User.findOneAndRemove( {email: usermail},
+        (err, userupdated) => {
+            if (err) console.log(err);
+        });
+}
+//----------------------------------------------------------------------------
+// Super sleep function ;-)
+// Must be called from an ASYNC function
+//----------------------------------------------------------------------------
+sleep = function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
