@@ -9,7 +9,7 @@
 //    Mar 30 2019   Remove some log message
 //    Apr 26 2019   Add a variable for the mongodb server location
 //----------------------------------------------------------------------------
-const Version = "mongo:1.22, Apr 26 2019 ";
+const Version = "mongo:1.23, Apr 26 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
@@ -47,7 +47,7 @@ let DB = null;
 module.exports.getMongoDBConnection = function getMongoDBConnection(traceflag = false) {
   if(traceflag) logger.debug(Version + 'Connect to : ' + mongodb);
   try {
-    mongoose.connect(mongodb,{useNewUrlParser: true, keepAlive: false } )
+    mongoose.connect(mongodb,{useNewUrlParser: true, keepAlive: false, useFindAndModify: false } )
     .then(function(MongooseObject) {
       if(traceflag) logger.info('Mongoose now ready [' + MongooseObject.connection.readyState + ']');
       return MongooseObject.connection;
