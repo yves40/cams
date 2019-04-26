@@ -5,7 +5,7 @@
 //    Apr 26 2019    Input from a json file
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.11 Apr 26 2019 ";
+const Version = "useradmin.js:1.13 Apr 26 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -40,6 +40,10 @@ function parseCommandLine() {
                     command = 'UPD';
                     validparam = true;
                     break;
+        case '-list': 
+                    command = 'LIS';
+                    validparam = true;
+                    break;
         case '-f': 
                     thefile = process.argv[++index];
                     validparam = true;
@@ -53,7 +57,7 @@ function parseCommandLine() {
       value = keyword = undefined; // Next loop
     }
     if (!command) {throw new Error('No command specified ( add | delete | update ) ');}
-    if(thefile === undefined) {throw new Error('No json file input')}
+    if(thefile === undefined && command !== 'LIS') {throw new Error('No json file input')}
 };
 
 
@@ -63,7 +67,8 @@ function parseCommandLine() {
 function usage() {
 
     console.log('\n\n');
-    console.log('Usage : node useradmin -list | -add | -delete | -update  -f jsonuserfile \n');
+    console.log('Usage : node useradmin -add | -delete | -update  -f jsonuserfile \n');
+    console.log('Usage : node useradmin -list  \n');
     console.log('[]');
     console.log('[] Samples');
     console.log('[]');
@@ -82,8 +87,10 @@ try {
     // Get a connection
     mongo.getMongoDBConnection();
     // Get the json file
-    let jsondata = fs.readFileSync(thefile);
-    var jsonContent = JSON.parse(jsondata);
+    if (command !== 'LIS') {
+      let jsondata = fs.readFileSync(thefile);
+      var jsonContent = JSON.parse(jsondata);
+    }
     switch(command) {
       case 'ADD': console.log('Adding user(s)');
         createUsers(jsonContent);
@@ -93,6 +100,9 @@ try {
         break;
       case 'DEL': console.log('Deleting user(s)');
         removeUsers(jsonContent);
+        break;
+      case 'LIS': console.log('Listing user(s)');
+        listUsers();
         break;
     }
 
@@ -116,7 +126,7 @@ function createUsers(jsonContent) {
     console.log('Processing user : ' + jsonContent[i].email);
     let newuser = new user();  
     newuser.createUser(jsonContent[i]);
-    console.log('    Save : ' + newuser.usermodel.email);
+    console.log('    Save : ' + newuser.User.email);
   }
 }
 //----------------------------------------------------------------------------
@@ -133,7 +143,7 @@ function updateUsers(jsonContent) {
   }
 }
 //----------------------------------------------------------------------------
-// Update users
+// Delete users
 //----------------------------------------------------------------------------
 function removeUsers(jsonContent) {
   let i = 0;
@@ -142,6 +152,27 @@ function removeUsers(jsonContent) {
     console.log('Processing user : ' + jsonContent[i].email);
     let newuser = new user(jsonContent[i].email);
     newuser.removeUser();
+    console.log('    Deleted : ' + newuser.User.email);
   }
+}
+//----------------------------------------------------------------------------
+// List users
+// Quick and dirty implementation : Will not be cool if 1000 users
+//----------------------------------------------------------------------------
+function listUsers() {
+    console.log('____________________________________________');
+    console.log('Listing user(s)');
+    let newuser = new user();
+    (async () => {
+      await newuser.listUser().then( (allusers) => {
+        console.log('There are ' + allusers.length + ' stored in the DB.\n'); 
+        allusers.forEach((value, index) => {
+          let email = value.email.padEnd(24, ' ');
+          let name = value.name.padEnd(30, ' ');
+          let description = value.description;
+          console.log('%s %s %s', email, name, description);
+        });
+      });
+    })();
 }
 

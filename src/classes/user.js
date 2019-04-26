@@ -10,7 +10,7 @@ const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.18, Apr 26 2019 ';
+        this.Version = 'user:1.19, Apr 26 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -28,7 +28,10 @@ module.exports = class user {
     getprofilecode() { return this.User.profilecode; }
     setdescription(description) { this.User.description = description;  }
     getdescription() { return this.User.description; }   
+
+    //-------------------------------------
     // Get a user object and save it
+    //-------------------------------------
     createUser(user) {
         this.User.email = user.email;
         this.User.name = user.name;
@@ -37,7 +40,9 @@ module.exports = class user {
         this.User.description = user.description;
         save(this);
     }
+    //-------------------------------------
     // Get a user object and update it
+    //-------------------------------------
     updateUser(user) {
         this.User.email = user.email;
         this.User.name = user.name;
@@ -46,9 +51,30 @@ module.exports = class user {
         this.User.description = user.description;
         update(this);
     }
-    // Get a user object and delete it
+    //-------------------------------------
+    // Remove this user
+    //-------------------------------------
     removeUser() {
         remove(this.User.email);
+    }
+    //-------------------------------------
+    // List user(s)
+    //-------------------------------------
+    listUser() {
+        return new Promise((resolve, reject) => {
+            let querylog = User.find({});
+            (async () => {
+                await querylog.exec(function(err, userlist) {
+                    if (err) console.log(err);
+                    if(userlist.length === 0) {
+                        reject({});
+                    }
+                    else {
+                        resolve(userlist);
+                    }
+                });
+            })();
+        });
     }
 }
 //----------------------------------------------------------------------------
