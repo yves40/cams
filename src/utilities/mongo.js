@@ -7,13 +7,14 @@
 //    Mar 06 2019   Code Cleanup
 //    Mar 25 2019   Test new connection method
 //    Mar 30 2019   Remove some log message
+//    Apr 26 2019   Add a variable for the mongodb server location
 //----------------------------------------------------------------------------
-const Version = "mongo:1.21, Mar 30 2019 ";
+const Version = "mongo:1.22, Apr 26 2019 ";
 
 var mongoose = require('mongoose');
 const logger = require('./logger');
 
-const mongodb = 'mongodb://vboxweb:4100/cams';
+const mongodb =  process.env.MONGOSERVER || 'mongodb://vboxweb:4100/cams';
 //----------------------------------------------------------------------------
 // Version
 //----------------------------------------------------------------------------
