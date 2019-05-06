@@ -33,29 +33,47 @@ module.exports = class user {
     // Get a user object and save it
     //-------------------------------------
     createUser(user) {
-        this.User.email = user.email;
-        this.User.name = user.name;
-        this.User.password = hashPassword(user.password);
-        this.User.profilecode = user.profilecode;
-        this.User.description = user.description;
-        save(this);
+        return new Promise( (resolve, reject) => {
+            this.User.email = user.email;
+            this.User.name = user.name;
+            this.User.password = hashPassword(user.password);
+            this.User.profilecode = user.profilecode;
+            this.User.description = user.description;
+            (async () => {
+                save(this);
+                resolve('User ' + user.email + ' created');
+            })();
+        })
     }
     //-------------------------------------
     // Get a user object and update it
     //-------------------------------------
     updateUser(user) {
-        this.User.email = user.email;
-        this.User.name = user.name;
-        this.User.password = hashPassword(user.password);
-        this.User.profilecode = user.profilecode;
-        this.User.description = user.description;
-        update(this);
+        return new Promise((resolve, reject) => {
+            this.User.email = user.email;
+            this.User.name = user.name;
+            this.User.password = hashPassword(user.password);
+            this.User.profilecode = user.profilecode;
+            this.User.description = user.description;
+            (async () => {
+                update(this);
+                resolve('User ' + user.email + ' created');
+            })();
+        })
     }
     //-------------------------------------
     // Remove this user
     //-------------------------------------
     removeUser() {
-        remove(this.User.email);
+        return new Promise((resolve, reject) => {
+            (async () => {
+                User.findOneAndRemove( {email: this.User.email},
+                    (err, userupdated) => {
+                        if (err) reject(err);
+                        else resolve('User ' + this.User.email + ' deleted');
+                    });
+            })();                
+        });
     }
     //-------------------------------------
     // List user(s)

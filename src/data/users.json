@@ -1,20 +1,20 @@
 
   {
-    "user1" : {
+    "y" : {
       "email": "yves.yves@free.fr",
       "name": "Yves",
       "password": "yvespassword",
       "profilecode": 0,
-      "description": "This is Yves, retired now and playing js"
+      "description": "This is Yves, retired now and playing js and node"
     },
-    "user2" : {
+    "l" : {
       "email": "ludo.ludo@free.fr",
       "name": "Ludo",
       "password": "manager",
       "profilecode": 0,
       "description": "This is Ludo the top level Oracle cloud architect"
     } ,
-    "user3" : {
+    "h" : {
       "email": "hlo.hlo@free.fr",
       "name": "hakim Loumaille, laloum",
       "password": "manager",
