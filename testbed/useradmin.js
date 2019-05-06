@@ -3,9 +3,11 @@
 //
 //    Apr 24 2019    Initial
 //    Apr 26 2019    Input from a json file
+//    May 03 2019    WIP on asynchronous ops for add delete update
+//    May 06 2019    Async and program termination
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.13 Apr 26 2019 ";
+const Version = "useradmin.js:1.16 May 06 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -105,6 +107,8 @@ try {
         listUsers();
         break;
     }
+    
+    //process.exit(0);
 
     (async() => {
       await helpers.sleep(3000);    // Wait for mongo to flush cache
@@ -125,8 +129,14 @@ function createUsers(jsonContent) {
     console.log('____________________________________________');
     console.log('Processing user : ' + jsonContent[i].email);
     let newuser = new user();  
-    newuser.createUser(jsonContent[i]);
-    console.log('    Save : ' + newuser.User.email);
+    (async () => {
+      await newuser.createUser(jsonContent[i]).then((status) => {
+        console.log('\t' + status);
+      })
+      .catch( (status) => {
+        console.log('\t' + status);
+      })
+    })();
   }
 }
 //----------------------------------------------------------------------------
@@ -138,8 +148,14 @@ function updateUsers(jsonContent) {
     console.log('____________________________________________');
     console.log('Processing user : ' + jsonContent[i].email);
     let newuser = new user();  
-    newuser.updateUser(jsonContent[i]);
-    console.log('    Updated : ' + newuser.User.email);
+    (async () => {
+      await newuser.updateUser(jsonContent[i]).then( (status) => {
+        console.log('\t' + status);
+      })
+      .catch( (status) => {
+        console.log('\t' + status);
+      })
+    })();
   }
 }
 //----------------------------------------------------------------------------
@@ -151,8 +167,14 @@ function removeUsers(jsonContent) {
     console.log('____________________________________________');
     console.log('Processing user : ' + jsonContent[i].email);
     let newuser = new user(jsonContent[i].email);
-    newuser.removeUser();
-    console.log('    Deleted : ' + newuser.User.email);
+    (async () => {
+      await newuser.removeUser().then( (status) => {
+        console.log('\t' + status);
+      })
+      .catch( (status) => {
+        console.log('\t' + status);
+      })
+    })();
   }
 }
 //----------------------------------------------------------------------------
@@ -172,7 +194,10 @@ function listUsers() {
           let description = value.description;
           console.log('%s %s %s', email, name, description);
         });
-      });
+      })
+      .catch( (status) => {
+        console.log('\t' + status);
+      })
     })();
 }
 
