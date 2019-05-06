@@ -7,7 +7,7 @@
 //    May 06 2019    Async and program termination
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.16 May 06 2019 ";
+const Version = "useradmin.js:1.17 May 06 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -93,32 +93,73 @@ try {
       let jsondata = fs.readFileSync(thefile);
       var jsonContent = JSON.parse(jsondata);
     }
+    let commandFunction = undefined;
     switch(command) {
       case 'ADD': console.log('Adding user(s)');
-        createUsers(jsonContent);
+        commandFunction = createUsers;
+        // createUsers(jsonContent);
         break;
       case 'UPD': console.log('Updating user(s)');
-        updateUsers(jsonContent);
+        commandFunction = updateUsers;
+        // updateUsers(jsonContent);
         break;
       case 'DEL': console.log('Deleting user(s)');
-        removeUsers(jsonContent);
+        commandFunction = removeUsers;
+        // removeUsers(jsonContent);
         break;
       case 'LIS': console.log('Listing user(s)');
-        listUsers();
+        commandFunction = listUsers;
+        // listUsers(undefined);
         break;
     }
     
-    //process.exit(0);
-
+    // Syntax already checked : If coming here, we have a valid command
+    // Call with await to ensure the command is properly finished
+    (async () => {
+      await commandFunction(jsonContent).then( (status)=> {
+        console.log(status);
+        process.exit(0);
+      })
+    })();
+/*
     (async() => {
       await helpers.sleep(3000);    // Wait for mongo to flush cache
       process.exit(0);
     })();
-    }
+*/
+}
 catch(Error) {
     console.log('\n\n********** Error : ' + Error);
     usage();
     process.exit(1);
+}
+
+//----------------------------------------------------------------------------
+// List users
+// Quick and dirty implementation : Will not be cool if 1000 users
+//----------------------------------------------------------------------------
+function listUsers() {
+  return new Promise((resolve, reject) => {
+    console.log('____________________________________________');
+    console.log('Listing user(s)');
+    let newuser = new user();
+    (async () => {
+      await newuser.listUser().then( (allusers) => {
+        console.log('There are ' + allusers.length + ' stored in the DB.\n'); 
+        allusers.forEach((value, index) => {
+          let email = value.email.padEnd(24, ' ');
+          let name = value.name.padEnd(40, ' ');
+          let description = value.description;
+          console.log('%s %s %s', email, name, description);
+        });
+        resolve('OK');
+      })
+      .catch( (status) => {
+        console.log('\t' + status);
+        reject('KO');
+      })
+    })();
+  });
 }
 //----------------------------------------------------------------------------
 // Create users
@@ -176,28 +217,5 @@ function removeUsers(jsonContent) {
       })
     })();
   }
-}
-//----------------------------------------------------------------------------
-// List users
-// Quick and dirty implementation : Will not be cool if 1000 users
-//----------------------------------------------------------------------------
-function listUsers() {
-    console.log('____________________________________________');
-    console.log('Listing user(s)');
-    let newuser = new user();
-    (async () => {
-      await newuser.listUser().then( (allusers) => {
-        console.log('There are ' + allusers.length + ' stored in the DB.\n'); 
-        allusers.forEach((value, index) => {
-          let email = value.email.padEnd(24, ' ');
-          let name = value.name.padEnd(30, ' ');
-          let description = value.description;
-          console.log('%s %s %s', email, name, description);
-        });
-      })
-      .catch( (status) => {
-        console.log('\t' + status);
-      })
-    })();
 }
 
