@@ -3,6 +3,8 @@
 //
 //    Apr 24 2019   Initial
 //    Apr 26 2019   Some work on methods
+//    May 07 2019   Update Message
+//    May 08 2019   WIP on async 
 //----------------------------------------------------------------------------
 
 const User = require('../models/userModel');
@@ -10,7 +12,7 @@ const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.19, Apr 26 2019 ';
+        this.Version = 'user:1.23, May 08 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -55,10 +57,27 @@ module.exports = class user {
             this.User.password = hashPassword(user.password);
             this.User.profilecode = user.profilecode;
             this.User.description = user.description;
-            (async () => {
-                update(this);
-                resolve('User ' + user.email + ' created');
-            })();
+            User.findOneAndUpdate( {email: this.User.email}, 
+                {
+                    email: this.User.email,
+                    name: this.User.name,
+                    password: this.User.password,
+                    profilecode: this.User.profilecode,
+                    description: this.User.description,
+                },
+                { upsert: false, new: true },
+                (err, userupdated) => {
+                    if (err) reject(err);
+                    else{
+                        if(userupdated === null) {
+                            resolve('User ' + this.User.email + ' does not exist');
+                        }
+                        else {
+                            resolve('User ' + userupdated.email + ' updated');
+                        }
+                    }
+                }
+            );
         })
     }
     //-------------------------------------

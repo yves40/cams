@@ -5,9 +5,11 @@
 //    Apr 26 2019    Input from a json file
 //    May 03 2019    WIP on asynchronous ops for add delete update
 //    May 06 2019    Async and program termination
+//    May 07 2019    Async...
+//    May 08 2019    Async...
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.17 May 06 2019 ";
+const Version = "useradmin.js:1.28 May 08 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -83,33 +85,30 @@ function usage() {
 try {
 
     console.log('\n\n');
-    logger.infos(Version);
+    logger.infos(Version + '\n\n');
     
     parseCommandLine();
     // Get a connection
     mongo.getMongoDBConnection();
     // Get the json file
+    let jsonContent = undefined;
     if (command !== 'LIS') {
       let jsondata = fs.readFileSync(thefile);
-      var jsonContent = JSON.parse(jsondata);
+      jsonContent = JSON.parse(jsondata);
     }
     let commandFunction = undefined;
     switch(command) {
-      case 'ADD': console.log('Adding user(s)');
+      case 'ADD': 
         commandFunction = createUsers;
-        // createUsers(jsonContent);
         break;
-      case 'UPD': console.log('Updating user(s)');
+      case 'UPD': 
         commandFunction = updateUsers;
-        // updateUsers(jsonContent);
         break;
-      case 'DEL': console.log('Deleting user(s)');
+      case 'DEL': 
         commandFunction = removeUsers;
-        // removeUsers(jsonContent);
         break;
-      case 'LIS': console.log('Listing user(s)');
+      case 'LIS':   
         commandFunction = listUsers;
-        // listUsers(undefined);
         break;
     }
     
@@ -121,12 +120,6 @@ try {
         process.exit(0);
       })
     })();
-/*
-    (async() => {
-      await helpers.sleep(3000);    // Wait for mongo to flush cache
-      process.exit(0);
-    })();
-*/
 }
 catch(Error) {
     console.log('\n\n********** Error : ' + Error);
@@ -135,24 +128,52 @@ catch(Error) {
 }
 
 //----------------------------------------------------------------------------
+// Delete users
+//----------------------------------------------------------------------------
+function removeUsers(jsonContent) {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      const userlistsize = Object.keys(jsonContent).length;
+      console.log('Processing list of ' + userlistsize + ' user(s)');
+      let i = 0;
+      for (i in jsonContent) {
+        console.log('____________________________________________');
+        console.log('Removing user : ' + jsonContent[i].email);
+        let newuser = new user(jsonContent[i].email);
+        (async () => {
+          await newuser.removeUser().then( (status) => {
+            console.log('\t' + status);
+            console.log('\t' + jsonContent[i].email + ' removed');
+            if (i === userlistsize - 1)
+              resolve('Processed ' + userlistsize + ' user(s) to be removed');
+          })
+          .catch( (status) => {
+            console.log('\t' + status);
+            reject('KO');
+          })
+        })();
+      }
+    })();
+  });
+}
+//----------------------------------------------------------------------------
 // List users
 // Quick and dirty implementation : Will not be cool if 1000 users
 //----------------------------------------------------------------------------
 function listUsers() {
   return new Promise((resolve, reject) => {
     console.log('____________________________________________');
-    console.log('Listing user(s)');
     let newuser = new user();
     (async () => {
       await newuser.listUser().then( (allusers) => {
-        console.log('There are ' + allusers.length + ' stored in the DB.\n'); 
+        console.log(allusers.length + ' user(s) stored in the DB.\n'); 
         allusers.forEach((value, index) => {
           let email = value.email.padEnd(24, ' ');
           let name = value.name.padEnd(40, ' ');
           let description = value.description;
           console.log('%s %s %s', email, name, description);
         });
-        resolve('OK');
+        resolve('\n');
       })
       .catch( (status) => {
         console.log('\t' + status);
@@ -165,57 +186,55 @@ function listUsers() {
 // Create users
 //----------------------------------------------------------------------------
 function createUsers(jsonContent) {
-  let i = 0;
-  for (i in jsonContent) {
-    console.log('____________________________________________');
-    console.log('Processing user : ' + jsonContent[i].email);
-    let newuser = new user();  
+  return new Promise((resolve, reject) => {
     (async () => {
-      await newuser.createUser(jsonContent[i]).then((status) => {
-        console.log('\t' + status);
-      })
-      .catch( (status) => {
-        console.log('\t' + status);
-      })
+      const userlistsize = Object.keys(jsonContent).length;
+      console.log('Processing list of ' + userlistsize + ' user(s)');
+      let i = 0;
+      for (i in jsonContent) {
+        console.log('____________________________________________');
+        console.log('Adding user : ' + jsonContent[i].email);
+        let newuser = new user();  
+        (async () => {
+          await newuser.createUser(jsonContent[i]).then((status) => {
+            console.log('\t' + status);
+          })
+          .catch( (status) => {
+            console.log('\t' + status);
+            reject('KO');
+          })
+        })();
+      }
+      resolve('OK');
     })();
-  }
+  });
 }
 //----------------------------------------------------------------------------
 // Update users
 //----------------------------------------------------------------------------
 function updateUsers(jsonContent) {
-  let i = 0;
-  for (i in jsonContent) {
-    console.log('____________________________________________');
-    console.log('Processing user : ' + jsonContent[i].email);
-    let newuser = new user();  
+  return new Promise((resolve, reject) => {
     (async () => {
-      await newuser.updateUser(jsonContent[i]).then( (status) => {
-        console.log('\t' + status);
-      })
-      .catch( (status) => {
-        console.log('\t' + status);
-      })
+      const userlistsize = Object.keys(jsonContent).length;
+      let userupdated = 0;
+      console.log('____________________________________________');
+      console.log('Processing list of ' + userlistsize + ' user(s)\n');
+      let i = 0;
+      for (i in jsonContent) {
+        let newuser = new user();  
+        (async () => {
+          await newuser.updateUser(jsonContent[i]).then( (status) => {
+            console.log(status);
+            if (++userupdated === userlistsize)
+              resolve('\nProcessed ' + userlistsize + ' user(s)');
+          })
+          .catch( (status) => {
+            console.log('\t' + status);
+            reject('KO');
+          })
+        })();
+      }
     })();
-  }
-}
-//----------------------------------------------------------------------------
-// Delete users
-//----------------------------------------------------------------------------
-function removeUsers(jsonContent) {
-  let i = 0;
-  for (i in jsonContent) {
-    console.log('____________________________________________');
-    console.log('Processing user : ' + jsonContent[i].email);
-    let newuser = new user(jsonContent[i].email);
-    (async () => {
-      await newuser.removeUser().then( (status) => {
-        console.log('\t' + status);
-      })
-      .catch( (status) => {
-        console.log('\t' + status);
-      })
-    })();
-  }
+  });
 }
 
