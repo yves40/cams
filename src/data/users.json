@@ -5,28 +5,28 @@
       "name": "Yves",
       "password": "yvespassword",
       "profilecode": 0,
-      "description": "V2 ! Yves, retired now and playing js and node"
+      "description": "V4 ! Yves, retired now and playing js and node"
     },
     "l" : {
       "email": "ludo.ludo@free.fr",
       "name": "Ludo",
       "password": "manager",
       "profilecode": 0,
-      "description": "V2 ! This is Ludo : top level Oracle cloud architect"
+      "description": "V4 ! This is Ludo : top level Oracle cloud architect"
     } ,
     "h" : {
       "email": "hlo.hlo@free.fr",
       "name": "hakim Loumaille, laloum",
       "password": "manager",
       "profilecode": 0,
-      "description": "V2 ! Security PM, Oracle Colombus TLS"
+      "description": "V4 ! Security PM, Oracle Colombus TLS"
     },
     "dummy" : {
       "email": "dummy@free.fr",
       "name": "TEst user, never used",
       "password": "manager",
       "profilecode": 0,
-      "description": "V2 ! Test user, will not be updated if not inserted before"
+      "description": "V4 ! Test user, will not be updated if not inserted before"
     }  
   }
 

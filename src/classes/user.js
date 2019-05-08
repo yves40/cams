@@ -5,6 +5,8 @@
 //    Apr 26 2019   Some work on methods
 //    May 07 2019   Update Message
 //    May 08 2019   WIP on async 
+//                  Update user
+//                  Create user
 //----------------------------------------------------------------------------
 
 const User = require('../models/userModel');
@@ -12,7 +14,7 @@ const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.23, May 08 2019 ';
+        this.Version = 'user:1.26, May 08 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -36,15 +38,30 @@ module.exports = class user {
     //-------------------------------------
     createUser(user) {
         return new Promise( (resolve, reject) => {
-            this.User.email = user.email;
-            this.User.name = user.name;
-            this.User.password = hashPassword(user.password);
-            this.User.profilecode = user.profilecode;
-            this.User.description = user.description;
-            (async () => {
-                save(this);
-                resolve('User ' + user.email + ' created');
-            })();
+            /* 
+                Check user does not exist yet
+            */
+            User.find( { email: user.email }, (err, found) => {
+                if (err) reject(err);
+                else {
+                    if (found) reject('User ' + user.email + ' already exist')
+                    else {
+                        this.User.email = user.email;
+                        this.User.name = user.name;
+                        this.User.password = hashPassword(user.password);
+                        this.User.profilecode = user.profilecode;
+                        this.User.description = user.description;
+                        (async () => {
+                            this.User.save(this.User, (err, inserteduser) => {
+                                if (err) reject(err);
+                                else {
+                                    resolve('User ' + inserteduser.email + ' created');
+                                }
+                            });
+                        })();
+                    }
+                }
+            })
         })
     }
     //-------------------------------------
@@ -65,7 +82,7 @@ module.exports = class user {
                     profilecode: this.User.profilecode,
                     description: this.User.description,
                 },
-                { upsert: false, new: true },
+                { upsert: false, new: true }, // Do not update a non existing user
                 (err, userupdated) => {
                     if (err) reject(err);
                     else{

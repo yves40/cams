@@ -9,7 +9,7 @@
 //    May 08 2019    Async...
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.28 May 08 2019 ";
+const Version = "useradmin.js:1.31 May 08 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -119,6 +119,10 @@ try {
         console.log(status);
         process.exit(0);
       })
+      .catch( (status) => {
+        console.log('\nHmmmm, sorry it seems something went wrong');
+        process.exit(0);
+      })
     })();
 }
 catch(Error) {
@@ -189,15 +193,17 @@ function createUsers(jsonContent) {
   return new Promise((resolve, reject) => {
     (async () => {
       const userlistsize = Object.keys(jsonContent).length;
-      console.log('Processing list of ' + userlistsize + ' user(s)');
+      let userupdated = 0;
+      console.log('____________________________________________');
+      console.log('Processing ADD list of ' + userlistsize + ' user(s)\n');
       let i = 0;
       for (i in jsonContent) {
-        console.log('____________________________________________');
-        console.log('Adding user : ' + jsonContent[i].email);
         let newuser = new user();  
         (async () => {
           await newuser.createUser(jsonContent[i]).then((status) => {
-            console.log('\t' + status);
+            console.log(status);
+            if (++userupdated === userlistsize)
+              resolve('\nProcessed ' + userlistsize + ' user(s)');
           })
           .catch( (status) => {
             console.log('\t' + status);
@@ -205,7 +211,6 @@ function createUsers(jsonContent) {
           })
         })();
       }
-      resolve('OK');
     })();
   });
 }
@@ -218,7 +223,7 @@ function updateUsers(jsonContent) {
       const userlistsize = Object.keys(jsonContent).length;
       let userupdated = 0;
       console.log('____________________________________________');
-      console.log('Processing list of ' + userlistsize + ' user(s)\n');
+      console.log('Processing UPDATE list of ' + userlistsize + ' user(s)\n');
       let i = 0;
       for (i in jsonContent) {
         let newuser = new user();  
