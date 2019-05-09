@@ -7,9 +7,10 @@
 //    May 06 2019    Async and program termination
 //    May 07 2019    Async...
 //    May 08 2019    Async...
+//    May 09 2019    Delete users
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.31 May 08 2019 ";
+const Version = "useradmin.js:1.32 May 09 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -132,24 +133,53 @@ catch(Error) {
 }
 
 //----------------------------------------------------------------------------
+// Create users
+//----------------------------------------------------------------------------
+function createUsers(jsonContent) {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      const userlistsize = Object.keys(jsonContent).length;
+      let userupdated = 0;
+      console.log('____________________________________________');
+      console.log('Processing ADD list of ' + userlistsize + ' user(s)\n');
+      let i = 0;
+      for (i in jsonContent) {
+        let newuser = new user();  
+        (async () => {
+          await newuser.createUser(jsonContent[i]).then((status) => {
+            console.log(status);
+            if (++userupdated === userlistsize)
+              resolve('\nProcessed ' + userlistsize + ' user(s)');
+          })
+          .catch( (status) => {
+            console.log('\t' + status);
+            reject('KO');
+          })
+        })();
+      }
+    })();
+  });
+}
+
+//----------------------------------------------------------------------------
 // Delete users
 //----------------------------------------------------------------------------
 function removeUsers(jsonContent) {
   return new Promise((resolve, reject) => {
+    const userlistsize = Object.keys(jsonContent).length;
+    let userupdated = 0;
+  console.log('____________________________________________');
     (async () => {
       const userlistsize = Object.keys(jsonContent).length;
-      console.log('Processing list of ' + userlistsize + ' user(s)');
+      console.log('Processing DEL list  of ' + userlistsize + ' user(s)');
       let i = 0;
       for (i in jsonContent) {
-        console.log('____________________________________________');
-        console.log('Removing user : ' + jsonContent[i].email);
         let newuser = new user(jsonContent[i].email);
         (async () => {
           await newuser.removeUser().then( (status) => {
             console.log('\t' + status);
-            console.log('\t' + jsonContent[i].email + ' removed');
-            if (i === userlistsize - 1)
-              resolve('Processed ' + userlistsize + ' user(s) to be removed');
+            if (++userupdated === userlistsize)
+              resolve('\nProcessed ' + userlistsize + ' user(s)');
           })
           .catch( (status) => {
             console.log('\t' + status);
@@ -183,34 +213,6 @@ function listUsers() {
         console.log('\t' + status);
         reject('KO');
       })
-    })();
-  });
-}
-//----------------------------------------------------------------------------
-// Create users
-//----------------------------------------------------------------------------
-function createUsers(jsonContent) {
-  return new Promise((resolve, reject) => {
-    (async () => {
-      const userlistsize = Object.keys(jsonContent).length;
-      let userupdated = 0;
-      console.log('____________________________________________');
-      console.log('Processing ADD list of ' + userlistsize + ' user(s)\n');
-      let i = 0;
-      for (i in jsonContent) {
-        let newuser = new user();  
-        (async () => {
-          await newuser.createUser(jsonContent[i]).then((status) => {
-            console.log(status);
-            if (++userupdated === userlistsize)
-              resolve('\nProcessed ' + userlistsize + ' user(s)');
-          })
-          .catch( (status) => {
-            console.log('\t' + status);
-            reject('KO');
-          })
-        })();
-      }
     })();
   });
 }
