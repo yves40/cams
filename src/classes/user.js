@@ -14,7 +14,7 @@ const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.26, May 08 2019 ';
+        this.Version = 'user:1.27, May 08 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -44,7 +44,7 @@ module.exports = class user {
             User.find( { email: user.email }, (err, found) => {
                 if (err) reject(err);
                 else {
-                    if (found) reject('User ' + user.email + ' already exist')
+                    if (found.length !== 0) reject('User ' + user.email + ' already exist')
                     else {
                         this.User.email = user.email;
                         this.User.name = user.name;
@@ -63,6 +63,20 @@ module.exports = class user {
                 }
             })
         })
+    }
+    //-------------------------------------
+    // Remove this user
+    //-------------------------------------
+    removeUser() {
+        return new Promise((resolve, reject) => {
+            (async () => {
+                User.findOneAndRemove( {email: this.User.email},
+                    (err, userupdated) => {
+                        if (err) reject(err);
+                        else resolve('User ' + this.User.email + ' deleted');
+                    });
+            })();                
+        });
     }
     //-------------------------------------
     // Get a user object and update it
@@ -96,20 +110,6 @@ module.exports = class user {
                 }
             );
         })
-    }
-    //-------------------------------------
-    // Remove this user
-    //-------------------------------------
-    removeUser() {
-        return new Promise((resolve, reject) => {
-            (async () => {
-                User.findOneAndRemove( {email: this.User.email},
-                    (err, userupdated) => {
-                        if (err) reject(err);
-                        else resolve('User ' + this.User.email + ' deleted');
-                    });
-            })();                
-        });
     }
     //-------------------------------------
     // List user(s)
