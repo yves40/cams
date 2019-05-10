@@ -8,9 +8,10 @@
 //    May 07 2019    Async...
 //    May 08 2019    Async...
 //    May 09 2019    Delete users
+//    May 10 2019    Small output changes
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.32 May 09 2019 ";
+const Version = "useradmin.js:1.33 May 10 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -171,13 +172,13 @@ function removeUsers(jsonContent) {
   console.log('____________________________________________');
     (async () => {
       const userlistsize = Object.keys(jsonContent).length;
-      console.log('Processing DEL list  of ' + userlistsize + ' user(s)');
+      console.log('Processing DEL list  of ' + userlistsize + ' user(s)\n');
       let i = 0;
       for (i in jsonContent) {
         let newuser = new user(jsonContent[i].email);
         (async () => {
           await newuser.removeUser().then( (status) => {
-            console.log('\t' + status);
+            console.log(status);
             if (++userupdated === userlistsize)
               resolve('\nProcessed ' + userlistsize + ' user(s)');
           })

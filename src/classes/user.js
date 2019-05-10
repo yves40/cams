@@ -7,6 +7,7 @@
 //    May 08 2019   WIP on async 
 //                  Update user
 //                  Create user
+//    May 10 2019   Properly manage delete message when user doex not exist 
 //----------------------------------------------------------------------------
 
 const User = require('../models/userModel');
@@ -14,7 +15,7 @@ const bcryptjs = require('bcryptjs');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.27, May 08 2019 ';
+        this.Version = 'user:1.28, May 10 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -73,7 +74,12 @@ module.exports = class user {
                 User.findOneAndRemove( {email: this.User.email},
                     (err, userupdated) => {
                         if (err) reject(err);
-                        else resolve('User ' + this.User.email + ' deleted');
+                        else {
+                            if (userupdated === null)
+                                resolve(this.User.email + ' does not exists');
+                            else
+                                resolve('User ' + this.User.email + ' deleted');
+                        } 
                     });
             })();                
         });
