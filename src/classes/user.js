@@ -7,7 +7,7 @@
 //    May 08 2019   WIP on async 
 //                  Update user
 //                  Create user
-//    May 10 2019   Properly manage delete message when user doex not exist 
+//    May 10 2019   Properly manage delete message when user does not exist 
 //----------------------------------------------------------------------------
 
 const User = require('../models/userModel');
