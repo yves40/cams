@@ -1,0 +1,11 @@
+
+  {
+    "todelete" : {
+      "email": "todel@free.fr",
+      "name": "todel",
+      "password": "manager",
+      "profilecode": 0,
+      "description": "To be deleted, no future"
+    }
+  }
+
