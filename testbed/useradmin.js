@@ -9,9 +9,10 @@
 //    May 08 2019    Async...
 //    May 09 2019    Delete users
 //    May 10 2019    Small output changes
+//    May 15 2019    SYNC modewhen calling createUser
 //----------------------------------------------------------------------------
 
-const Version = "useradmin.js:1.33 May 10 2019 ";
+const Version = "useradmin.js:1.34 May 15 2019 ";
 
 const user = require('../src/classes/user');
 const logger = require("../src/utilities/logger");
@@ -147,7 +148,7 @@ function createUsers(jsonContent) {
       for (i in jsonContent) {
         let newuser = new user();  
         (async () => {
-          await newuser.createUser(jsonContent[i]).then((status) => {
+          await newuser.createUser(jsonContent[i], false).then((status) => {
             console.log(status);
             if (++userupdated === userlistsize)
               resolve('\nProcessed ' + userlistsize + ' user(s)');

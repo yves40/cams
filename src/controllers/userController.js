@@ -48,14 +48,18 @@
 //    Apr 03 2019  Use the new userLogger class
 //    Apr 04 2019  Track client IP in user connection log
 //                 Test pass req to callback for login
+//    May 14 2019  Use the user class for 'register'
+//    May 15 2019  user class for 'register'...
 //----------------------------------------------------------------------------
 
-const Version = 'userController:2.92, Apr 04 2019 ';
+const Version = 'userController:2.96, May 15 2019 ';
 
 // CORS
 const corsutility = require("../utilities/corsutility");
 // User definition
 const User = require('../models/userModel')
+// User class
+const userclass = require('../classes/user');
 // To access mongodb status
 const mongo = require("../utilities/mongo");
 const logger = require("../utilities/logger");
@@ -169,6 +173,7 @@ module.exports.controller = (app) => {
                 const email = req.body.email;
                 const password = req.body.password;
                 const description = req.body.description;
+                /*
                 const newuser = new User({name, email, password, profilecode: 0, description});
                 User.createUser(newuser, (error, user) => {
                     if(error) { 
@@ -183,6 +188,22 @@ module.exports.controller = (app) => {
                         status: 'OK',
                     });
                 });
+                */
+                let newuser = new userclass();
+                try {
+                    newuser.S_createUser({name, email, password, profilecode: 0, description});
+                    res.send({
+                        user: {name, email, password, profilecode: 0, description}, 
+                        message: 'User ' + email + ' registered',
+                        status: 'OK',
+                    });
+                }
+                catch(error) {
+                    logger.debug(Version + 'Oh my god !!');
+                    res.status(422).json({
+                        message: 'Something went wrong, try again later',
+                    });
+                }
             }
             else {
                 logger.debug(Version + 'User ' + req.body.email + ' already registered');

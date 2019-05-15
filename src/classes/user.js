@@ -8,14 +8,16 @@
 //                  Update user
 //                  Create user
 //    May 10 2019   Properly manage delete message when user does not exist 
+//    May 15 2019   1st tests in the WEB app
 //----------------------------------------------------------------------------
 
 const User = require('../models/userModel');
 const bcryptjs = require('bcryptjs');
+const logger = require('../utilities/logger');
 
 module.exports = class user {
     constructor (usermail = "dummy@free.fr") {
-        this.Version = 'user:1.28, May 10 2019 ';
+        this.Version = 'user:1.33, May 15 2019 ';
         this.User = new(User);
         this.User.email = usermail;
     };
@@ -36,14 +38,50 @@ module.exports = class user {
 
     //-------------------------------------
     // Get a user object and save it
+    // ASYNC can be true of false ( for batch job useradmin )
+    //  Default is ASYNC
     //-------------------------------------
-    createUser(user) {
+    S_createUser(user) {
+        User.find( { email: user.email }, (err, found) => {
+            if (err) {
+                console.log(err);
+                throw new Error(err);
+            } 
+            else {
+                if (found.length !== 0) throw new Error('User ' + user.email + ' already exist')
+                else {
+                    this.User.email = user.email;
+                    this.User.name = user.name;
+                    this.User.password = hashPassword(user.password);
+                    this.User.profilecode = user.profilecode;
+                    this.User.description = user.description;
+                    this.User.save(this.User, (err, inserteduser) => {
+                        if (err){
+                            throw new Error(err);
+                        } 
+                        else {
+                            logger.debug('User ' + inserteduser.email + ' created');
+                            return 'OK';
+                        }
+                    });
+                }
+            }
+        })
+}
+    //-------------------------------------
+    // Get a user object and save it
+    // ASYNC can be true of false ( for batch job useradmin )
+    //  Default is ASYNC
+    //-------------------------------------
+    createUser(user, ASYNC = true ) {
         return new Promise( (resolve, reject) => {
             /* 
                 Check user does not exist yet
             */
-            User.find( { email: user.email }, (err, found) => {
-                if (err) reject(err);
+           User.find( { email: user.email }, (err, found) => {
+                if (err) {
+                    reject(err);
+                } 
                 else {
                     if (found.length !== 0) reject('User ' + user.email + ' already exist')
                     else {
@@ -52,14 +90,31 @@ module.exports = class user {
                         this.User.password = hashPassword(user.password);
                         this.User.profilecode = user.profilecode;
                         this.User.description = user.description;
-                        (async () => {
+                        if (ASYNC) {
                             this.User.save(this.User, (err, inserteduser) => {
-                                if (err) reject(err);
+                                logger.debug(this.Version + 'ASYNC user creation');
+                                if (err){
+                                    logger.debug(this.Version + 'Error here');
+                                    reject(err);
+                                } 
                                 else {
                                     resolve('User ' + inserteduser.email + ' created');
                                 }
                             });
-                        })();
+                        }
+                        else {  // SYNC mode, must wait before sending response
+                            (async () => {
+                                this.User.save(this.User, (err, inserteduser) => {
+                                    if (err){
+                                        logger.debug(this.Version + 'Error here');
+                                        reject(err);
+                                    } 
+                                    else {
+                                        resolve('User ' + inserteduser.email + ' created');
+                                    }
+                                });
+                            })();    
+                        }
                     }
                 }
             })
@@ -68,9 +123,9 @@ module.exports = class user {
     //-------------------------------------
     // Remove this user
     //-------------------------------------
-    removeUser() {
+    removeUser(ASYNC = true) {
         return new Promise((resolve, reject) => {
-            (async () => {
+            if (ASYNC) {
                 User.findOneAndRemove( {email: this.User.email},
                     (err, userupdated) => {
                         if (err) reject(err);
@@ -81,7 +136,21 @@ module.exports = class user {
                                 resolve('User ' + this.User.email + ' deleted');
                         } 
                     });
-            })();                
+            }
+            else {
+                (async () => {
+                    User.findOneAndRemove( {email: this.User.email},
+                        (err, userupdated) => {
+                            if (err) reject(err);
+                            else {
+                                if (userupdated === null)
+                                    resolve(this.User.email + ' does not exists');
+                                else
+                                    resolve('User ' + this.User.email + ' deleted');
+                            } 
+                        });
+                })();                    
+            }
         });
     }
     //-------------------------------------
